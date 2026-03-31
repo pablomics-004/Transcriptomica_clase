@@ -22,12 +22,14 @@ Para ello se descargaron datos de RNA-seq de la serie GSE132040, extrayendo los 
 
 ## Descarga de datos
 
-La descarga de los datos se realizó utilizando las herramientas `wget` para obtener los metadatos y `prefetch` junto con `fasterq-dump` para obtener los archivos fastq a partir de los archivos SRA. Se descargaron un total de 7 archivos SRR correspondientes a muestras de riñón de ratones machos de 3 y 18 meses de edad.
+La descarga de los datos se realizó utilizando las herramientas `wget` para obtener los metadatos y `prefetch` junto con `fasterq-dump` para obtener los archivos `fastq` a partir de los archivos SRA. Se descargaron un **total de 7 archivos SRR** correspondientes a muestras de **riñón de ratones machos de 3 y 18 meses** de edad.
 
 ```{python}
 #| eval: false
 #| echo: true
 #| message: false
+
+#!/usr/bin/env python3
 
 from datetime import datetime
 import subprocess as sb
@@ -116,9 +118,41 @@ for SRR in SRR_files:
 print(f"[{datetime.now().strftime('%d-%H:%M:%S')}] All SRR files have been processed.", flush=True)
 ```
 
-## Evaluación de calidad y limpieza de las lecturas
+## Evaluación de calidad
 
-[---]
+Una vez obtenidos los datos en formato `fastq`, se procedió a evaluar la calidad de las lecturas con `fastqc`:
+
+```{shell}
+#| eval: false
+#| echo: true
+
+#!/usr/bin/env bash
+
+set -euo pipefail # Si un comando falla, el script se detiene
+shopt -s nullglob # Evita errores si no se encuentran archivos coincidentes
+
+# Activando ambiente de conda para fastqc
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate multiqc
+
+# Directorios de trabajo
+DATA="./data"
+FASTQ="$DATA/fastq"
+
+mkdir -p "$FASTQ" ./logs/
+
+# Evaluación de calidad de las lecturas utilizando fastqc en paralelo
+nohup fastqc "$FASTQ"/*_1.fastq -o "${FASTQ}c_1" > ./logs/fastqc_1_explore.log 2>&1 &
+nohup fastqc "$FASTQ"/*_2.fastq -o "${FASTQ}c_2" > ./logs/fastqc_2_explore.log 2>&1 &
+```
+
+![Figura 1. Resultados de FASTQC previo a la limpieza para la muestra SRR9126924_1.fastq](./docs/images/fastqc_pre_clean.png)
+
+Como es posible observar en la **Figura 1**, las lecturas presentan una calidad de secuenciación relativamente buena, con un porcentaje de bases por encima de *Q30* en la mayoría de los casos. Sin embargo, se observa una caída en la calidad hacia el final de las lecturas, lo cual es común en experimentos de RNA-seq. Además, se detectan adaptadores residuales de *Nextera Transpose Seq* y un sesgo de composición de bases al inicio de las lecturas (aproximadamente en las primeras 12-17 bp). Esta tendencia, ilustrada con una única muestra en la figura, se repite en las demás, lo que sugiere la necesidad de realizar una limpieza de las lecturas para mejorar la calidad de los datos antes del alineamiento.
+
+## Limpieza de lecturas
+
+Haciendo uso de `fastp`, se procedió a realizar la limpieza de las lecturas, eliminando los adaptadores residuales y recortando los primeros 17 bp para eliminar el sesgo de composición de bases al inicio de las lecturas. Acto seguido, se volvió a evaluar la calidad de las lecturas limpias utilizando `fastqc` para verificar la mejora en la calidad de las secuencias.
 
 ```{shell}
 #| eval: false
@@ -129,8 +163,9 @@ print(f"[{datetime.now().strftime('%d-%H:%M:%S')}] All SRR files have been proce
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate fastp
 
-set -euo pipefail # Si un comando falla, el script se detiene
-shopt -s nullglob # Evita errores si no se encuentran archivos coincidentes
+# Configurando el match de patrones
+set -euo pipefail
+shopt -s nullglob
 
 # Creación de carpetas
 DATA="./data"
@@ -227,6 +262,8 @@ multiqc "$DATA" -o "$MULTIQC_DIR"
 
 echo "Proceso terminado."
 ```
+
+[...]
 
 # Conclusiones
 
