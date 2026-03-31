@@ -1,0 +1,21 @@
+# Directorios
+logs/
+data/fastp/
+data/fastq/
+data/indexes/
+data/sra/
+data/multiqc/multiqc_data/
+results/star_pe/other_logs/
+
+# Archivos
+*.sam
+*.bam
+*.fastq
+*.tab
+*.zip
+*.sra
+*.log
+*.json
+# *.html
+*.hisat2
+*.star
