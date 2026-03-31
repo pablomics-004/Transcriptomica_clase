@@ -6,6 +6,7 @@ data/indexes/
 data/sra/
 data/multiqc/multiqc_data/
 results/star_pe/other_logs/
+results/star_se/other_logs/
 
 # Archivos
 *.sam

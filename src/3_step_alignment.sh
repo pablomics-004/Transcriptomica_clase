@@ -10,18 +10,19 @@ LOGS="./logs"
 RESULTS="./results"
 CLEAN="${DATA}/fastp"
 INDEXES="${DATA}/indexes"
-STAR="${RESULTS}/star_pe"
+STAR_PE="${RESULTS}/star_pe"
+STAR_SE="${RESULTS}/star_se"
 HISAT2_PE="${RESULTS}/hisat2_pe"
 HISAT2_SE="${RESULTS}/hisat2_se"
 
-mkdir -p "$STAR" "$HISAT2_PE" "$HISAT2_SE" "$LOGS"
+mkdir -p "$STAR_PE" "$HISAT2_PE" "$HISAT2_SE" "$LOGS" "$STAR_SE"
 
 # Índices de alineamiento
 STAR_IDX="${INDEXES}/mm39.gencode.M36.star"
 HISAT2_IDX="${INDEXES}/mm39.gencode.M36.hisat/mm39.gencode.M36.hisat"
 
 [[ ! -f "${HISAT2_IDX}.1.ht2" ]] && echo "[ERROR] Índice HISAT2 no existente en $HISAT2_IDX" && exit 1
-[[ ! -d "$STAR_IDX" ]] && echo "[ERROR] Directorio de índice STAR no existente en $STAR_IDX" && exit 1
+[[ ! -d "$STAR_IDX" ]] && echo "[ERROR] Directorio de índice STAR_PE no existente en $STAR_IDX" && exit 1
 
 # Configuración de hilos
 threads_star=8
@@ -79,10 +80,27 @@ for f in "${files[@]}"; do
         --runThreadN "$threads_star" \
         --genomeDir "$STAR_IDX" \
         --readFilesIn "$f" "${CLEAN}/${base}_clean_2.fastq" \
-        --outFileNamePrefix "${STAR}/${base}_star_pe_" \
+        --outFileNamePrefix "${STAR_PE}/${base}_star_pe_" \
         --outSAMtype BAM SortedByCoordinate \
         --outSAMunmapped None \
-        2> ${STAR}/${base}_star_pe_time.txt
+        2> ${STAR_PE}/${base}_star_pe_time.txt
+
+done
+
+echo "========== STAR SE =========="
+
+for f in "${files[@]}"; do
+    base=$(basename "$f" _clean_1.fastq)
+
+    # Alineamiento PE con STAR
+    /usr/bin/time -f "%e" STAR \
+        --runThreadN "$threads_star" \
+        --genomeDir "$STAR_IDX" \
+        --readFilesIn "$f" \
+        --outFileNamePrefix "${STAR_SE}/${base}_star_se_" \
+        --outSAMtype BAM SortedByCoordinate \
+        --outSAMunmapped None \
+        2> ${STAR_SE}/${base}_star_se_time.txt
 
 done
 
