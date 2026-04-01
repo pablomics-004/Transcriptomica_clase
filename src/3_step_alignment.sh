@@ -92,7 +92,7 @@ echo "========== STAR SE =========="
 for f in "${files[@]}"; do
     base=$(basename "$f" _clean_1.fastq)
 
-    # Alineamiento PE con STAR
+    # Alineamiento SE con STAR
     /usr/bin/time -f "%e" STAR \
         --runThreadN "$threads_star" \
         --genomeDir "$STAR_IDX" \
