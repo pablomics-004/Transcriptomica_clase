@@ -265,7 +265,7 @@ echo "Proceso terminado."
 
 ![Figura 2. Resultados de FASTQC tras la limpieza para la muestra SRR9126924_1.fastq](./docs/images/fastqc_post_clean.png)
 
-Tras la limpieza, el sesgo de composición de bases al inicio de las lecturas se ha eliminado, y la calidad de las secuencias ha mejorado significativamente, con un porcentaje de bases por encima de *Q30* en prácticamente toda la longitud de las lecturas. Además, los adaptadores residuales han sido eliminados, lo que se refleja en la ausencia de picos correspondientes a los adaptadores en el gráfico de calidad. Así mismo, la distribución de la longitud de lecturas ha quedado en ~81 bp, lo cual resulta raro dado que se eliminaron 17 bp al inicio de las mismas, sugiriendo un posible recorte adicional en el 3' o un procesamiento 
+Tras la limpieza, el sesgo de composición de bases al inicio de las lecturas se ha eliminado, y la calidad de las secuencias ha mejorado significativamente, con un porcentaje de bases por encima de *Q30* en prácticamente toda la longitud de las lecturas. Además, los adaptadores residuales han sido eliminados, lo que se refleja en la ausencia de picos correspondientes a los adaptadores en el gráfico de calidad. Así mismo, la distribución de la longitud de lecturas ha quedado en ~83 bp, acorde a lo esperado tras el recorte de los primeros 17 bp.
 
 # Conclusiones
 
