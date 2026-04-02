@@ -498,11 +498,72 @@ results = pd.DataFrame(
     index=["aligned_uniq", "aligned_mult", "overall_rate", "time_sec"]
 ).T
 
+del files, aligners, alignment_dir
+del extract_hisat2_info, extract_star_info, get_srr_basename, standarize_time, get_files_list
+
 results.to_csv("./results/aligners_performance_table.csv", sep=",")
 display(results)
 ```
 
+```{python fig-3-tiempo-alineamiento}
+#| fig-cap: "Figura 3. Tiempo de alineamiento."
+#| echo: false
+#| eval: true
+#| message: false
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+time = results.time_sec
+samples = results.index
+
+# Promedio de tiempo de alineamiento para cada alineador y tipo de lectura
+aligners_performance = {
+    "STAR PE": (time.loc[samples.str.contains("star_pe")].to_numpy() / 60).mean(),
+    "HISAT2 PE": (time.loc[samples.str.contains("hisat2_pe")].to_numpy() / 60).mean(),
+    "STAR SE": (time.loc[samples.str.contains("star_se")].to_numpy() / 60).mean(),
+    "HISAT2 SE": (time.loc[samples.str.contains("hisat2_se")].to_numpy() / 60).mean()
+}
+aligners_performance = pd.DataFrame(aligners_performance, index=["Tiempo promedio (minutos)"]).T
+aligners_performance.sort_values("Tiempo promedio (minutos)", ascending=False, inplace=True)
+aligners_performance["Alineador"] = aligners_performance.index
+
+# Tiempo para cada muestra 
+samples_performance = time.to_frame(name="Tiempo (mins)") / 60
+samples_performance[["Muestra", "Alineador", "Tipo de lectura"]] = samples_performance.index.to_series().str.split("_", expand=True)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 6), constrained_layout=True)
+
+sns.barplot(
+    data=aligners_performance,
+    x="Alineador",
+    y="Tiempo promedio (minutos)",
+    ax=axes[0],
+    hue="Alineador",
+    palette="magma"
+)
+axes[0].set_ylabel(None)
+
+sns.lineplot(
+    data=samples_performance,
+    x="Muestra",
+    y="Tiempo (mins)",
+    hue="Tipo de lectura",
+    style="Alineador",
+    markers=True,
+    dashes=True,
+    palette="magma",
+    ax=axes[1]
+)
+axes[1].tick_params(axis='x', rotation=45)
+plt.setp(axes[1].get_xticklabels(), rotation=45, ha="right")
+axes[1].set_ylabel(None)
+
+fig.supylabel(
+    "Tiempo de alineamiento (minutos)", fontsize=14, y=0.6
+)
+plt.show()
+```
 
 ### Tiempos de ejecución
 
