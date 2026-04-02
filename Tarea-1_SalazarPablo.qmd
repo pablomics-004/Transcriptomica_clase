@@ -560,7 +560,7 @@ plt.setp(axes[1].get_xticklabels(), rotation=45, ha="right")
 axes[1].set_ylabel(None)
 
 fig.supylabel(
-    "Tiempo de alineamiento (minutos)", fontsize=14, y=0.6
+    "Tiempo promedio (minutos)", fontsize=14, y=0.6
 )
 plt.show()
 ```
