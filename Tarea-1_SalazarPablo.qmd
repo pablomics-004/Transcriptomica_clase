@@ -24,7 +24,7 @@ Para ello se descargaron datos de RNA-seq de la serie GSE132040, extrayendo los 
 
 La descarga de los datos se realizó utilizando las herramientas `wget` para obtener los metadatos y `prefetch` junto con `fasterq-dump` para obtener los archivos `fastq` a partir de los archivos SRA. Se descargaron un **total de 7 archivos SRR** correspondientes a muestras de **riñón de ratones machos de 3 y 18 meses** de edad.
 
-```{python}
+```{python Descarga de datos}
 #| eval: false
 #| echo: true
 #| message: false
@@ -122,7 +122,7 @@ print(f"[{datetime.now().strftime('%d-%H:%M:%S')}] All SRR files have been proce
 
 Una vez obtenidos los datos en formato `fastq`, se procedió a evaluar la calidad de las lecturas con `fastqc`:
 
-```{shell}
+```{shell FASTQC previo a la limpieza}
 #| eval: false
 #| echo: true
 
@@ -154,7 +154,7 @@ Como es posible observar en la **Figura 1**, las lecturas presentan una calidad 
 
 Haciendo uso de `fastp`, se procedió a realizar la limpieza de las lecturas, eliminando los adaptadores residuales y recortando los primeros 17 bp para eliminar el sesgo de composición de bases al inicio de las lecturas. Acto seguido, se volvió a evaluar la calidad de las lecturas limpias utilizando `fastqc` para verificar la mejora en la calidad de las secuencias.
 
-```{shell}
+```{shell Limpieza de lecturas y evaluación de calidad posterior}
 #| eval: false
 #| echo: true
 
@@ -271,7 +271,7 @@ Tras la limpieza, el sesgo de composición de bases al inicio de las lecturas se
 
 Se procedió a realizar el alineamiento de las lecturas limpias utilizando los alineadores STAR y HISAT2, con el fin de comparar su rendimiento y calidad de alineamiento en cada uno, tanto para _paired-end_ (PE) como _single-end_ (SE). Para ello se utilizaron los índices correspondientes al genoma de referencia de ratón para cada alineador (ver carpeta `data/indexes/` en el servidor *Chaac*), y se recuperó el porcentaje de lecturas alineadas y el tiempo de ejecución para cada muestra a partir de los `Log` de cada programa.
 
-```{shell}
+```{shell Alineamiento de lecturas}
 #| eval: false
 #| echo: true
 
@@ -383,6 +383,126 @@ done
 
 echo "Proceso terminado."
 ```
+
+La tabla de resultados obtenida a partir de los archivos de resumen de HISAT2 y log de STAR se muestra a continuación:
+```{python Tabla de resultados}
+#| echo: false
+#| eval: true
+#| message: true
+#| warning: false
+
+#!/usr/bin/env python3
+
+import pandas as pd
+import numpy as np
+import os
+
+def get_files_list(dir: str = "results") -> list[str]:
+    """
+    Devuelve una lista con las rutas completas de los archivos contenidos en el directorio dado, ordenados alfabéticamente.
+    """
+    if not os.path.isdir(dir):
+        msg = f"[FILES] The given path don't correspond to a directory: {dir}"
+        raise ValueError(msg)
+    return [os.path.join(dir, f) for f in sorted(os.listdir(dir))]
+
+def get_srr_basename(str):
+    """
+    Devuelve el nombre base de un archivo sin la extensión ni el sufijo de alineador.
+    """
+    return os.path.basename(str).split("e")[0] + "e"
+
+def standarize_time(time_str: str) -> float:
+    """
+    Convierte un tiempo en formato "h:m:s" a segundos.
+    """
+    h, m, s = map(float, time_str.strip().split(":"))
+    return h * 3600 + m * 60 + s
+
+def extract_hisat2_info(summary_file) -> np.ndarray:
+    """
+    Extrae el porcentaje de lecturas alineadas y el tiempo de ejecución a partir del archivo de resumen de HISAT2.
+    """
+    appeared_uniq, appeared_more = 0, 0
+    info = np.empty(4, dtype=np.float64) # [aligned_uniq, >1, overall_rate, time_sec]
+
+    with open(summary_file, "r") as f:
+        for line in f.readlines():
+            line = line.strip()
+            # Reporte de valores
+            if not appeared_uniq and "exactly 1 time" in line:
+                info[0] = float(line.split()[1].replace("%", "").replace("(", "").replace(")", ""))
+                appeared_uniq += 1
+
+            if not appeared_more and ">1 times" in line:
+                info[1] = float(line.split()[1].replace("%", "").replace("(", "").replace(")", ""))
+                appeared_more += 1
+            
+            if "overall alignment rate" in line:
+                info[2] = float(line.split()[0].replace("%", ""))
+            
+            if "Time searching" in line:
+                info[3] = standarize_time(line.split()[-1])
+
+    return info
+
+def extract_star_info(log_file) -> np.ndarray:
+    """
+    Extrae el porcentaje de lecturas alineadas y el tiempo de ejecución a partir del archivo de log de STAR.
+    """
+    info = np.empty(4, dtype=np.float64) # [aligned_uniq, >1, overall, time_sec]
+
+    with open(log_file, "r") as f:
+        for line in f.readlines():
+            line = line.strip()
+            if "Started mapping on" in line:
+                t0 = standarize_time(line.split()[-1])
+            if "Finished on" in line:
+                t1 = standarize_time(line.split()[-1])
+                info[3] = t1 - t0
+
+            if "Uniquely mapped reads %" in line:
+                info[0] = float(line.split()[-1].replace("%", ""))
+
+            if "% of reads mapped to multiple loci" in line:
+                info[1] = float(line.split()[-1].replace("%", ""))
+                info[2] = info[0] + info[1]
+
+    return info
+
+## Código principal
+
+# Obtener la lista de archivos de resumen de HISAT2 y log de STAR
+alignment_dir = {"hisat2": "time_align", "star": "Logs"}
+aligners = list(alignment_dir.keys())
+files = sum(
+    (
+        get_files_list(
+            os.path.join("results", (aligner + f"_{sufix}"), alignment_dir[aligner])
+        )
+        for aligner in aligners
+        for sufix in ("pe", "se")
+    ),
+    []
+)
+
+# Extracción de información para cada archivo y almacenarla en un DataFrame
+results = {
+    get_srr_basename(f): extract_hisat2_info(f) if "hisat2" in f else extract_star_info(f)
+    for f in files
+}
+
+# Guardado de los resultados en un archivo CSV
+results = pd.DataFrame(
+    results,
+    index=["aligned_uniq", "aligned_mult", "overall_rate", "time_sec"]
+).T
+
+results.to_csv("./results/aligners_performance_table.csv", sep=",")
+display(results)
+```
+
+
 
 ### Tiempos de ejecución
 
