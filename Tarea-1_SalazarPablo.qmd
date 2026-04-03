@@ -508,8 +508,8 @@ display(results)
 ```{python fig-3-tiempo-alineamiento}
 #| fig-cap: "Figura 3. Tiempo de alineamiento."
 #| echo: false
-#| eval: true
 #| message: false
+#| warning: false
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -568,7 +568,7 @@ plt.show()
 ```{python fig-4-porcentaje-alineamiento}
 #| fig-cap: "Figura 4. Porcentaje de lecturas alineadas."
 #| echo: false
-#| eval: true
+#| warning: false
 #| message: false
 
 alignment_stats = results[["aligned_uniq", "aligned_mult", "overall_rate"]].copy()
