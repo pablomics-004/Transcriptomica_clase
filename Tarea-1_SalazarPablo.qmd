@@ -565,6 +565,80 @@ fig.supylabel(
 plt.show()
 ```
 
+```{python fig-4-porcentaje-alineamiento}
+#| fig-cap: "Figura 4. Porcentaje de lecturas alineadas."
+#| echo: false
+#| eval: true
+#| message: false
+
+alignment_stats = results[["aligned_uniq", "aligned_mult", "overall_rate"]].copy()
+alignment_stats.columns = ["Alineadas de forma única", "Alineadas a múltiples loci", "Tasa de alineamiento global"]
+
+# Porcentaje de alineamiento para cada alineador y tipo de lectura
+aligners_performance = {
+    "STAR PE": alignment_stats.loc[samples.str.contains("star_pe")].mean(),
+    "HISAT2 PE": alignment_stats.loc[samples.str.contains("hisat2_pe")].mean(),
+    "STAR SE": alignment_stats.loc[samples.str.contains("star_se")].mean(),
+    "HISAT2 SE": alignment_stats.loc[samples.str.contains("hisat2_se")].mean()
+}
+
+aligners_performance = pd.DataFrame(aligners_performance).T
+aligners_performance.sort_values("Tasa de alineamiento global", ascending=False, inplace=True)
+
+aligners_performance_melted = aligners_performance.reset_index().melt(
+    id_vars="index",
+    var_name="Métrica",
+    value_name="Porcentaje"
+)
+aligners_performance_melted.rename(columns={"index": "Alineador"}, inplace=True)
+
+# Porcentaje de alineamiento para cada muestra
+samples_performance = alignment_stats["Alineadas de forma única"].to_frame(name="Porcentaje de lecturas alineadas de forma única")
+samples_performance[["Muestra", "Alineador", "Tipo de lectura"]] = samples_performance.index.to_series().str.split("_", expand=True)
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 8), constrained_layout=True)
+
+metrics = aligners_performance_melted["Métrica"].unique()
+palette = dict(zip(metrics, sns.color_palette("flare", len(metrics))))
+
+for metric in metrics:
+    subset = aligners_performance_melted[
+        aligners_performance_melted["Métrica"] == metric
+    ]
+    
+    sns.barplot(
+        data=subset,
+        x="Alineador",
+        y="Porcentaje",
+        ax=axes[0],
+        color=palette[metric],
+        label=metric,
+        alpha=0.5
+    )
+axes[0].set_ylabel(None)
+
+sns.lineplot(
+    data=samples_performance,
+    x="Muestra",
+    y="Porcentaje de lecturas alineadas de forma única",
+    hue="Tipo de lectura",
+    style="Alineador",
+    markers=True,
+    dashes=True,
+    palette="flare",
+    ax=axes[1]
+)
+axes[1].set_title("Porcentaje de lecturas alineadas de forma única por muestra")
+axes[1].tick_params(axis='x', rotation=45)
+axes[1].set_ylabel(None)
+
+fig.supylabel(
+    "Porcentaje de alineamientos (%)", fontsize=14, y=0.6
+)
+
+plt.show()
+```
+
 ### Tiempos de ejecución
 
 [...]
