@@ -3,22 +3,25 @@ title: "Tarea 1"
 subtitle: "Alineamiento de lecturas"
 author: "Pablo Salazar-Méndez"
 date: "2026-03-01"
+crossref:
+  fig-title: "Figura"
 format:
   pdf:
     pdf-engine: xelatex
     mainfont: "Times New Roman"
-    fontsize: 12 pt
+    fontsize: 12pt
     include-in-header:
       text: |
         \usepackage{fvextra}
         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \renewcommand{\figurename}{Figura}
 ---
 
 # Introducción
 
-El alineamiento de secuencias permite la inferencia de transcritos expresados al mapear las lecturas obtenidas a partir de un experimento de RNA-seq a un genoma de referencia. En esta tarea se realizará el alineamiento de las lecturas obtenidas a partir de un experimento de RNA-seq utilizando los alineadores STAR y HISAT2, con el fin de comparar su rendimiento y calidad de alineamiento en cada uno. 
+El alineamiento de secuencias permite la inferencia de transcritos expresados al mapear las lecturas obtenidas a partir de un experimento de RNA-seq a un genoma de referencia. En esta tarea se realizará el alineamiento de dichas lecturas utilizando los alineadores STAR y HISAT2, con el fin de comparar su rendimiento y calidad de alineamiento.
 
-Para ello se descargaron datos de RNA-seq de la serie GSE132040, extrayendo los SRR correspondientes a muestras de riñón de ratones machos de 3 y 18 meses de edad. Luego se realizó la evaluación de calidad y limpieza de las lecturas utilizando FastQC y Trimmomatic, respectivamente, para posteriormente realizar el alineamiento utilizando ambos alineadores. Finalmente se compararon los resultados obtenidos en términos de porcentaje de lecturas alineadas y tiempo de ejecución.
+Para ello, se descargaron datos de RNA-seq de la serie GSE132040, extrayendo los SRR correspondientes a muestras de riñón de ratones machos de 3 y 18 meses de edad. Luego, se realizó la evaluación de calidad y limpieza de las lecturas utilizando FastQC y Trimmomatic, respectivamente, para posteriormente realizar el alineamiento utilizando ambos alineadores. Finalmente, se compararon los resultados obtenidos en términos de porcentaje de lecturas alineadas y tiempo de ejecución.
 
 # Resultados
 
@@ -148,13 +151,13 @@ nohup fastqc "$FASTQ"/*_1.fastq -o "${FASTQ}c_1" > ./logs/fastqc_1_explore.log 2
 nohup fastqc "$FASTQ"/*_2.fastq -o "${FASTQ}c_2" > ./logs/fastqc_2_explore.log 2>&1 &
 ```
 
-![Figura 1. Resultados de FASTQC previo a la limpieza para la muestra SRR9126924_1.fastq](./docs/images/fastqc_pre_clean.png)
+![Resultados de FASTQC previo a la limpieza para la muestra SRR9126924_1.fastq](./docs/images/fastqc_pre_clean.png)
 
-Como es posible observar en la **Figura 1**, las lecturas presentan una calidad de secuenciación relativamente buena, con un porcentaje de bases por encima de *Q30* en la mayoría de los casos. Sin embargo, se observa una caída en la calidad hacia el final de las lecturas, lo cual es común en experimentos de RNA-seq. Además, se detectan adaptadores residuales de *Nextera Transpose Seq* y un sesgo de composición de bases al inicio de las lecturas (aproximadamente en las primeras 12-17 bp). Esta tendencia, ilustrada con una única muestra en la figura, se repite en las demás, lo que sugiere la necesidad de realizar una limpieza de las lecturas para mejorar la calidad de los datos antes del alineamiento.
+Como es posible observar en la **Figura 1**, las lecturas presentan una calidad de secuenciación buena, con un porcentaje de bases por encima de *Q30* en todos los casos. Ergo, se detectan adaptadores residuales de *Nextera Transpose Seq* y un sesgo de composición de bases al inicio de las lecturas (aproximadamente en las primeras 12-17 bp). Esta tendencia, ilustrada con una única muestra en la figura, se repite en las demás, lo que sugiere la necesidad de realizar una limpieza de las lecturas para mejorar la calidad de los datos antes del alineamiento.
 
 ## Limpieza de lecturas
 
-Haciendo uso de `fastp`, se procedió a realizar la limpieza de las lecturas, eliminando los adaptadores residuales y recortando los primeros 17 bp para eliminar el sesgo de composición de bases al inicio de las lecturas. Acto seguido, se volvió a evaluar la calidad de las lecturas limpias utilizando `FASTQC` para verificar la mejora en la calidad de las secuencias.
+Haciendo uso de `fastp`, se procedió a realizar la limpieza de las lecturas, eliminando los adaptadores residuales y recortando los primeros 17 bp para eliminar el sesgo de composición de bases al inicio de las lecturas. Acto seguido, se volvió a evaluar la calidad de las lecturas limpias utilizando `FastQC` para verificar la mejora en la calidad de las secuencias.
 
 ```{shell Limpieza de lecturas y evaluación de calidad posterior}
 #| eval: false
@@ -265,15 +268,15 @@ multiqc "$DATA" -o "$MULTIQC_DIR"
 echo "Proceso terminado."
 ```
 
-![Figura 2. Resultados de FASTQC tras la limpieza para la muestra SRR9126924_1.fastq](./docs/images/fastqc_post_clean.png)
+![Resultados de FASTQC tras la limpieza para la muestra SRR9126924_1.fastq](./docs/images/fastqc_post_clean.png)
 
-Tras la limpieza, el sesgo de composición de bases al inicio de las lecturas se ha eliminado, y la calidad de las secuencias ha mejorado significativamente, con un porcentaje de bases por encima de *Q30* en prácticamente toda la longitud de las lecturas. Además, los adaptadores residuales han sido eliminados, lo que se refleja en la ausencia de picos correspondientes a los adaptadores en el gráfico de calidad. Así mismo, la distribución de la longitud de lecturas ha quedado en ~83 bp, acorde a lo esperado tras el recorte de los primeros 17 bp.
+Tras la limpieza, el sesgo de composición de bases al inicio de las lecturas se ha eliminado, y la calidad de las secuencias se mantiene con un porcentaje de bases por encima de *Q30* en prácticamente toda la longitud de las lecturas. Además, los adaptadores residuales han sido eliminados, lo que se refleja en la ausencia de picos correspondientes a los adaptadores en el gráfico de calidad. Asimismo, la distribución de la longitud de lecturas ha quedado en ~83 bp, acorde a lo esperado tras el recorte de los primeros 17 bp.
 
 ## Alineamiento de lecturas
 
-Se procedió a realizar el alineamiento de las lecturas limpias utilizando los alineadores STAR y HISAT2, con el fin de comparar su rendimiento y calidad de alineamiento en cada uno, tanto para _paired-end_ (PE) como _single-end_ (SE). Para ello se utilizaron los índices correspondientes al genoma de referencia de ratón para cada alineador (ver carpeta `data/indexes/` en el servidor *Chaac*), y se recuperó el porcentaje de lecturas alineadas y el tiempo de ejecución para cada muestra a partir de los `Log` de cada programa.
+Se procedió a realizar el alineamiento de las lecturas limpias utilizando los alineadores STAR y HISAT2, con el fin de comparar su rendimiento y calidad de alineamiento en cada uno, tanto para *paired-end* (PE) como *single-end* (SE). Para ello, se utilizaron los índices correspondientes al genoma de referencia de ratón para cada alineador (ver carpeta `data/indexes/` en el servidor *Chaac*), y se recuperó el porcentaje de lecturas alineadas y el tiempo de ejecución para cada muestra a partir de los `Log` de cada programa.
 
-Para HISAT2, se empleó un esquema de alineamiento multihilo (`-p`) contra un genoma de referencia indexado (`-x`), utilizando archivos de entrada en formato `FASTQ` (`-U` para SE y `-1/-2` para PE) y generando archivos de salida en formato SAM (`-S`). Se habilitó la medición de tiempo de ejecución (-t), se excluyeron lecturas no alineadas (`--no-unal`) y se generaron reportes resumidos por muestra (`--summary-file`). Por su parte, STAR se ejecutó también en modo multihilo (`--runThreadN`), utilizando un índice de genoma previamente construido (`--genomeDir`) y archivos de entrada correspondientes a lecturas simples o pareadas (`--readFilesIn`). La salida se generó directamente en formato BAM ordenado por coordenadas (`--outSAMtype BAM SortedByCoordinate`), excluyendo lecturas no alineadas (`--outSAMunmapped None`). El tiempo de ejecución se registró por dos vías, mediante la herramienta externa `/usr/bin/time` y dentro de cada programa (para HISAT2 se utilizó el parámetro `-t`). Estas configuraciones permitieron comparar el desempeño de ambos alineadores en términos de eficiencia computacional y calidad de alineamiento.
+Para HISAT2, se empleó un esquema de alineamiento multihilo (`-p`) contra un genoma de referencia indexado (`-x`), utilizando archivos de entrada en formato `FASTQ` (`-U` para SE y `-1/-2` para PE) y generando archivos de salida en formato SAM (`-S`). Se habilitó la medición de tiempo de ejecución (`-t`), se excluyeron lecturas no alineadas (`--no-unal`) y se generaron reportes resumidos por muestra (`--summary-file`). Por su parte, STAR se ejecutó también en modo multihilo (`--runThreadN`), utilizando un índice de genoma previamente construido (`--genomeDir`) y archivos de entrada correspondientes a lecturas simples o pareadas (`--readFilesIn`). La salida se generó directamente en formato BAM ordenado por coordenadas (`--outSAMtype BAM SortedByCoordinate`), excluyendo lecturas no alineadas (`--outSAMunmapped None`). El tiempo de ejecución se registró por dos vías, mediante la herramienta externa `/usr/bin/time` y dentro de cada programa (para HISAT2 se utilizó el parámetro `-t`). Estas configuraciones permitieron comparar el desempeño de ambos alineadores en términos de eficiencia computacional y calidad de alineamiento.
 
 ```{shell Alineamiento de lecturas}
 #| eval: false
@@ -511,7 +514,7 @@ display(results)
 
 ### Tiempo de ejecución
 ```{python fig-3-tiempo-alineamiento}
-#| fig-cap: "Figura 3. Tiempo de alineamiento."
+#| fig-cap: "Tiempo de alineamiento."
 #| echo: false
 #| message: false
 #| warning: false
@@ -564,6 +567,7 @@ sns.barplot(
     palette="magma"
 )
 axes[0].set_ylabel(None)
+axes[0].set_xlabel("Alineador", fontsize=14)
 
 sns.lineplot(
     data=samples_performance,
@@ -579,6 +583,12 @@ sns.lineplot(
 axes[1].tick_params(axis='x', rotation=45)
 plt.setp(axes[1].get_xticklabels(), rotation=45, ha="right")
 axes[1].set_ylabel(None)
+axes[1].set_xlabel("Muestra", fontsize=14)
+
+axes[0].tick_params(axis='both', labelsize=12)
+axes[1].tick_params(axis='both', labelsize=12)
+axes[0].legend(fontsize=12, title_fontsize=13)
+axes[1].legend(fontsize=12, title_fontsize=13)
 
 fig.supylabel(
     "Tiempo promedio (minutos)", fontsize=14, y=0.6
@@ -588,11 +598,11 @@ plt.show()
 
 Los alineamientos PE presentan un tiempo de ejecución mayor en comparación con los SE, lo cual es esperado debido a la mayor cantidad de datos a procesar. En cuanto a los alineadores, STAR muestra un tiempo de ejecución menor que HISAT2 en ambos casos (PE y SE), lo que sugiere una mayor eficiencia computacional (ver **Figura 3**, panel izquierdo). Esta diferencia podría atribuirse a las optimizaciones implementadas en STAR para el manejo de grandes volúmenes de datos y su capacidad para aprovechar múltiples hilos de procesamiento de manera más efectiva.
 
-Entre muestras, el tiempo de alineamiento pareciera crecer a medida que crece el número de lecturas, aunque esta tendencia no es lineal como se puede ver en el panel derecho de la **Figura 3**, en donde las muestras están ordenadas ascendentemente en función del número de lecturas. Esto podría deberse a variaciones en la complejidad del genoma de referencia, la calidad de las lecturas, la presencia de secuencias repetitivas que pueden afectar el tiempo de alineamiento o a la propia naturaleza de los algoritmos que, aunque con tendencias similares, resulta en un mejor desempeño para STAR en términos de tiempo de ejecución tanto para PE como SE.
+Entre muestras, el tiempo de alineamiento pareciera crecer a medida que crece el número de lecturas, aunque esta tendencia no es lineal, como se puede ver en el panel derecho de la **Figura 3**, en donde las muestras están ordenadas ascendentemente en función del número de lecturas. Esto podría deberse a variaciones en la complejidad del genoma de referencia, la calidad de las lecturas, la presencia de secuencias repetitivas que pueden afectar el tiempo de alineamiento o a la propia naturaleza de los algoritmos que, aunque con tendencias similares, resulta en un mejor desempeño para STAR en términos de tiempo de ejecución tanto para PE como SE.
 
 ### Porcentaje de lecturas alineadas
 ```{python fig-4-porcentaje-alineamiento}
-#| fig-cap: "Figura 4. Porcentaje de lecturas alineadas."
+#| fig-cap: "Porcentaje de lecturas alineadas."
 #| eval: true
 #| echo: false
 #| warning: false
@@ -657,6 +667,7 @@ for metric in metrics:
         # alpha=0.5
     )
 axes[0].set_ylabel(None)
+axes[0].set_xlabel("Alineador", fontsize=14)
 
 sns.lineplot(
     data=samples_performance,
@@ -669,9 +680,15 @@ sns.lineplot(
     palette="flare",
     ax=axes[1]
 )
-axes[1].set_title("Porcentaje de lecturas alineadas de forma única por muestra")
+axes[1].set_title("Porcentaje de lecturas alineadas de forma única por muestra", fontsize=14)
 axes[1].tick_params(axis='x', rotation=45)
 axes[1].set_ylabel(None)
+axes[1].set_xlabel("Muestra", fontsize=14)
+
+axes[0].tick_params(axis='both', labelsize=12)
+axes[1].tick_params(axis='both', labelsize=12)
+axes[0].legend(fontsize=12, title_fontsize=13)
+axes[1].legend(fontsize=12, title_fontsize=13)
 
 fig.supylabel(
     "Porcentaje de alineamientos (%)", fontsize=14, y=0.6
@@ -680,9 +697,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-Prácticamente todos los alineadores y tipos de lectura presentan una tasa de alineamiento global superior al 80%, lo cual es un buen resultado en términos de calidad de alineamiento (ver **Figura 4**, panel izquierdo). Mientras que la tasa de alineamientos únicos se encuentra entre el 75-80% para STAR y entre el 68-76% para HISAT2. 
+Prácticamente todos los alineadores y tipos de lectura presentan una tasa de alineamiento global superior al 80%, lo cual es un buen resultado en términos de calidad de alineamiento (ver **Figura 4**, panel izquierdo). Mientras que la tasa de alineamientos únicos se encuentra entre el 75-80% para STAR y entre el 68-76% para HISAT2.
 
-Así mismo, las lecturas SE presentan una tasa de alineamiento global ligeramente superior a las PE. Esto puede explicarse porque, en el caso de lecturas PE, el alineamiento está sujeto a criterios más estrictos relacionados con la concordancia entre ambos extremos de la lectura, lo que puede reducir la proporción de alineamientos válidos en comparación con las lecturas SE. Aunado a ello, las lecturas PE parecen ser más conservadoras con la proporción de alineamientos a múltiples loci, como se logra ver en el panel izquierdo de la **Figura 4**, lo que sugiere que las lecturas PE podrían estar alineando de forma más específica a regiones del genoma, mientras que las SE podrían estar alineando a múltiples loci debido a la menor cantidad de información contextual disponible en cada lectura.
+Asimismo, las lecturas SE presentan una tasa de alineamiento global ligeramente superior a las PE. Esto puede explicarse porque, en el caso de lecturas PE, el alineamiento está sujeto a criterios más estrictos relacionados con la concordancia entre ambos extremos de la lectura, lo que puede reducir la proporción de alineamientos válidos en comparación con las lecturas SE. Aunado a ello, las lecturas PE parecen ser más conservadoras con la proporción de alineamientos a múltiples loci, como se logra ver en el panel izquierdo de la **Figura 4**, lo que sugiere que las lecturas PE podrían estar alineando de forma más específica a regiones del genoma, mientras que las SE podrían estar alineando a múltiples loci debido a la menor cantidad de información contextual disponible en cada lectura.
 
 A nivel de muestras, no se observa una tendencia clara entre el número de lecturas y el porcentaje de alineamiento, lo que sugiere que otros factores como la calidad de las lecturas, la complejidad del genoma de referencia o la presencia de secuencias repetitivas podrían estar influyendo en la tasa de alineamiento más que el número total de lecturas (ver panel derecho de la **Figura 4**). Aquí, y como ya se había mencionado, STAR exhibe tasas de alineamientos únicos superiores a los alcanzados por HISAT2 en ambos tipos de lecturas.
 
