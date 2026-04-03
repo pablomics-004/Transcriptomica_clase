@@ -586,7 +586,7 @@ plt.show()
 
 Los alineamientos PE presentan un tiempo de ejecución mayor en comparación con los SE, lo cual es esperado debido a la mayor cantidad de datos a procesar. En cuanto a los alineadores, STAR muestra un tiempo de ejecución menor que HISAT2 en ambos casos (PE y SE), lo que sugiere una mayor eficiencia computacional (ver **Figura 3**, panel izquierdo). Esta diferencia podría atribuirse a las optimizaciones implementadas en STAR para el manejo de grandes volúmenes de datos y su capacidad para aprovechar múltiples hilos de procesamiento de manera más efectiva.
 
-Entre muestras, el tiempo de alineamiento pareciera crecer a medida que crece el número de lecturas, aunque esta tendencia no es completamente lineal como se puede ver en el panel derecho de la **Figura 3**, en donde las muestras están ordenadas ascendentemente en función del número de lecturas. Esto podría deberse a variaciones en la complejidad del genoma de referencia, la calidad de las lecturas, la presencia de secuencias repetitivas que pueden afectar el tiempo de alineamiento o la propia naturaleza de los algoritmos que, aunque con tendencias similares, de nuevo STAR refleja un mejor desempeño en términos de tiempo de ejecución tanto para PE como SE.
+Entre muestras, el tiempo de alineamiento pareciera crecer a medida que crece el número de lecturas, aunque esta tendencia no es lineal como se puede ver en el panel derecho de la **Figura 3**, en donde las muestras están ordenadas ascendentemente en función del número de lecturas. Esto podría deberse a variaciones en la complejidad del genoma de referencia, la calidad de las lecturas, la presencia de secuencias repetitivas que pueden afectar el tiempo de alineamiento o a la propia naturaleza de los algoritmos que, aunque con tendencias similares, resulta en un mejor desempeño para STAR en términos de tiempo de ejecución tanto para PE como SE.
 
 ### Porcentaje de lecturas alineadas
 ```{python fig-4-porcentaje-alineamiento}
@@ -620,9 +620,23 @@ aligners_performance_melted.rename(columns={"index": "Alineador"}, inplace=True)
 samples_performance = alignment_stats["Alineadas de forma única"].to_frame(name="Porcentaje de lecturas alineadas de forma única")
 samples_performance[["Muestra", "Alineador", "Tipo de lectura"]] = samples_performance.index.to_series().str.split("_", expand=True)
 
+sample_reads = {
+    "SRR9126754": 27679547,
+    "SRR9126924": 37491582,
+    "SRR9126950": 26487827,
+    "SRR9127139": 26480710,
+    "SRR9127244": 10539867,
+    "SRR9127382": 26820139,
+    "SRR9127568": 23030317
+}
+samples_performance["Número de lecturas"] = (
+    samples_performance["Muestra"].map(sample_reads)
+)
+samples_performance = samples_performance.sort_values("Número de lecturas")
+
 fig, axes = plt.subplots(1, 2, figsize=(14, 8), constrained_layout=True)
 
-metrics = aligners_performance_melted["Métrica"].unique()
+metrics = ["Tasa de alineamiento global", "Alineadas de forma única", "Alineadas a múltiples loci"]
 palette = dict(zip(metrics, sns.color_palette("flare", len(metrics))))
 
 for metric in metrics:
@@ -637,7 +651,7 @@ for metric in metrics:
         ax=axes[0],
         color=palette[metric],
         label=metric,
-        alpha=0.5
+        # alpha=0.5
     )
 axes[0].set_ylabel(None)
 
@@ -659,8 +673,23 @@ axes[1].set_ylabel(None)
 fig.supylabel(
     "Porcentaje de alineamientos (%)", fontsize=14, y=0.6
 )
-
+plt.tight_layout()
 plt.show()
+```
+
+Prácticamente todos los alineadores y tipos de lectura presentan una tasa de alineamiento global superior al 80%, lo cual es un buen resultado en términos de calidad de alineamiento (ver **Figura 4**, panel izquierdo). Mientras que la tasa de alineamientos únicos se encuentra entre el 75-80% para STAR y entre el 68-76% para HISAT2. 
+
+Así mismo, las lecturas SE presentan una tasa de alineamiento global ligeramente superior a las PE. Esto puede explicarse porque, en el caso de lecturas PE, el alineamiento está sujeto a criterios más estrictos relacionados con la concordancia entre ambos extremos de la lectura, lo que puede reducir la proporción de alineamientos válidos en comparación con las lecturas SE. Aunado a ello, las lecturas PE parecen ser más conservadoras con la proporción de alineamientos a múltiples loci, como se logra ver en el panel izquierdo de la **Figura 4**, lo que sugiere que las lecturas PE podrían estar alineando de forma más específica a regiones del genoma, mientras que las SE podrían estar alineando a múltiples loci debido a la menor cantidad de información contextual disponible en cada lectura.
+
+A nivel de muestras, no se observa una tendencia clara entre el número de lecturas y el porcentaje de alineamiento, lo que sugiere que otros factores como la calidad de las lecturas, la complejidad del genoma de referencia o la presencia de secuencias repetitivas podrían estar influyendo en la tasa de alineamiento más que el número total de lecturas (ver panel derecho de la **Figura 4**). Aquí, y como ya se había mencionado, STAR exhibe tasas de alineamientos únicos superiores a los alcanzados por HISAT2 en ambos tipos de lecturas.
+
+```{python}
+#| eval: true
+#| echo: false
+#| message: false
+#| warning: false
+
+plt.close("all")
 ```
 
 # Discusión
