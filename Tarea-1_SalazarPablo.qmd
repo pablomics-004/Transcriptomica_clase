@@ -1,11 +1,13 @@
 ---
 title: "Tarea 1"
 subtitle: "Alineamiento de lecturas"
-author: "Pablo Salazar Méndez"
+author: "Pablo Salazar-Méndez"
 date: "2026-03-01"
 format:
   pdf:
     pdf-engine: xelatex
+    mainfont: "Times New Roman"
+    fontsize: 12 pt
     include-in-header:
       text: |
         \usepackage{fvextra}
@@ -120,7 +122,7 @@ print(f"[{datetime.now().strftime('%d-%H:%M:%S')}] All SRR files have been proce
 
 ## Evaluación de calidad
 
-Una vez obtenidos los datos en formato `fastq`, se procedió a evaluar la calidad de las lecturas con `fastqc`:
+Una vez obtenidos los datos en formato `FASTQ`, se procedió a evaluar la calidad de las lecturas con `FASTQC`:
 
 ```{shell FASTQC previo a la limpieza}
 #| eval: false
@@ -152,7 +154,7 @@ Como es posible observar en la **Figura 1**, las lecturas presentan una calidad 
 
 ## Limpieza de lecturas
 
-Haciendo uso de `fastp`, se procedió a realizar la limpieza de las lecturas, eliminando los adaptadores residuales y recortando los primeros 17 bp para eliminar el sesgo de composición de bases al inicio de las lecturas. Acto seguido, se volvió a evaluar la calidad de las lecturas limpias utilizando `fastqc` para verificar la mejora en la calidad de las secuencias.
+Haciendo uso de `fastp`, se procedió a realizar la limpieza de las lecturas, eliminando los adaptadores residuales y recortando los primeros 17 bp para eliminar el sesgo de composición de bases al inicio de las lecturas. Acto seguido, se volvió a evaluar la calidad de las lecturas limpias utilizando `FASTQC` para verificar la mejora en la calidad de las secuencias.
 
 ```{shell Limpieza de lecturas y evaluación de calidad posterior}
 #| eval: false
@@ -591,6 +593,7 @@ Entre muestras, el tiempo de alineamiento pareciera crecer a medida que crece el
 ### Porcentaje de lecturas alineadas
 ```{python fig-4-porcentaje-alineamiento}
 #| fig-cap: "Figura 4. Porcentaje de lecturas alineadas."
+#| eval: true
 #| echo: false
 #| warning: false
 #| message: false
@@ -694,4 +697,8 @@ plt.close("all")
 
 # Discusión
 
-[...]
+En suma, los resultados muestran diferencias claras entre los alineadores y los tipos de lectura tanto en términos de eficiencia computacional como de desempeño en el alineamiento. En primera instancia, los PE presentan mayores tiempos de ejecución en comparación con los SE, lo cual es consistente con el incremento en la cantidad de información a procesar y la necesidad de evaluar la concordancia entre ambos extremos de cada par de lecturas. En este contexto, STAR mostró consistentemente un menor tiempo de ejecución que HISAT2 para ambos tipos de lectura, lo que indica una mayor eficiencia computacional.
+
+En términos de calidad de alineamiento, ambos alineadores presentan tasas globales superiores al 80%, lo cual indica un buen desempeño general. Sin embargo, al considerar la proporción de alineamientos únicos (que reflejan la especificidad del mapeo), STAR exhibe valores superiores en comparación con HISAT2 en ambos tipos de lecturas. Esto sugiere que STAR no solo es más rápido, sino que también logra una asignación más específica de las lecturas al genoma de referencia. Por otro lado, las lecturas SE muestran tasas de alineamiento global ligeramente mayores que las PE, lo cual puede explicarse por la menor restricción en los criterios de alineamiento, ya que las lecturas PE requieren cumplir condiciones adicionales de concordancia entre pares. En contraste, las lecturas PE tienden a presentar una menor proporción de alineamientos a múltiples loci, lo que sugiere una mayor especificidad derivada de la información adicional que proveen ambos extremos de la lectura.
+
+Finalmente, a nivel de muestras, no se observa una relación directa entre el número de lecturas y la tasa de alineamiento, lo que indica que factores como la calidad de las lecturas o la complejidad del genoma tienen un mayor impacto en el desempeño del alineamiento que el tamaño del dataset en sí. En conjunto, estos resultados sugieren que **STAR presenta el mejor desempeño global** al combinar mayor eficiencia computacional con una mayor proporción de alineamientos únicos, mientras que HISAT2, aunque más lento, mantiene un desempeño robusto y consistente en distintos escenarios.
