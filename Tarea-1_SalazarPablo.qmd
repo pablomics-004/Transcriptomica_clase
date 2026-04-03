@@ -271,6 +271,8 @@ Tras la limpieza, el sesgo de composición de bases al inicio de las lecturas se
 
 Se procedió a realizar el alineamiento de las lecturas limpias utilizando los alineadores STAR y HISAT2, con el fin de comparar su rendimiento y calidad de alineamiento en cada uno, tanto para _paired-end_ (PE) como _single-end_ (SE). Para ello se utilizaron los índices correspondientes al genoma de referencia de ratón para cada alineador (ver carpeta `data/indexes/` en el servidor *Chaac*), y se recuperó el porcentaje de lecturas alineadas y el tiempo de ejecución para cada muestra a partir de los `Log` de cada programa.
 
+Para HISAT2, se empleó un esquema de alineamiento multihilo (`-p`) contra un genoma de referencia indexado (`-x`), utilizando archivos de entrada en formato `FASTQ` (`-U` para SE y `-1/-2` para PE) y generando archivos de salida en formato SAM (`-S`). Se habilitó la medición de tiempo de ejecución (-t), se excluyeron lecturas no alineadas (`--no-unal`) y se generaron reportes resumidos por muestra (`--summary-file`). Por su parte, STAR se ejecutó también en modo multihilo (`--runThreadN`), utilizando un índice de genoma previamente construido (`--genomeDir`) y archivos de entrada correspondientes a lecturas simples o pareadas (`--readFilesIn`). La salida se generó directamente en formato BAM ordenado por coordenadas (`--outSAMtype BAM SortedByCoordinate`), excluyendo lecturas no alineadas (`--outSAMunmapped None`). El tiempo de ejecución se registró por dos vías, mediante la herramienta externa `/usr/bin/time` y dentro de cada programa (para HISAT2 se utilizó el parámetro `-t`). Estas configuraciones permitieron comparar el desempeño de ambos alineadores en términos de eficiencia computacional y calidad de alineamiento.
+
 ```{shell Alineamiento de lecturas}
 #| eval: false
 #| echo: true
@@ -505,6 +507,8 @@ results.to_csv("./results/aligners_performance_table.csv", sep=",")
 display(results)
 ```
 
+## Análisis de resultados
+### Tiempo de ejecución
 ```{python fig-3-tiempo-alineamiento}
 #| fig-cap: "Figura 3. Tiempo de alineamiento."
 #| echo: false
@@ -513,6 +517,8 @@ display(results)
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+plt.close("all")
 
 time = results.time_sec
 samples = results.index
@@ -565,6 +571,9 @@ fig.supylabel(
 plt.show()
 ```
 
+[...]
+
+### Porcentaje de lecturas alineadas
 ```{python fig-4-porcentaje-alineamiento}
 #| fig-cap: "Figura 4. Porcentaje de lecturas alineadas."
 #| echo: false
