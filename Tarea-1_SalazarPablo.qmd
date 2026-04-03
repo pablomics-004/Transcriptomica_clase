@@ -5,6 +5,7 @@ author: "Pablo Salazar-Méndez"
 date: "2026-03-01"
 crossref:
   fig-title: "Figura"
+  tbl-title: "Tabla"
 format:
   pdf:
     pdf-engine: xelatex
@@ -51,21 +52,18 @@ else:
 
 # Descarga de datos SRA
 file = "./data/GSE132040_MACA_Bulk_metadata.csv"
+url = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE132nnn/GSE132040/suppl/GSE132040_MACA_Bulk_metadata.csv"
 if not os.path.exists(file):
     print("Downloading metadata from GEO...", flush=True)
     sb.run(
-        [ # Parámetros de ejecución de wget
-            "wget", 
-            "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE132nnn/GSE132040/suppl/GSE132040_MACA_Bulk_metadata.csv", 
-            "-O", 
-            file
-        ],
+        # Parámetros de ejecución de wget
+        ["wget", url, "-O", file],
         check=True
     )
 
 # Carga de metadatos
 metadata = pd.read_csv(file)
-del file
+del file, url
 
 # Filtrado
 patt_tissue = re.compile(r"^kidney(.?)+", re.IGNORECASE)
@@ -87,6 +85,7 @@ os.makedirs(sra_dir, exist_ok=True)
 os.makedirs(fastq_dir, exist_ok=True)
 os.makedirs("./tmp/", exist_ok=True)
 
+# Obtención de archivos SRA y conversión a FASTQ
 for SRR in SRR_files:
 
     # Secuencias PE
@@ -165,6 +164,7 @@ Haciendo uso de `fastp`, se procedió a realizar la limpieza de las lecturas, el
 
 #!/usr/bin/env bash
 
+# Cambio interno de ambientes de conda
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate fastp
 
@@ -220,6 +220,7 @@ for f in "${files[@]}"; do
         --trim_front2 $erase_bp \
         --detect_adapter_for_pe &
 
+    # Guardado del JOBID para control de procesos
     pids+=("$!")
     batch_processing
 done
@@ -245,14 +246,19 @@ for f1 in "${clean_files_1[@]}"; do
         -o "$FASTQC_CLEAN_1" \
         -t "$threads_fastqc" \
         "$f1" &
+    
+    # Guardado del JOBID para control de procesos
     pids+=("$!")
     batch_processing
 
+    # Si existe un archivo par, se procesa en paralelo, de lo contrario se muestra un mensaje de error
     if [[ -f "$f2" ]]; then
         fastqc \
             -o "$FASTQC_CLEAN_2" \
             -t "$threads_fastqc" \
             "$f2" &
+        
+        # Guardado del JOBID para control de procesos
         pids+=("$!")
         batch_processing
     else
@@ -270,11 +276,11 @@ echo "Proceso terminado."
 
 ![Resultados de FASTQC tras la limpieza para la muestra SRR9126924_1.fastq](./docs/images/fastqc_post_clean.png)
 
-Tras la limpieza, el sesgo de composición de bases al inicio de las lecturas se ha eliminado, y la calidad de las secuencias se mantiene con un porcentaje de bases por encima de *Q30* en prácticamente toda la longitud de las lecturas. Además, los adaptadores residuales han sido eliminados, lo que se refleja en la ausencia de picos correspondientes a los adaptadores en el gráfico de calidad. Asimismo, la distribución de la longitud de lecturas ha quedado en ~83 bp, acorde a lo esperado tras el recorte de los primeros 17 bp.
+Tras la limpieza, el sesgo de composición de bases al inicio de las lecturas se ha eliminado, y la calidad de las secuencias se mantiene con un porcentaje de bases por encima de *Q30* en prácticamente toda la longitud de las lecturas. Además, los adaptadores residuales han sido eliminados, lo que se refleja en la ausencia de picos correspondientes a los adaptadores en el gráfico de calidad. Asimismo, la distribución de la longitud de lecturas ha quedado en ~83 bp, acorde a lo esperado tras el recorte de los primeros 17 bp (ver **Figura 2**).
 
 ## Alineamiento de lecturas
 
-Se procedió a realizar el alineamiento de las lecturas limpias utilizando los alineadores STAR y HISAT2, con el fin de comparar su rendimiento y calidad de alineamiento en cada uno, tanto para *paired-end* (PE) como *single-end* (SE). Para ello, se utilizaron los índices correspondientes al genoma de referencia de ratón para cada alineador (ver carpeta `data/indexes/` en el servidor *Chaac*), y se recuperó el porcentaje de lecturas alineadas y el tiempo de ejecución para cada muestra a partir de los `Log` de cada programa.
+Se procedió a realizar el alineamiento de las lecturas limpias utilizando los alineadores STAR y HISAT2, con el fin de comparar su rendimiento y calidad de alineamiento en cada uno, tanto para *paired-end* (PE) como *single-end* (SE). Para ello, se utilizaron los índices correspondientes al genoma de referencia de ratón para cada alineador (ver carpeta `/export/space3/users/pablosm/2026-2/Transcriptomica_clase/data/indexes/` en el servidor *Chaac*), y se recuperó el porcentaje de lecturas alineadas y el tiempo de ejecución para cada muestra a partir de los `Log` de cada programa.
 
 Para HISAT2, se empleó un esquema de alineamiento multihilo (`-p`) contra un genoma de referencia indexado (`-x`), utilizando archivos de entrada en formato `FASTQ` (`-U` para SE y `-1/-2` para PE) y generando archivos de salida en formato SAM (`-S`). Se habilitó la medición de tiempo de ejecución (`-t`), se excluyeron lecturas no alineadas (`--no-unal`) y se generaron reportes resumidos por muestra (`--summary-file`). Por su parte, STAR se ejecutó también en modo multihilo (`--runThreadN`), utilizando un índice de genoma previamente construido (`--genomeDir`) y archivos de entrada correspondientes a lecturas simples o pareadas (`--readFilesIn`). La salida se generó directamente en formato BAM ordenado por coordenadas (`--outSAMtype BAM SortedByCoordinate`), excluyendo lecturas no alineadas (`--outSAMunmapped None`). El tiempo de ejecución se registró por dos vías, mediante la herramienta externa `/usr/bin/time` y dentro de cada programa (para HISAT2 se utilizó el parámetro `-t`). Estas configuraciones permitieron comparar el desempeño de ambos alineadores en términos de eficiencia computacional y calidad de alineamiento.
 
@@ -391,12 +397,14 @@ done
 echo "Proceso terminado."
 ```
 
-La tabla de resultados obtenida a partir de los archivos de resumen de HISAT2 y log de STAR se muestra a continuación:
+Las estadísticas de alineamiento obtenidas a partir de los archivos de resumen de HISAT2 y log de STAR se presentan en la **Tabla 1**. En ella se muestra el porcentaje de lecturas alineadas de forma única, alineadas a múltiples loci, la tasa de alineamiento global y el tiempo de ejecución para cada muestra y alineador.
+
 ```{python Tabla de resultados}
 #| echo: false
 #| eval: true
 #| message: true
 #| warning: false
+#| tbl-cap: "Estadísticas de alineamiento para HISAT2 y STAR."
 
 #!/usr/bin/env python3
 
@@ -482,6 +490,8 @@ def extract_star_info(log_file) -> np.ndarray:
 # Obtener la lista de archivos de resumen de HISAT2 y log de STAR
 alignment_dir = {"hisat2": "time_align", "star": "Logs"}
 aligners = list(alignment_dir.keys())
+
+# Lista de archivos a procesar, obtenida a partir de la combinación de los archivos de resumen de HISAT2 y log de STAR para ambos alineadores y tipos de lectura (PE y SE)
 files = sum(
     (
         get_files_list(
@@ -697,7 +707,17 @@ plt.tight_layout()
 plt.show()
 ```
 
-Prácticamente todos los alineadores y tipos de lectura presentan una tasa de alineamiento global superior al 80%, lo cual es un buen resultado en términos de calidad de alineamiento (ver **Figura 4**, panel izquierdo). Mientras que la tasa de alineamientos únicos se encuentra entre el 75-80% para STAR y entre el 68-76% para HISAT2.
+Prácticamente todos los alineadores y tipos de lectura presentan una tasa de alineamiento global superior al 80%, lo cual es un buen resultado en términos de calidad de alineamiento (ver **Figura 4**, panel izquierdo). Mientras que la tasa de alineamientos únicos se encuentra entre el 75-80% para STAR y entre el 68-76% para HISAT2 (ver **Tabla 2**).
+
+```{python Tabla de performance de alineadores}
+#| echo: false
+#| eval: true
+#| message: true
+#| warning: false
+#| tbl-cap: "Performance de los alineadores."
+
+display(aligners_performance)
+```
 
 Asimismo, las lecturas SE presentan una tasa de alineamiento global ligeramente superior a las PE. Esto puede explicarse porque, en el caso de lecturas PE, el alineamiento está sujeto a criterios más estrictos relacionados con la concordancia entre ambos extremos de la lectura, lo que puede reducir la proporción de alineamientos válidos en comparación con las lecturas SE. Aunado a ello, las lecturas PE parecen ser más conservadoras con la proporción de alineamientos a múltiples loci, como se logra ver en el panel izquierdo de la **Figura 4**, lo que sugiere que las lecturas PE podrían estar alineando de forma más específica a regiones del genoma, mientras que las SE podrían estar alineando a múltiples loci debido a la menor cantidad de información contextual disponible en cada lectura.
 
