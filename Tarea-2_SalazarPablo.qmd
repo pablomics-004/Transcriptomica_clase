@@ -1,0 +1,19 @@
+---
+title: "Tarea 1"
+subtitle: "Pseudoalineamientos"
+author: "Pablo Salazar-Méndez"
+date: "2026-04-15"
+crossref:
+  fig-title: "Figura"
+  tbl-title: "Tabla"
+format:
+  pdf:
+    pdf-engine: xelatex
+    mainfont: "Arial"
+    fontsize: 12pt
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \renewcommand{\figurename}{Figura}
+---
