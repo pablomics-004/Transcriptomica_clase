@@ -21,4 +21,5 @@ results/star_se/other_logs/
 # *.html
 *.hisat2
 *.star
+*.bai
 *.gtf
