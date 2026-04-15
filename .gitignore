@@ -4,6 +4,7 @@ data/fastp/
 data/fastq/
 data/indexes/
 data/sra/
+data/reference/
 data/multiqc/multiqc_data/
 results/star_pe/other_logs/
 results/star_se/other_logs/
@@ -20,3 +21,4 @@ results/star_se/other_logs/
 # *.html
 *.hisat2
 *.star
+*.gtf
