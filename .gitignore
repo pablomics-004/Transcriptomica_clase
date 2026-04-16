@@ -1,5 +1,5 @@
 # Directorios
-logs/
+# logs/
 data/fastp/
 data/fastq/
 data/indexes/
