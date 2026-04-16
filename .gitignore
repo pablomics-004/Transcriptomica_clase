@@ -6,8 +6,8 @@ data/indexes/
 data/sra/
 data/reference/
 data/multiqc/multiqc_data/
-results/star_pe/other_logs/
-results/star_se/other_logs/
+results/*/other_logs/
+results/*/PILEUPS
 
 # Archivos
 *.sam
