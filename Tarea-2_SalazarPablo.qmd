@@ -1,5 +1,5 @@
 ---
-title: "Tarea 1"
+title: "Tarea 2"
 subtitle: "Pseudoalineamientos"
 author: "Pablo Salazar-Méndez"
 date: "2026-04-15"
@@ -11,6 +11,9 @@ format:
     pdf-engine: xelatex
     mainfont: "Arial"
     fontsize: 12pt
+    toc: true
+    toc-depth: 3
+    number-sections: true
     include-in-header:
       text: |
         \usepackage{fvextra}
@@ -24,11 +27,16 @@ format:
 
 # Metodología
 
+Si bien todos los scripts utilizados se muestran en las secciones subsecuentes, la totalidad del proyecto se ubica en el servidor Chaac dentro del directorio `/export/space3/users/pablosm/2026-2/Transcriptomica_clase` y en el siguiente [repositorio de GitHub](https://github.com/pablomics-004/Transcriptomica_clase).
+
 ## 1. Filtrado y ordenamiento de los archivos `BAM` mediante `samtools`
 
 [...]
 
 ```{shell Filtrado_ordenamiento de BAM y generación de index}
+#| eval: false
+#| echo: true
+
 #!/usr/bin/env bash
 
 set -euo pipefail
@@ -143,5 +151,371 @@ echo "==========================================================================
 [...]
 
 ```{shell Generación de pileups}
+#| eval: false
+#| echo: true
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+shopt -s nullglob
+
+# Activación del entorno deeptools
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate deeptools
+
+# Directorios y archivos
+RESULTS="./results"
+BLACKLIST="${RESULTS}/reference/mm38-blacklist.bed"
+
+declare -A rutas
+rutas[HISAT2_PE]="${RESULTS}/hisat2_pe"
+rutas[HISAT2_SE]="${RESULTS}/hisat2_se"
+rutas[STAR_PE]="${RESULTS}/star_pe"
+rutas[STAR_SE]="${RESULTS}/star_se"
+
+# Variables útiles
+wks=8
+BIN_SIZE=20
+BAM_FILTERED="BAM_FILTERED_SORTED"
+
+echo "================================================================================================="
+current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+echo "Iniciando la generación de pileups - $current_date_time"
+
+for key in "${!rutas[@]}"; do
+    ruta="${rutas[$key]}/$BAM_FILTERED"
+    OUT_DIR="${rutas[$key]}/PILEUPS"
+
+    mkdir -p "$OUT_DIR"
+
+    for f in "$ruta"/*.bam; do
+        base="$(basename "$f" .bam)"
+
+        echo "-------------------------------------------------------------------------------------------------"
+
+        if [[ "$key" == *_PE ]]; then
+            FLAG_INCLUDE=(--samFlagInclude 64)
+        else
+            FLAG_INCLUDE=()
+        fi
+
+        if [[ -f "$BLACKLIST" ]]; then
+            echo "Procesando $f con la blacklist $BLACKLIST - [$(date "+%Y-%m-%d %H:%M:%S")]"
+
+            bamCoverage \
+                -p "$wks" \
+                -b "$f" \
+                -o "${OUT_DIR}/${base}.bw" \
+                --binSize "$BIN_SIZE" \
+                --blackListFileName "$BLACKLIST" \
+                --normalizeUsing BPM \
+                --skipNAs \
+                --ignoreDuplicates \
+                "${FLAG_INCLUDE[@]}" \
+                --extendReads
+        else
+            echo "Procesando $f sin blacklist - [$(date "+%Y-%m-%d %H:%M:%S")]"
+
+            bamCoverage \
+                -p "$wks" \
+                -b "$f" \
+                -o "${OUT_DIR}/${base}.bw" \
+                --binSize "$BIN_SIZE" \
+                --normalizeUsing BPM \
+                --skipNAs \
+                --ignoreDuplicates \
+                "${FLAG_INCLUDE[@]}" \
+                --extendReads
+        fi
+
+        echo "Procesamiento finalizado - [$(date "+%Y-%m-%d %H:%M:%S")]"
+    done
+done
+
+echo "-------------------------------------------------------------------------------------------------"
+current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+echo "Script finalizado con éxito - $current_date_time"
+echo "================================================================================================="
+```
+
+## 3. Feature counts
+
+[...]
+
+```{shell Feature counts}
+#!/usr/bin/env bash
+
+set -euo pipefail
+shopt -s nullglob
+
+# Descarga de la anotación
+URL="https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M38/gencode.vM38.annotation.gtf.gz"
+ANNOTATION_DIR="./data/annotation"
+
+mkdir -p "$ANNOTATION_DIR"
+
+# Ejecución de Feature Counts
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate subread
+
+# Variables útiles
+wks=8
+
+echo "================================================================================================="
+current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+echo "Iniciando descarga de GTF - $current_date_time"
+echo ""
+
+# Descarga de datos
+ANNOTATION_GZ="${ANNOTATION_DIR}/gencode.vM38.annotation.gtf.gz"
+ANNOTATION="${ANNOTATION_DIR}/gencode.vM38.annotation.gtf"
+
+# Evita volver a descargar si ya estaba
+if [[ ! -f "$ANNOTATION" ]]; then
+    wget -P "$ANNOTATION_DIR" "$URL" && gunzip -f "$ANNOTATION_GZ"
+fi
+
+echo "-------------------------------------------------------------------------------------------------"
+current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+echo "Descarga exitosa - $current_date_time"
+echo "================================================================================================="
+
+# Directorios de trabajo
+RESULTS="./results"
+BAM_FILTERED="BAM_FILTERED_SORTED"
+
+declare -A rutas
+rutas[HISAT2_PE]="${RESULTS}/hisat2_pe"
+rutas[HISAT2_SE]="${RESULTS}/hisat2_se"
+rutas[STAR_PE]="${RESULTS}/star_pe"
+rutas[STAR_SE]="${RESULTS}/star_se"
+
+# Renombrado de archivos
+declare -A edades
+edades[SRR9126754]="18"
+edades[SRR9127244]="3"
+edades[SRR9127382]="18"
+edades[SRR9127568]="18"
+edades[SRR9126950]="3"
+edades[SRR9127139]="3"
+edades[SRR9126924]="18"
+
+echo "================================================================================================="
+current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+echo "Iniciando renombrado de archivos BAM y BAI - $current_date_time"
+echo ""
+
+# Iterando sobre las rutas de cada alineador
+for key in "${!rutas[@]}"; do
+    dir="${rutas[$key]}/${BAM_FILTERED}"
+
+    # Evalúa si se trata de un directorio o no
+    [[ -d "$dir" ]] || continue
+
+    archivos_bam=()
+    archivos=("$dir"/*.bam "$dir"/*.bai)
+
+    for file in "${archivos[@]}"; do
+        base=$(basename "$file")
+        ext="${base##*.}"
+        name="${base%.*}"
+
+        # Separa el nombre por "_"
+        IFS='_' read -r srr align tipo _ <<< "$name"
+
+        edad="${edades[$srr]:-}"
+
+        if [[ -z "$edad" ]]; then
+            echo "No encontré edad para $srr, se omite: $base"
+            continue
+        fi
+
+        new_name="${srr}_age${edad}_${align}_${tipo}_filtered.${ext}"
+
+        # Desplazando archivos BAI a su respectivo directorio
+        if [[ "${ext}" == "bai" ]]; then
+            new_dir="${rutas[$key]}/BAI"
+            mkdir -p "$new_dir"
+            new_path="${new_dir}/${new_name}"
+        else
+            new_path="${dir}/${new_name}"
+        fi
+
+        # Obtención de los nombres de los archivos BAM
+        if [[ "${ext}" == "bam" ]]; then
+            archivos_bam+=("$new_path")
+        fi
+
+        echo "$base -> $new_name"
+        echo "Destino: $new_path"
+        mv -n -- "$file" "$new_path" # No sobreescribe archivos existentes
+        echo "-------------------------------------------------------------------------------------------------"
+    done
+
+    # Ordenando los nombres de los archivos para featureCounts dentro de un arreglo
+    mapfile -t bams_ordenados < <(printf "%s\n" "${archivos_bam[@]}" | sort)
+
+    # Generación de listas ordenadas
+    printf "%s\n" "${bams_ordenados[@]}" > "${rutas[$key]}/bam_${key}_sorted_names.txt"
+
+    echo "================================================================================================="
+    current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+    echo "Iniciando FeatureCounts - $current_date_time"
+    echo ""
+
+    if [[ ${#bams_ordenados[@]} -eq 0 ]]; then
+        echo "No hay BAMs para $key, se omite featureCounts"
+        continue
+    fi
+
+    # Revisión del tipo de lectura
+    if [[ "$key" == *_PE ]]; then
+        FEATURECOUNTS_PE=(-p -B)
+    else
+        FEATURECOUNTS_PE=()
+    fi
+
+    # Directorio de salida
+    OUT="${rutas[$key]}/FeatureCounts"
+    mkdir -p "$OUT"
+
+    featureCounts \
+        -T $wks \
+        -a "$ANNOTATION" \
+        -o "$OUT/counts_${key}_table.txt" \
+        --largestOverlap \
+        -s 0 \
+        "${FEATURECOUNTS_PE[@]}" \
+        "${bams_ordenados[@]}"
+
+    current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+    echo "FeatureCounts finalizado, tabla guardada en "$OUT" - $current_date_time"
+    echo "================================================================================================="
+done
+
+current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+echo "Script finalizado - $current_date_time"
+echo "================================================================================================="
+```
+
+## 4. Pseudoalineamientos
+
+[...]
+
+```{shell Pseudoalineamientos con Salmon}
+#| eval: false
+#| echo: true
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+shopt -s nullglob
+
+# Directorios de trabajo
+DATA="./data"
+RESULTS="./results"
+FASTQ_CLEANED="${DATA}/fastp"
+SALMON_DIR="${RESULTS}/SALMON"
+
+mkdir -p "$SALMON_DIR"
+
+# Variables útiles
+wks=8
+READ_TYPE="paired"
+SALMON_IDX="${DATA}/indexes/mm39.gencode.M36.salmon"
+
+# Entorno de salmon
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate salmon
+
+echo "================================================================================================="
+current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+echo "Iniciando pseudoalineamientos con SALMON - $current_date_time"
+echo ""
+echo "-------------------------------------------------------------------------------------------------"
+
+# Obtención de nombres de muestra
+fastq_array=("${FASTQ_CLEANED}"/*.fastq)
+mapfile -t nombres < <(
+    for f in "${fastq_array[@]}"; do
+        base=$(basename "$f")
+        echo "${base%%_clean*}"
+    done | sort -u
+)
+
+for sample in "${nombres[@]}"; do
+    echo "-------------------------------------------------------------------------------------------------"
+    echo "Procesando muestra ${sample}... - [$(date "+%Y-%m-%d %H:%M:%S")]"
+    echo "Tipo de lectura: $READ_TYPE"
+    echo ""
+
+    OUT="${SALMON_DIR}/$sample"
+
+    if [[ "$READ_TYPE" == "paired" ]]; then
+
+        R1="${FASTQ_CLEANED}/${sample}_clean_1.fastq"
+        R2="${FASTQ_CLEANED}/${sample}_clean_2.fastq"
+
+        if [[ ! -f "$R1" || ! -f "$R2" ]]; then
+            echo "No está uno de los pares de la muestra $sample"
+            continue
+        fi
+
+        salmon quant \
+            -i "$SALMON_IDX" \
+            -l A \
+            -1 "$R1" \
+            -2 "$R2" \
+            -p "$wks" \
+            --validateMappings \
+            -o "$OUT"
+
+    else
+
+        R="${FASTQ_CLEANED}/${sample}_clean.fastq"
+
+        if [[ ! -f "$R" ]]; then
+            echo "Sin archivo para la muestra $sample"
+            continue
+        fi
+
+        salmon quant \
+            -i "$SALMON_IDX" \
+            -l A \
+            -r "$R" \
+            -p "$wks" \
+            --validateMappings \
+            -o "$OUT"
+    fi
+
+    echo "Fin del procesamiento - [$(date "+%Y-%m-%d %H:%M:%S")]"
+    echo "-------------------------------------------------------------------------------------------------"
+done
+
+current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
+echo "Script finalizado con éxito - $current_date_time"
+echo "================================================================================================="
+```
+
+## 3. `tximport`
+
+```{python tximport}
+from pytximport.utils import create_transcript_gene_map_from_annotation
+import pandas as pd
+import pytximport
+import os
+
+# Mapa transcrito a gen
+tx2gene = create_transcript_gene_map_from_annotation("./data/reference/gencode.vM38.annotation.gtf")
+tx2gene.to_csv("./results/tx2gene.csv", sep=",", index=False)
+
+# Eliminando la versión en los gene y transcript ID
+tx2gene["transcript_id"] = tx2gene["transcript_id"].str.replace(r"\.[0-9]$", "", regex=True)
+tx2gene["gene_id"] = tx2gene["gene_id"].str.replace(r"\.[0-9]$", "", regex=True)
+
 
 ```
+
+# Resultados
+
+[...]
