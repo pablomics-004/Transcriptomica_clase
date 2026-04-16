@@ -13,7 +13,7 @@ mkdir -p "$SALMON_DIR"
 
 # Variables útiles
 wks=8
-READ_TYPE="paired"
+READ_TYPE="single"
 SALMON_IDX="${DATA}/indexes/mm39.gencode.M36.salmon"
 
 # Entorno de salmon
@@ -41,9 +41,9 @@ for sample in "${nombres[@]}"; do
     echo "Tipo de lectura: $READ_TYPE"
     echo ""
 
-    OUT="${SALMON_DIR}/$sample"
-
     if [[ "$READ_TYPE" == "paired" ]]; then
+
+        OUT="${SALMON_DIR}/PE/$sample"
 
         R1="${FASTQ_CLEANED}/${sample}_clean_1.fastq"
         R2="${FASTQ_CLEANED}/${sample}_clean_2.fastq"
@@ -64,7 +64,9 @@ for sample in "${nombres[@]}"; do
 
     else
 
-        R="${FASTQ_CLEANED}/${sample}_clean.fastq"
+        OUT="${SALMON_DIR}/SE/$sample"
+
+        R="${FASTQ_CLEANED}/${sample}_clean_1.fastq"
 
         if [[ ! -f "$R" ]]; then
             echo "Sin archivo para la muestra $sample"
