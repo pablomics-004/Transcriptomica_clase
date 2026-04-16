@@ -1,0 +1,15 @@
+Status	./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126754_age18_hisat2_pe_filtered.bam	./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126924_age18_hisat2_pe_filtered.bam	./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126950_age3_hisat2_pe_filtered.bam	./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127139_age3_hisat2_pe_filtered.bam	./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127244_age3_hisat2_pe_filtered.bam	./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127382_age18_hisat2_pe_filtered.bam	./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127568_age18_hisat2_pe_filtered.bam
+Assigned	28187231	39866451	28273000	30936197	12253288	31103593	21472150
+Unassigned_Unmapped	0	0	0	0	0	0	0
+Unassigned_Read_Type	0	0	0	0	0	0	0
+Unassigned_Singleton	0	0	0	0	0	0	0
+Unassigned_MappingQuality	0	0	0	0	0	0	0
+Unassigned_Chimera	0	0	0	0	0	0	0
+Unassigned_FragmentLength	0	0	0	0	0	0	0
+Unassigned_Duplicate	0	0	0	0	0	0	0
+Unassigned_MultiMapping	0	0	0	0	0	0	0
+Unassigned_Secondary	0	0	0	0	0	0	0
+Unassigned_NonSplit	0	0	0	0	0	0	0
+Unassigned_NoFeatures	15704813	18663783	11448651	11048182	4616374	9413457	11451707
+Unassigned_Overlapping_Length	0	0	0	0	0	0	0
+Unassigned_Ambiguity	1107455	1480019	1027983	1261904	478446	1198663	780408

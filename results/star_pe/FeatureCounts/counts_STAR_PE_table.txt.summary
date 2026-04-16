@@ -1,0 +1,15 @@
+Status	./results/star_pe/BAM_FILTERED_SORTED/SRR9126754_age18_star_pe_filtered.bam	./results/star_pe/BAM_FILTERED_SORTED/SRR9126924_age18_star_pe_filtered.bam	./results/star_pe/BAM_FILTERED_SORTED/SRR9126950_age3_star_pe_filtered.bam	./results/star_pe/BAM_FILTERED_SORTED/SRR9127139_age3_star_pe_filtered.bam	./results/star_pe/BAM_FILTERED_SORTED/SRR9127244_age3_star_pe_filtered.bam	./results/star_pe/BAM_FILTERED_SORTED/SRR9127382_age18_star_pe_filtered.bam	./results/star_pe/BAM_FILTERED_SORTED/SRR9127568_age18_star_pe_filtered.bam
+Assigned	28000562	37113397	26452502	30784922	12443949	30884829	19383763
+Unassigned_Unmapped	0	0	0	0	0	0	0
+Unassigned_Read_Type	0	0	0	0	0	0	0
+Unassigned_Singleton	0	0	0	0	0	0	0
+Unassigned_MappingQuality	0	0	0	0	0	0	0
+Unassigned_Chimera	0	0	0	0	0	0	0
+Unassigned_FragmentLength	0	0	0	0	0	0	0
+Unassigned_Duplicate	0	0	0	0	0	0	0
+Unassigned_MultiMapping	0	0	0	0	0	0	0
+Unassigned_Secondary	0	0	0	0	0	0	0
+Unassigned_NonSplit	0	0	0	0	0	0	0
+Unassigned_NoFeatures	14840539	16442662	9873013	10351084	4271430	8485260	10094095
+Unassigned_Overlapping_Length	0	0	0	0	0	0	0
+Unassigned_Ambiguity	1080504	1343066	941761	1232751	476278	1174010	688335

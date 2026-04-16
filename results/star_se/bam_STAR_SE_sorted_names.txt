@@ -1,0 +1,7 @@
+./results/star_se/BAM_FILTERED_SORTED/SRR9126754_age18_star_se_filtered.bam
+./results/star_se/BAM_FILTERED_SORTED/SRR9126924_age18_star_se_filtered.bam
+./results/star_se/BAM_FILTERED_SORTED/SRR9126950_age3_star_se_filtered.bam
+./results/star_se/BAM_FILTERED_SORTED/SRR9127139_age3_star_se_filtered.bam
+./results/star_se/BAM_FILTERED_SORTED/SRR9127244_age3_star_se_filtered.bam
+./results/star_se/BAM_FILTERED_SORTED/SRR9127382_age18_star_se_filtered.bam
+./results/star_se/BAM_FILTERED_SORTED/SRR9127568_age18_star_se_filtered.bam
