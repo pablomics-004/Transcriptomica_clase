@@ -1,0 +1,859 @@
+=================================================================================================
+Iniciando la generación de pileups - 2026-04-14 22:46:14
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_pe/BAM_FILTERED_SORTED/SRR9126754_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:46:14]
+normalization: BPM
+Due to filtering, 14.425676820825984% of the aforementioned alignments will be used 6335988.791819747
+bamFilesList: ['./results/star_pe/BAM_FILTERED_SORTED/SRR9126754_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 599
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 2396
+Procesamiento finalizado - [2026-04-14 22:47:15]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_pe/BAM_FILTERED_SORTED/SRR9126924_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:47:15]
+normalization: BPM
+Due to filtering, 13.308721388702892% of the aforementioned alignments will be used 7306371.591085738
+bamFilesList: ['./results/star_pe/BAM_FILTERED_SORTED/SRR9126924_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 550
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 2200
+Procesamiento finalizado - [2026-04-14 22:48:24]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_pe/BAM_FILTERED_SORTED/SRR9126950_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:48:24]
+normalization: BPM
+Due to filtering, 14.324215456394008% of the aforementioned alignments will be used 5338244.908969014
+bamFilesList: ['./results/star_pe/BAM_FILTERED_SORTED/SRR9126950_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 669
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 2676
+Procesamiento finalizado - [2026-04-14 22:49:24]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_pe/BAM_FILTERED_SORTED/SRR9127139_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:49:24]
+normalization: BPM
+Due to filtering, 18.793082585499853% of the aforementioned alignments will be used 7962395.49345975
+bamFilesList: ['./results/star_pe/BAM_FILTERED_SORTED/SRR9127139_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 691
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 2764
+Procesamiento finalizado - [2026-04-14 22:50:29]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_pe/BAM_FILTERED_SORTED/SRR9127244_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:50:29]
+normalization: BPM
+Due to filtering, 25.248974319750563% of the aforementioned alignments will be used 4340717.061069599
+bamFilesList: ['./results/star_pe/BAM_FILTERED_SORTED/SRR9127244_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 748
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 2992
+Procesamiento finalizado - [2026-04-14 22:51:21]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_pe/BAM_FILTERED_SORTED/SRR9127382_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:51:21]
+normalization: BPM
+Due to filtering, 13.891351916139694% of the aforementioned alignments will be used 5632123.473318075
+bamFilesList: ['./results/star_pe/BAM_FILTERED_SORTED/SRR9127382_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 889
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 3556
+Procesamiento finalizado - [2026-04-14 22:52:22]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_pe/BAM_FILTERED_SORTED/SRR9127568_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:52:22]
+normalization: BPM
+Due to filtering, 15.254844236775922% of the aforementioned alignments will be used 4601805.754315201
+bamFilesList: ['./results/star_pe/BAM_FILTERED_SORTED/SRR9127568_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 472
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1888
+Procesamiento finalizado - [2026-04-14 22:53:18]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_se/BAM_FILTERED_SORTED/SRR9126754_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:53:18]
+normalization: BPM
+bamFilesList: ['./results/star_se/BAM_FILTERED_SORTED/SRR9126754_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 22:54:07]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_se/BAM_FILTERED_SORTED/SRR9126924_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:54:07]
+normalization: BPM
+bamFilesList: ['./results/star_se/BAM_FILTERED_SORTED/SRR9126924_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 22:55:01]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_se/BAM_FILTERED_SORTED/SRR9126950_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:55:01]
+normalization: BPM
+bamFilesList: ['./results/star_se/BAM_FILTERED_SORTED/SRR9126950_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 22:55:48]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_se/BAM_FILTERED_SORTED/SRR9127139_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:55:48]
+normalization: BPM
+bamFilesList: ['./results/star_se/BAM_FILTERED_SORTED/SRR9127139_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 22:56:35]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_se/BAM_FILTERED_SORTED/SRR9127244_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:56:35]
+normalization: BPM
+bamFilesList: ['./results/star_se/BAM_FILTERED_SORTED/SRR9127244_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 22:57:13]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_se/BAM_FILTERED_SORTED/SRR9127382_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:57:13]
+normalization: BPM
+bamFilesList: ['./results/star_se/BAM_FILTERED_SORTED/SRR9127382_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 22:57:58]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/star_se/BAM_FILTERED_SORTED/SRR9127568_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam sin blacklist - [2026-04-14 22:57:58]
+normalization: BPM
+bamFilesList: ['./results/star_se/BAM_FILTERED_SORTED/SRR9127568_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 22:58:42]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126754_hisat2_se_filtered_sorted.bam sin blacklist - [2026-04-14 22:58:42]
+normalization: BPM
+bamFilesList: ['./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126754_hisat2_se_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 22:59:31]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126924_hisat2_se_filtered_sorted.bam sin blacklist - [2026-04-14 22:59:31]
+normalization: BPM
+bamFilesList: ['./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126924_hisat2_se_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 23:00:24]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126950_hisat2_se_filtered_sorted.bam sin blacklist - [2026-04-14 23:00:24]
+normalization: BPM
+bamFilesList: ['./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126950_hisat2_se_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 23:01:09]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127139_hisat2_se_filtered_sorted.bam sin blacklist - [2026-04-14 23:01:09]
+normalization: BPM
+bamFilesList: ['./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127139_hisat2_se_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 23:01:57]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127244_hisat2_se_filtered_sorted.bam sin blacklist - [2026-04-14 23:01:57]
+normalization: BPM
+bamFilesList: ['./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127244_hisat2_se_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 23:02:36]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127382_hisat2_se_filtered_sorted.bam sin blacklist - [2026-04-14 23:02:36]
+normalization: BPM
+bamFilesList: ['./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127382_hisat2_se_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 23:03:19]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127568_hisat2_se_filtered_sorted.bam sin blacklist - [2026-04-14 23:03:19]
+normalization: BPM
+bamFilesList: ['./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127568_hisat2_se_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: read length
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: None
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1000
+Procesamiento finalizado - [2026-04-14 23:04:03]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126754_hisat2_pe_filtered_sorted.bam sin blacklist - [2026-04-14 23:04:03]
+normalization: BPM
+Due to filtering, 14.951806176335547% of the aforementioned alignments will be used 6728237.870802052
+bamFilesList: ['./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126754_hisat2_pe_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 401
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1604
+Procesamiento finalizado - [2026-04-14 23:05:05]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126924_hisat2_pe_filtered_sorted.bam sin blacklist - [2026-04-14 23:05:05]
+normalization: BPM
+Due to filtering, 13.828488556739217% of the aforementioned alignments will be used 8298510.968975252
+bamFilesList: ['./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126924_hisat2_pe_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 344
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1376
+Procesamiento finalizado - [2026-04-14 23:06:16]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126950_hisat2_pe_filtered_sorted.bam sin blacklist - [2026-04-14 23:06:16]
+normalization: BPM
+Due to filtering, 14.839701069373756% of the aforementioned alignments will be used 6047123.872463892
+bamFilesList: ['./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126950_hisat2_pe_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 374
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1496
+Procesamiento finalizado - [2026-04-14 23:07:17]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127139_hisat2_pe_filtered_sorted.bam sin blacklist - [2026-04-14 23:07:17]
+normalization: BPM
+Due to filtering, 19.700897412275474% of the aforementioned alignments will be used 8519905.84845233
+bamFilesList: ['./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127139_hisat2_pe_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 390
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1560
+Procesamiento finalizado - [2026-04-14 23:08:21]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127244_hisat2_pe_filtered_sorted.bam sin blacklist - [2026-04-14 23:08:21]
+normalization: BPM
+Due to filtering, 23.971068785731063% of the aforementioned alignments will be used 4158526.9017029135
+bamFilesList: ['./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127244_hisat2_pe_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 489
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1956
+Procesamiento finalizado - [2026-04-14 23:09:09]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127382_hisat2_pe_filtered_sorted.bam sin blacklist - [2026-04-14 23:09:09]
+normalization: BPM
+Due to filtering, 14.661832374127137% of the aforementioned alignments will be used 6116287.913731962
+bamFilesList: ['./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127382_hisat2_pe_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 433
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1732
+Procesamiento finalizado - [2026-04-14 23:10:15]
+-------------------------------------------------------------------------------------------------
+Procesando ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127568_hisat2_pe_filtered_sorted.bam sin blacklist - [2026-04-14 23:10:15]
+normalization: BPM
+Due to filtering, 15.537009857832995% of the aforementioned alignments will be used 5236634.975560156
+bamFilesList: ['./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127568_hisat2_pe_filtered_sorted.bam']
+binLength: 20
+numberOfSamples: None
+blackListFileName: None
+skipZeroOverZero: False
+bed_and_bin: False
+genomeChunkSize: None
+defaultFragmentLength: 303
+numberOfProcessors: 8
+verbose: False
+region: None
+bedFile: None
+minMappingQuality: None
+ignoreDuplicates: True
+chrsToSkip: []
+stepSize: 20
+center_read: False
+samFlag_include: 64
+samFlag_exclude: None
+minFragmentLength: 0
+maxFragmentLength: 0
+zerosToNans: True
+smoothLength: None
+save_data: False
+out_file_for_raw_data: None
+maxPairedFragmentLength: 1212
+Procesamiento finalizado - [2026-04-14 23:11:13]
+-------------------------------------------------------------------------------------------------
+Script finalizado con éxito - 2026-04-14 23:11:13
+=================================================================================================

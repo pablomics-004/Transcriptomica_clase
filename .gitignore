@@ -18,7 +18,7 @@ results/SALMON/*/*/libParams/
 *.tab
 *.zip
 *.sra
-*.log
+# *.log
 *.json
 # *.html
 *.hisat2

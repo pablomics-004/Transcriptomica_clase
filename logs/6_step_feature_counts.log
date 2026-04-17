@@ -1,0 +1,585 @@
+=================================================================================================
+Iniciando descarga de GTF - 2026-04-15 19:00:02
+
+-------------------------------------------------------------------------------------------------
+Descarga exitosa - 2026-04-15 19:00:02
+=================================================================================================
+=================================================================================================
+Iniciando renombrado de archivos BAM y BAI - 2026-04-15 19:00:02
+
+SRR9126754_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9126754_age18_star_pe_filtered.bam
+Destino: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126754_age18_star_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126924_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9126924_age18_star_pe_filtered.bam
+Destino: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126924_age18_star_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126950_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9126950_age3_star_pe_filtered.bam
+Destino: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126950_age3_star_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127139_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9127139_age3_star_pe_filtered.bam
+Destino: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127139_age3_star_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127244_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9127244_age3_star_pe_filtered.bam
+Destino: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127244_age3_star_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127382_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9127382_age18_star_pe_filtered.bam
+Destino: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127382_age18_star_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127568_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9127568_age18_star_pe_filtered.bam
+Destino: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127568_age18_star_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126754_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9126754_age18_star_pe_filtered.bai
+Destino: ./results/star_pe/BAI/SRR9126754_age18_star_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9126924_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9126924_age18_star_pe_filtered.bai
+Destino: ./results/star_pe/BAI/SRR9126924_age18_star_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9126950_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9126950_age3_star_pe_filtered.bai
+Destino: ./results/star_pe/BAI/SRR9126950_age3_star_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127139_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9127139_age3_star_pe_filtered.bai
+Destino: ./results/star_pe/BAI/SRR9127139_age3_star_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127244_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9127244_age3_star_pe_filtered.bai
+Destino: ./results/star_pe/BAI/SRR9127244_age3_star_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127382_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9127382_age18_star_pe_filtered.bai
+Destino: ./results/star_pe/BAI/SRR9127382_age18_star_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127568_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9127568_age18_star_pe_filtered.bai
+Destino: ./results/star_pe/BAI/SRR9127568_age18_star_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+=================================================================================================
+Iniciando FeatureCounts - 2026-04-15 19:00:02
+
+
+        ==========     _____ _    _ ____  _____  ______          _____  
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \ 
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v2.0.8
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 7 BAM files                                      ||
+||                                                                            ||
+||                           SRR9126754_age18_star_pe_filtered.bam            ||
+||                           SRR9126924_age18_star_pe_filtered.bam            ||
+||                           SRR9126950_age3_star_pe_filtered.bam             ||
+||                           SRR9127139_age3_star_pe_filtered.bam             ||
+||                           SRR9127244_age3_star_pe_filtered.bam             ||
+||                           SRR9127382_age18_star_pe_filtered.bam            ||
+||                           SRR9127568_age18_star_pe_filtered.bam            ||
+||                                                                            ||
+||             Output file : counts_STAR_PE_table.txt                         ||
+||                 Summary : counts_STAR_PE_table.txt.summary                 ||
+||              Paired-end : yes                                              ||
+||        Count read pairs : no                                               ||
+||              Annotation : gencode.vM38.annotation.gtf (GTF)                ||
+||      Dir for temp files : ./results/star_pe/FeatureCounts                  ||
+||                                                                            ||
+||                 Threads : 8                                                ||
+||                   Level : meta-feature level                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\============================================================================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file gencode.vM38.annotation.gtf ...                       ||
+||    Features : 1298972                                                      ||
+||    Meta-features : 78275                                                   ||
+||    Chromosomes/contigs : 22                                                ||
+||                                                                            ||
+|| Process BAM file SRR9126754_age18_star_pe_filtered.bam...                  ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 43921605                                             ||
+||    Successfully assigned alignments : 28000562 (63.8%)                     ||
+||    Running time : 0.10 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9126924_age18_star_pe_filtered.bam...                  ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 54899125                                             ||
+||    Successfully assigned alignments : 37113397 (67.6%)                     ||
+||    Running time : 0.12 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9126950_age3_star_pe_filtered.bam...                   ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 37267276                                             ||
+||    Successfully assigned alignments : 26452502 (71.0%)                     ||
+||    Running time : 0.08 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127139_age3_star_pe_filtered.bam...                   ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 42368757                                             ||
+||    Successfully assigned alignments : 30784922 (72.7%)                     ||
+||    Running time : 0.10 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127244_age3_star_pe_filtered.bam...                   ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 17191657                                             ||
+||    Successfully assigned alignments : 12443949 (72.4%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127382_age18_star_pe_filtered.bam...                  ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 40544099                                             ||
+||    Successfully assigned alignments : 30884829 (76.2%)                     ||
+||    Running time : 0.09 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127568_age18_star_pe_filtered.bam...                  ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 30166193                                             ||
+||    Successfully assigned alignments : 19383763 (64.3%)                     ||
+||    Running time : 0.07 minutes                                             ||
+||                                                                            ||
+|| Write the final count table.                                               ||
+|| Write the read assignment summary.                                         ||
+||                                                                            ||
+|| Summary of counting results can be found in file "./results/star_pe/Featu  ||
+|| reCounts/counts_STAR_PE_table.txt.summary"                                 ||
+||                                                                            ||
+\\============================================================================//
+
+FeatureCounts finalizado, tabla guardada en ./results/star_pe/FeatureCounts - 2026-04-15 19:00:44
+=================================================================================================
+SRR9126754_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9126754_age18_star_se_filtered.bam
+Destino: ./results/star_se/BAM_FILTERED_SORTED/SRR9126754_age18_star_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126924_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9126924_age18_star_se_filtered.bam
+Destino: ./results/star_se/BAM_FILTERED_SORTED/SRR9126924_age18_star_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126950_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9126950_age3_star_se_filtered.bam
+Destino: ./results/star_se/BAM_FILTERED_SORTED/SRR9126950_age3_star_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127139_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9127139_age3_star_se_filtered.bam
+Destino: ./results/star_se/BAM_FILTERED_SORTED/SRR9127139_age3_star_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127244_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9127244_age3_star_se_filtered.bam
+Destino: ./results/star_se/BAM_FILTERED_SORTED/SRR9127244_age3_star_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127382_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9127382_age18_star_se_filtered.bam
+Destino: ./results/star_se/BAM_FILTERED_SORTED/SRR9127382_age18_star_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127568_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam -> SRR9127568_age18_star_se_filtered.bam
+Destino: ./results/star_se/BAM_FILTERED_SORTED/SRR9127568_age18_star_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126754_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9126754_age18_star_se_filtered.bai
+Destino: ./results/star_se/BAI/SRR9126754_age18_star_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9126924_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9126924_age18_star_se_filtered.bai
+Destino: ./results/star_se/BAI/SRR9126924_age18_star_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9126950_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9126950_age3_star_se_filtered.bai
+Destino: ./results/star_se/BAI/SRR9126950_age3_star_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127139_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9127139_age3_star_se_filtered.bai
+Destino: ./results/star_se/BAI/SRR9127139_age3_star_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127244_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9127244_age3_star_se_filtered.bai
+Destino: ./results/star_se/BAI/SRR9127244_age3_star_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127382_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9127382_age18_star_se_filtered.bai
+Destino: ./results/star_se/BAI/SRR9127382_age18_star_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127568_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai -> SRR9127568_age18_star_se_filtered.bai
+Destino: ./results/star_se/BAI/SRR9127568_age18_star_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+=================================================================================================
+Iniciando FeatureCounts - 2026-04-15 19:00:44
+
+
+        ==========     _____ _    _ ____  _____  ______          _____  
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \ 
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v2.0.8
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 7 BAM files                                      ||
+||                                                                            ||
+||                           SRR9126754_age18_star_se_filtered.bam            ||
+||                           SRR9126924_age18_star_se_filtered.bam            ||
+||                           SRR9126950_age3_star_se_filtered.bam             ||
+||                           SRR9127139_age3_star_se_filtered.bam             ||
+||                           SRR9127244_age3_star_se_filtered.bam             ||
+||                           SRR9127382_age18_star_se_filtered.bam            ||
+||                           SRR9127568_age18_star_se_filtered.bam            ||
+||                                                                            ||
+||             Output file : counts_STAR_SE_table.txt                         ||
+||                 Summary : counts_STAR_SE_table.txt.summary                 ||
+||              Paired-end : no                                               ||
+||        Count read pairs : no                                               ||
+||              Annotation : gencode.vM38.annotation.gtf (GTF)                ||
+||      Dir for temp files : ./results/star_se/FeatureCounts                  ||
+||                                                                            ||
+||                 Threads : 8                                                ||
+||                   Level : meta-feature level                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\============================================================================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file gencode.vM38.annotation.gtf ...                       ||
+||    Features : 1298972                                                      ||
+||    Meta-features : 78275                                                   ||
+||    Chromosomes/contigs : 22                                                ||
+||                                                                            ||
+|| Process BAM file SRR9126754_age18_star_se_filtered.bam...                  ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 22690388                                             ||
+||    Successfully assigned alignments : 13785953 (60.8%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9126924_age18_star_se_filtered.bam...                  ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 30162461                                             ||
+||    Successfully assigned alignments : 19377883 (64.2%)                     ||
+||    Running time : 0.06 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9126950_age3_star_se_filtered.bam...                   ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 20800665                                             ||
+||    Successfully assigned alignments : 13839232 (66.5%)                     ||
+||    Running time : 0.04 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127139_age3_star_se_filtered.bam...                   ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 21791961                                             ||
+||    Successfully assigned alignments : 15095322 (69.3%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127244_age3_star_se_filtered.bam...                   ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 8828185                                              ||
+||    Successfully assigned alignments : 6101195 (69.1%)                      ||
+||    Running time : 0.03 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127382_age18_star_se_filtered.bam...                  ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 21447239                                             ||
+||    Successfully assigned alignments : 15251302 (71.1%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127568_age18_star_se_filtered.bam...                  ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 17315877                                             ||
+||    Successfully assigned alignments : 10547302 (60.9%)                     ||
+||    Running time : 0.04 minutes                                             ||
+||                                                                            ||
+|| Write the final count table.                                               ||
+|| Write the read assignment summary.                                         ||
+||                                                                            ||
+|| Summary of counting results can be found in file "./results/star_se/Featu  ||
+|| reCounts/counts_STAR_SE_table.txt.summary"                                 ||
+||                                                                            ||
+\\============================================================================//
+
+FeatureCounts finalizado, tabla guardada en ./results/star_se/FeatureCounts - 2026-04-15 19:01:09
+=================================================================================================
+SRR9126754_hisat2_se_filtered_sorted.bam -> SRR9126754_age18_hisat2_se_filtered.bam
+Destino: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126754_age18_hisat2_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126924_hisat2_se_filtered_sorted.bam -> SRR9126924_age18_hisat2_se_filtered.bam
+Destino: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126924_age18_hisat2_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126950_hisat2_se_filtered_sorted.bam -> SRR9126950_age3_hisat2_se_filtered.bam
+Destino: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126950_age3_hisat2_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127139_hisat2_se_filtered_sorted.bam -> SRR9127139_age3_hisat2_se_filtered.bam
+Destino: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127139_age3_hisat2_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127244_hisat2_se_filtered_sorted.bam -> SRR9127244_age3_hisat2_se_filtered.bam
+Destino: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127244_age3_hisat2_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127382_hisat2_se_filtered_sorted.bam -> SRR9127382_age18_hisat2_se_filtered.bam
+Destino: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127382_age18_hisat2_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127568_hisat2_se_filtered_sorted.bam -> SRR9127568_age18_hisat2_se_filtered.bam
+Destino: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127568_age18_hisat2_se_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126754_hisat2_se_filtered_sorted.bam.bai -> SRR9126754_age18_hisat2_se_filtered.bai
+Destino: ./results/hisat2_se/BAI/SRR9126754_age18_hisat2_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9126924_hisat2_se_filtered_sorted.bam.bai -> SRR9126924_age18_hisat2_se_filtered.bai
+Destino: ./results/hisat2_se/BAI/SRR9126924_age18_hisat2_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9126950_hisat2_se_filtered_sorted.bam.bai -> SRR9126950_age3_hisat2_se_filtered.bai
+Destino: ./results/hisat2_se/BAI/SRR9126950_age3_hisat2_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127139_hisat2_se_filtered_sorted.bam.bai -> SRR9127139_age3_hisat2_se_filtered.bai
+Destino: ./results/hisat2_se/BAI/SRR9127139_age3_hisat2_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127244_hisat2_se_filtered_sorted.bam.bai -> SRR9127244_age3_hisat2_se_filtered.bai
+Destino: ./results/hisat2_se/BAI/SRR9127244_age3_hisat2_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127382_hisat2_se_filtered_sorted.bam.bai -> SRR9127382_age18_hisat2_se_filtered.bai
+Destino: ./results/hisat2_se/BAI/SRR9127382_age18_hisat2_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127568_hisat2_se_filtered_sorted.bam.bai -> SRR9127568_age18_hisat2_se_filtered.bai
+Destino: ./results/hisat2_se/BAI/SRR9127568_age18_hisat2_se_filtered.bai
+-------------------------------------------------------------------------------------------------
+=================================================================================================
+Iniciando FeatureCounts - 2026-04-15 19:01:09
+
+
+        ==========     _____ _    _ ____  _____  ______          _____  
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \ 
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v2.0.8
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 7 BAM files                                      ||
+||                                                                            ||
+||                           SRR9126754_age18_hisat2_se_filtered.bam          ||
+||                           SRR9126924_age18_hisat2_se_filtered.bam          ||
+||                           SRR9126950_age3_hisat2_se_filtered.bam           ||
+||                           SRR9127139_age3_hisat2_se_filtered.bam           ||
+||                           SRR9127244_age3_hisat2_se_filtered.bam           ||
+||                           SRR9127382_age18_hisat2_se_filtered.bam          ||
+||                           SRR9127568_age18_hisat2_se_filtered.bam          ||
+||                                                                            ||
+||             Output file : counts_HISAT2_SE_table.txt                       ||
+||                 Summary : counts_HISAT2_SE_table.txt.summary               ||
+||              Paired-end : no                                               ||
+||        Count read pairs : no                                               ||
+||              Annotation : gencode.vM38.annotation.gtf (GTF)                ||
+||      Dir for temp files : ./results/hisat2_se/FeatureCounts                ||
+||                                                                            ||
+||                 Threads : 8                                                ||
+||                   Level : meta-feature level                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\============================================================================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file gencode.vM38.annotation.gtf ...                       ||
+||    Features : 1298972                                                      ||
+||    Meta-features : 78275                                                   ||
+||    Chromosomes/contigs : 22                                                ||
+||                                                                            ||
+|| Process BAM file SRR9126754_age18_hisat2_se_filtered.bam...                ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 21655386                                             ||
+||    Successfully assigned alignments : 13676467 (63.2%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9126924_age18_hisat2_se_filtered.bam...                ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 28781275                                             ||
+||    Successfully assigned alignments : 19201534 (66.7%)                     ||
+||    Running time : 0.07 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9126950_age3_hisat2_se_filtered.bam...                 ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 19546338                                             ||
+||    Successfully assigned alignments : 13670248 (69.9%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127139_age3_hisat2_se_filtered.bam...                 ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 20797661                                             ||
+||    Successfully assigned alignments : 14980309 (72.0%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127244_age3_hisat2_se_filtered.bam...                 ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 8547254                                              ||
+||    Successfully assigned alignments : 6050025 (70.8%)                      ||
+||    Running time : 0.03 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127382_age18_hisat2_se_filtered.bam...                ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 19985784                                             ||
+||    Successfully assigned alignments : 15076738 (75.4%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127568_age18_hisat2_se_filtered.bam...                ||
+||    Single-end reads are included.                                          ||
+||    Total alignments : 16065006                                             ||
+||    Successfully assigned alignments : 10356482 (64.5%)                     ||
+||    Running time : 0.04 minutes                                             ||
+||                                                                            ||
+|| Write the final count table.                                               ||
+|| Write the read assignment summary.                                         ||
+||                                                                            ||
+|| Summary of counting results can be found in file "./results/hisat2_se/Fea  ||
+|| tureCounts/counts_HISAT2_SE_table.txt.summary"                             ||
+||                                                                            ||
+\\============================================================================//
+
+FeatureCounts finalizado, tabla guardada en ./results/hisat2_se/FeatureCounts - 2026-04-15 19:01:35
+=================================================================================================
+SRR9126754_hisat2_pe_filtered_sorted.bam -> SRR9126754_age18_hisat2_pe_filtered.bam
+Destino: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126754_age18_hisat2_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126924_hisat2_pe_filtered_sorted.bam -> SRR9126924_age18_hisat2_pe_filtered.bam
+Destino: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126924_age18_hisat2_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126950_hisat2_pe_filtered_sorted.bam -> SRR9126950_age3_hisat2_pe_filtered.bam
+Destino: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126950_age3_hisat2_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127139_hisat2_pe_filtered_sorted.bam -> SRR9127139_age3_hisat2_pe_filtered.bam
+Destino: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127139_age3_hisat2_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127244_hisat2_pe_filtered_sorted.bam -> SRR9127244_age3_hisat2_pe_filtered.bam
+Destino: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127244_age3_hisat2_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127382_hisat2_pe_filtered_sorted.bam -> SRR9127382_age18_hisat2_pe_filtered.bam
+Destino: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127382_age18_hisat2_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9127568_hisat2_pe_filtered_sorted.bam -> SRR9127568_age18_hisat2_pe_filtered.bam
+Destino: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127568_age18_hisat2_pe_filtered.bam
+-------------------------------------------------------------------------------------------------
+SRR9126754_hisat2_pe_filtered_sorted.bam.bai -> SRR9126754_age18_hisat2_pe_filtered.bai
+Destino: ./results/hisat2_pe/BAI/SRR9126754_age18_hisat2_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9126924_hisat2_pe_filtered_sorted.bam.bai -> SRR9126924_age18_hisat2_pe_filtered.bai
+Destino: ./results/hisat2_pe/BAI/SRR9126924_age18_hisat2_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9126950_hisat2_pe_filtered_sorted.bam.bai -> SRR9126950_age3_hisat2_pe_filtered.bai
+Destino: ./results/hisat2_pe/BAI/SRR9126950_age3_hisat2_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127139_hisat2_pe_filtered_sorted.bam.bai -> SRR9127139_age3_hisat2_pe_filtered.bai
+Destino: ./results/hisat2_pe/BAI/SRR9127139_age3_hisat2_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127244_hisat2_pe_filtered_sorted.bam.bai -> SRR9127244_age3_hisat2_pe_filtered.bai
+Destino: ./results/hisat2_pe/BAI/SRR9127244_age3_hisat2_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127382_hisat2_pe_filtered_sorted.bam.bai -> SRR9127382_age18_hisat2_pe_filtered.bai
+Destino: ./results/hisat2_pe/BAI/SRR9127382_age18_hisat2_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+SRR9127568_hisat2_pe_filtered_sorted.bam.bai -> SRR9127568_age18_hisat2_pe_filtered.bai
+Destino: ./results/hisat2_pe/BAI/SRR9127568_age18_hisat2_pe_filtered.bai
+-------------------------------------------------------------------------------------------------
+=================================================================================================
+Iniciando FeatureCounts - 2026-04-15 19:01:35
+
+
+        ==========     _____ _    _ ____  _____  ______          _____  
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \ 
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v2.0.8
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 7 BAM files                                      ||
+||                                                                            ||
+||                           SRR9126754_age18_hisat2_pe_filtered.bam          ||
+||                           SRR9126924_age18_hisat2_pe_filtered.bam          ||
+||                           SRR9126950_age3_hisat2_pe_filtered.bam           ||
+||                           SRR9127139_age3_hisat2_pe_filtered.bam           ||
+||                           SRR9127244_age3_hisat2_pe_filtered.bam           ||
+||                           SRR9127382_age18_hisat2_pe_filtered.bam          ||
+||                           SRR9127568_age18_hisat2_pe_filtered.bam          ||
+||                                                                            ||
+||             Output file : counts_HISAT2_PE_table.txt                       ||
+||                 Summary : counts_HISAT2_PE_table.txt.summary               ||
+||              Paired-end : yes                                              ||
+||        Count read pairs : no                                               ||
+||              Annotation : gencode.vM38.annotation.gtf (GTF)                ||
+||      Dir for temp files : ./results/hisat2_pe/FeatureCounts                ||
+||                                                                            ||
+||                 Threads : 8                                                ||
+||                   Level : meta-feature level                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\============================================================================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file gencode.vM38.annotation.gtf ...                       ||
+||    Features : 1298972                                                      ||
+||    Meta-features : 78275                                                   ||
+||    Chromosomes/contigs : 22                                                ||
+||                                                                            ||
+|| Process BAM file SRR9126754_age18_hisat2_pe_filtered.bam...                ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 44999499                                             ||
+||    Successfully assigned alignments : 28187231 (62.6%)                     ||
+||    Running time : 0.12 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9126924_age18_hisat2_pe_filtered.bam...                ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 60010253                                             ||
+||    Successfully assigned alignments : 39866451 (66.4%)                     ||
+||    Running time : 0.17 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9126950_age3_hisat2_pe_filtered.bam...                 ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 40749634                                             ||
+||    Successfully assigned alignments : 28273000 (69.4%)                     ||
+||    Running time : 0.10 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127139_age3_hisat2_pe_filtered.bam...                 ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 43246283                                             ||
+||    Successfully assigned alignments : 30936197 (71.5%)                     ||
+||    Running time : 0.10 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127244_age3_hisat2_pe_filtered.bam...                 ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 17348108                                             ||
+||    Successfully assigned alignments : 12253288 (70.6%)                     ||
+||    Running time : 0.05 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127382_age18_hisat2_pe_filtered.bam...                ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 41715713                                             ||
+||    Successfully assigned alignments : 31103593 (74.6%)                     ||
+||    Running time : 0.10 minutes                                             ||
+||                                                                            ||
+|| Process BAM file SRR9127568_age18_hisat2_pe_filtered.bam...                ||
+||    Paired-end reads are included.                                          ||
+||    The reads are assigned on the single-end mode.                          ||
+||    Total alignments : 33704265                                             ||
+||    Successfully assigned alignments : 21472150 (63.7%)                     ||
+||    Running time : 0.08 minutes                                             ||
+||                                                                            ||
+|| Write the final count table.                                               ||
+|| Write the read assignment summary.                                         ||
+||                                                                            ||
+|| Summary of counting results can be found in file "./results/hisat2_pe/Fea  ||
+|| tureCounts/counts_HISAT2_PE_table.txt.summary"                             ||
+||                                                                            ||
+\\============================================================================//
+
+FeatureCounts finalizado, tabla guardada en ./results/hisat2_pe/FeatureCounts - 2026-04-15 19:02:23
+=================================================================================================
+Renombrado exitoso - 2026-04-15 19:02:23
+=================================================================================================

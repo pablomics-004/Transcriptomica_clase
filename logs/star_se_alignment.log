@@ -1,0 +1,65 @@
+nohup: ignoring input
+[RUN] STAR SE -> SRR9126754
+	/export/apps/bioconda/envs/star/bin/STAR-avx2 --runThreadN 8 --genomeDir ./data/indexes/mm39.gencode.M36.star --readFilesIn ./data/fastp/SRR9126754_clean_1.fastq --outFileNamePrefix ./results/star_se/SRR9126754_star_se_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped None
+	STAR version: 2.7.11b   compiled: 2025-01-09T12:32:06+0000 :/opt/conda/conda-bld/star_1736425784849/work/source
+Mar 31 16:39:49 ..... started STAR run
+Mar 31 16:39:49 ..... loading genome
+Mar 31 16:39:58 ..... started mapping
+Mar 31 16:41:35 ..... finished mapping
+Mar 31 16:41:35 ..... started sorting BAM
+Mar 31 16:41:42 ..... finished successfully
+[RUN] STAR SE -> SRR9126924
+	/export/apps/bioconda/envs/star/bin/STAR-avx2 --runThreadN 8 --genomeDir ./data/indexes/mm39.gencode.M36.star --readFilesIn ./data/fastp/SRR9126924_clean_1.fastq --outFileNamePrefix ./results/star_se/SRR9126924_star_se_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped None
+	STAR version: 2.7.11b   compiled: 2025-01-09T12:32:06+0000 :/opt/conda/conda-bld/star_1736425784849/work/source
+Mar 31 16:41:43 ..... started STAR run
+Mar 31 16:41:43 ..... loading genome
+Mar 31 16:41:51 ..... started mapping
+Mar 31 16:44:09 ..... finished mapping
+Mar 31 16:44:10 ..... started sorting BAM
+Mar 31 16:44:22 ..... finished successfully
+[RUN] STAR SE -> SRR9126950
+	/export/apps/bioconda/envs/star/bin/STAR-avx2 --runThreadN 8 --genomeDir ./data/indexes/mm39.gencode.M36.star --readFilesIn ./data/fastp/SRR9126950_clean_1.fastq --outFileNamePrefix ./results/star_se/SRR9126950_star_se_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped None
+	STAR version: 2.7.11b   compiled: 2025-01-09T12:32:06+0000 :/opt/conda/conda-bld/star_1736425784849/work/source
+Mar 31 16:44:23 ..... started STAR run
+Mar 31 16:44:23 ..... loading genome
+Mar 31 16:44:32 ..... started mapping
+Mar 31 16:46:10 ..... finished mapping
+Mar 31 16:46:11 ..... started sorting BAM
+Mar 31 16:46:18 ..... finished successfully
+[RUN] STAR SE -> SRR9127139
+	/export/apps/bioconda/envs/star/bin/STAR-avx2 --runThreadN 8 --genomeDir ./data/indexes/mm39.gencode.M36.star --readFilesIn ./data/fastp/SRR9127139_clean_1.fastq --outFileNamePrefix ./results/star_se/SRR9127139_star_se_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped None
+	STAR version: 2.7.11b   compiled: 2025-01-09T12:32:06+0000 :/opt/conda/conda-bld/star_1736425784849/work/source
+Mar 31 16:46:19 ..... started STAR run
+Mar 31 16:46:19 ..... loading genome
+Mar 31 16:46:28 ..... started mapping
+Mar 31 16:47:59 ..... finished mapping
+Mar 31 16:48:00 ..... started sorting BAM
+Mar 31 16:48:06 ..... finished successfully
+[RUN] STAR SE -> SRR9127244
+	/export/apps/bioconda/envs/star/bin/STAR-avx2 --runThreadN 8 --genomeDir ./data/indexes/mm39.gencode.M36.star --readFilesIn ./data/fastp/SRR9127244_clean_1.fastq --outFileNamePrefix ./results/star_se/SRR9127244_star_se_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped None
+	STAR version: 2.7.11b   compiled: 2025-01-09T12:32:06+0000 :/opt/conda/conda-bld/star_1736425784849/work/source
+Mar 31 16:48:07 ..... started STAR run
+Mar 31 16:48:07 ..... loading genome
+Mar 31 16:48:16 ..... started mapping
+Mar 31 16:48:58 ..... finished mapping
+Mar 31 16:48:58 ..... started sorting BAM
+Mar 31 16:49:01 ..... finished successfully
+[RUN] STAR SE -> SRR9127382
+	/export/apps/bioconda/envs/star/bin/STAR-avx2 --runThreadN 8 --genomeDir ./data/indexes/mm39.gencode.M36.star --readFilesIn ./data/fastp/SRR9127382_clean_1.fastq --outFileNamePrefix ./results/star_se/SRR9127382_star_se_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped None
+	STAR version: 2.7.11b   compiled: 2025-01-09T12:32:06+0000 :/opt/conda/conda-bld/star_1736425784849/work/source
+Mar 31 16:49:02 ..... started STAR run
+Mar 31 16:49:02 ..... loading genome
+Mar 31 16:49:11 ..... started mapping
+Mar 31 16:50:48 ..... finished mapping
+Mar 31 16:50:48 ..... started sorting BAM
+Mar 31 16:50:54 ..... finished successfully
+[RUN] STAR SE -> SRR9127568
+	/export/apps/bioconda/envs/star/bin/STAR-avx2 --runThreadN 8 --genomeDir ./data/indexes/mm39.gencode.M36.star --readFilesIn ./data/fastp/SRR9127568_clean_1.fastq --outFileNamePrefix ./results/star_se/SRR9127568_star_se_ --outSAMtype BAM SortedByCoordinate --outSAMunmapped None
+	STAR version: 2.7.11b   compiled: 2025-01-09T12:32:06+0000 :/opt/conda/conda-bld/star_1736425784849/work/source
+Mar 31 16:50:55 ..... started STAR run
+Mar 31 16:50:55 ..... loading genome
+Mar 31 16:51:04 ..... started mapping
+Mar 31 16:52:38 ..... finished mapping
+Mar 31 16:52:39 ..... started sorting BAM
+Mar 31 16:52:44 ..... finished successfully
+STAR SE terminado.

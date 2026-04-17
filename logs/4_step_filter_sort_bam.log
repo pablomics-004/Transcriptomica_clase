@@ -1,0 +1,255 @@
+=================================================================================================
+Iniciando conversión de SAM a BAM, filtrado y ordenamiento - 2026-04-14 19:23:15
+-------------------------------------------------------------------------------------------------
+Procesando directorio ./results/star_pe/BAM/
+Alineamientos de STAR
+Procesando archivo: ./results/star_pe/BAM/SRR9126754_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126754_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_pe/BAM/SRR9126754_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126754_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126754_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_pe/BAM/SRR9126924_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126924_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 2 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_pe/BAM/SRR9126924_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126924_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126924_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_pe/BAM/SRR9126950_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126950_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_pe/BAM/SRR9126950_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126950_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_pe/BAM_FILTERED_SORTED/SRR9126950_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_pe/BAM/SRR9127139_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127139_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_pe/BAM/SRR9127139_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127139_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127139_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_pe/BAM/SRR9127244_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127244_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_pe/BAM/SRR9127244_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127244_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127244_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_pe/BAM/SRR9127382_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127382_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_pe/BAM/SRR9127382_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127382_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127382_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_pe/BAM/SRR9127568_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127568_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_pe/BAM/SRR9127568_star_pe_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127568_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_pe/BAM_FILTERED_SORTED/SRR9127568_star_pe_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+-------------------------------------------------------------------------------------------------
+Procesando directorio ./results/star_se/BAM/
+Alineamientos de STAR
+Procesando archivo: ./results/star_se/BAM/SRR9126754_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_se/BAM_FILTERED_SORTED/SRR9126754_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_se/BAM/SRR9126754_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_se/BAM_FILTERED_SORTED/SRR9126754_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_se/BAM_FILTERED_SORTED/SRR9126754_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_se/BAM/SRR9126924_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_se/BAM_FILTERED_SORTED/SRR9126924_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_se/BAM/SRR9126924_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_se/BAM_FILTERED_SORTED/SRR9126924_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_se/BAM_FILTERED_SORTED/SRR9126924_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_se/BAM/SRR9126950_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_se/BAM_FILTERED_SORTED/SRR9126950_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_se/BAM/SRR9126950_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_se/BAM_FILTERED_SORTED/SRR9126950_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_se/BAM_FILTERED_SORTED/SRR9126950_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_se/BAM/SRR9127139_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_se/BAM_FILTERED_SORTED/SRR9127139_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_se/BAM/SRR9127139_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_se/BAM_FILTERED_SORTED/SRR9127139_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_se/BAM_FILTERED_SORTED/SRR9127139_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_se/BAM/SRR9127244_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_se/BAM_FILTERED_SORTED/SRR9127244_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_se/BAM/SRR9127244_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_se/BAM_FILTERED_SORTED/SRR9127244_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_se/BAM_FILTERED_SORTED/SRR9127244_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_se/BAM/SRR9127382_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_se/BAM_FILTERED_SORTED/SRR9127382_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_se/BAM/SRR9127382_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_se/BAM_FILTERED_SORTED/SRR9127382_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_se/BAM_FILTERED_SORTED/SRR9127382_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+Procesando archivo: ./results/star_se/BAM/SRR9127568_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/star_se/BAM_FILTERED_SORTED/SRR9127568_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/star_se/BAM/SRR9127568_star_se_Aligned.sortedByCoord.out.bam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/star_se/BAM_FILTERED_SORTED/SRR9127568_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam
+Índice generado: ./results/star_se/BAM_FILTERED_SORTED/SRR9127568_star_se_Aligned.sortedByCoord.out_filtered_sorted.bam.bai
+-------------------------------------------------------------------------------------------------
+Procesando directorio ./results/hisat2_se/SAM/
+Alineamientos de HISAT2
+Procesando archivo: ./results/hisat2_se/SAM/SRR9126754_hisat2_se.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_se/BAM/SRR9126754_hisat2_se.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126754_hisat2_se_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_se/SAM/SRR9126754_hisat2_se.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126754_hisat2_se_filtered_sorted.bam
+Índice generado: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126754_hisat2_se_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_se/SAM/SRR9126924_hisat2_se.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_se/BAM/SRR9126924_hisat2_se.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126924_hisat2_se_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_se/SAM/SRR9126924_hisat2_se.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126924_hisat2_se_filtered_sorted.bam
+Índice generado: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126924_hisat2_se_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_se/SAM/SRR9126950_hisat2_se.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_se/BAM/SRR9126950_hisat2_se.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126950_hisat2_se_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_se/SAM/SRR9126950_hisat2_se.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126950_hisat2_se_filtered_sorted.bam
+Índice generado: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9126950_hisat2_se_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_se/SAM/SRR9127139_hisat2_se.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_se/BAM/SRR9127139_hisat2_se.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127139_hisat2_se_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_se/SAM/SRR9127139_hisat2_se.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127139_hisat2_se_filtered_sorted.bam
+Índice generado: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127139_hisat2_se_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_se/SAM/SRR9127244_hisat2_se.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_se/BAM/SRR9127244_hisat2_se.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127244_hisat2_se_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_se/SAM/SRR9127244_hisat2_se.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127244_hisat2_se_filtered_sorted.bam
+Índice generado: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127244_hisat2_se_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_se/SAM/SRR9127382_hisat2_se.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_se/BAM/SRR9127382_hisat2_se.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127382_hisat2_se_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_se/SAM/SRR9127382_hisat2_se.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127382_hisat2_se_filtered_sorted.bam
+Índice generado: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127382_hisat2_se_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_se/SAM/SRR9127568_hisat2_se.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_se/BAM/SRR9127568_hisat2_se.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127568_hisat2_se_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_se/SAM/SRR9127568_hisat2_se.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127568_hisat2_se_filtered_sorted.bam
+Índice generado: ./results/hisat2_se/BAM_FILTERED_SORTED/SRR9127568_hisat2_se_filtered_sorted.bam.bai
+-------------------------------------------------------------------------------------------------
+Procesando directorio ./results/hisat2_pe/SAM/
+Alineamientos de HISAT2
+Procesando archivo: ./results/hisat2_pe/SAM/SRR9126754_hisat2_pe.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_pe/BAM/SRR9126754_hisat2_pe.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126754_hisat2_pe_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_pe/SAM/SRR9126754_hisat2_pe.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126754_hisat2_pe_filtered_sorted.bam
+Índice generado: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126754_hisat2_pe_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_pe/SAM/SRR9126924_hisat2_pe.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_pe/BAM/SRR9126924_hisat2_pe.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126924_hisat2_pe_filtered_sorted.bam
+[bam_sort_core] merging from 2 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_pe/SAM/SRR9126924_hisat2_pe.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126924_hisat2_pe_filtered_sorted.bam
+Índice generado: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126924_hisat2_pe_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_pe/SAM/SRR9126950_hisat2_pe.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_pe/BAM/SRR9126950_hisat2_pe.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126950_hisat2_pe_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_pe/SAM/SRR9126950_hisat2_pe.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126950_hisat2_pe_filtered_sorted.bam
+Índice generado: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9126950_hisat2_pe_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_pe/SAM/SRR9127139_hisat2_pe.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_pe/BAM/SRR9127139_hisat2_pe.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127139_hisat2_pe_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_pe/SAM/SRR9127139_hisat2_pe.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127139_hisat2_pe_filtered_sorted.bam
+Índice generado: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127139_hisat2_pe_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_pe/SAM/SRR9127244_hisat2_pe.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_pe/BAM/SRR9127244_hisat2_pe.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127244_hisat2_pe_filtered_sorted.bam
+[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_pe/SAM/SRR9127244_hisat2_pe.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127244_hisat2_pe_filtered_sorted.bam
+Índice generado: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127244_hisat2_pe_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_pe/SAM/SRR9127382_hisat2_pe.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_pe/BAM/SRR9127382_hisat2_pe.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127382_hisat2_pe_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_pe/SAM/SRR9127382_hisat2_pe.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127382_hisat2_pe_filtered_sorted.bam
+Índice generado: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127382_hisat2_pe_filtered_sorted.bam.bai
+Procesando archivo: ./results/hisat2_pe/SAM/SRR9127568_hisat2_pe.sam
+Convirtiendo SAM a BAM crudo: ./results/hisat2_pe/BAM/SRR9127568_hisat2_pe.bam
+-------------------------------------------------------------------------------------------------
+Filtrando y ordenando hacia: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127568_hisat2_pe_filtered_sorted.bam
+[bam_sort_core] merging from 1 files and 8 in-memory blocks...
+Procesado con éxito: ./results/hisat2_pe/SAM/SRR9127568_hisat2_pe.sam
+-------------------------------------------------------------------------------------------------
+Indexando BAM: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127568_hisat2_pe_filtered_sorted.bam
+Índice generado: ./results/hisat2_pe/BAM_FILTERED_SORTED/SRR9127568_hisat2_pe_filtered_sorted.bam.bai
+-------------------------------------------------------------------------------------------------
+Script finalizado con éxito - 2026-04-14 20:15:37
+=================================================================================================

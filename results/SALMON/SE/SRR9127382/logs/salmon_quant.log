@@ -1,0 +1,54 @@
+[2026-04-16 11:05:08.386] [jointLog] [info] setting maxHashResizeThreads to 8
+[2026-04-16 11:05:08.386] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2026-04-16 11:05:08.386] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2026-04-16 11:05:08.386] [jointLog] [info] Setting consensusSlack to selective-alignment default of 0.35.
+[2026-04-16 11:05:08.386] [jointLog] [info] parsing read library format
+[2026-04-16 11:05:08.386] [jointLog] [info] There is 1 library.
+[2026-04-16 11:05:08.386] [jointLog] [info] Loading pufferfish index
+[2026-04-16 11:05:08.386] [jointLog] [info] Loading dense pufferfish index.
+[2026-04-16 11:05:09.562] [jointLog] [info] done
+[2026-04-16 11:05:09.633] [jointLog] [info] Index contained 276,623 targets
+[2026-04-16 11:05:09.702] [jointLog] [info] Number of decoys : 0
+[2026-04-16 11:05:10.011] [jointLog] [info] Automatically detected most likely library type as U
+
+[2026-04-16 11:06:38.286] [fileLog] [info] 
+At end of round 0
+==================
+Observed 26820139 total fragments (26820139 in most recent round)
+
+[2026-04-16 11:06:38.285] [jointLog] [info] Computed 336,330 rich equivalence classes for further processing
+[2026-04-16 11:06:38.285] [jointLog] [info] Counted 18,538,996 total reads in the equivalence classes 
+[2026-04-16 11:06:38.292] [jointLog] [warning] 0.000294555% of fragments were shorter than the k used to build the index.
+If this fraction is too large, consider re-building the index with a smaller k.
+The minimum read size found was 15.
+
+
+[2026-04-16 11:06:38.292] [jointLog] [info] Number of mappings discarded because of alignment score : 114,433,375
+[2026-04-16 11:06:38.292] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 1,483,149
+[2026-04-16 11:06:38.292] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2026-04-16 11:06:38.292] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 0
+[2026-04-16 11:06:38.292] [jointLog] [info] Mapping rate = 69.1234%
+
+[2026-04-16 11:06:38.292] [jointLog] [info] finished quantifyLibrary()
+[2026-04-16 11:06:38.293] [jointLog] [info] Starting optimizer
+[2026-04-16 11:06:38.459] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2026-04-16 11:06:38.477] [jointLog] [info] iteration = 0 | max rel diff. = 4214.22
+[2026-04-16 11:06:39.841] [jointLog] [info] iteration = 100 | max rel diff. = 19.023
+[2026-04-16 11:06:41.579] [jointLog] [info] iteration = 200 | max rel diff. = 14.4759
+[2026-04-16 11:06:43.291] [jointLog] [info] iteration = 300 | max rel diff. = 2.68215
+[2026-04-16 11:06:44.988] [jointLog] [info] iteration = 400 | max rel diff. = 4.79038
+[2026-04-16 11:06:46.699] [jointLog] [info] iteration = 500 | max rel diff. = 0.464795
+[2026-04-16 11:06:48.389] [jointLog] [info] iteration = 600 | max rel diff. = 0.141111
+[2026-04-16 11:06:50.011] [jointLog] [info] iteration = 700 | max rel diff. = 12.284
+[2026-04-16 11:06:51.616] [jointLog] [info] iteration = 800 | max rel diff. = 0.0520894
+[2026-04-16 11:06:53.240] [jointLog] [info] iteration = 900 | max rel diff. = 0.222638
+[2026-04-16 11:06:54.953] [jointLog] [info] iteration = 1,000 | max rel diff. = 0.0465146
+[2026-04-16 11:06:57.029] [jointLog] [info] iteration = 1,100 | max rel diff. = 11.589
+[2026-04-16 11:06:58.809] [jointLog] [info] iteration = 1,200 | max rel diff. = 0.296798
+[2026-04-16 11:07:00.585] [jointLog] [info] iteration = 1,300 | max rel diff. = 0.604863
+[2026-04-16 11:07:02.410] [jointLog] [info] iteration = 1,400 | max rel diff. = 0.0458511
+[2026-04-16 11:07:04.196] [jointLog] [info] iteration = 1,500 | max rel diff. = 0.120637
+[2026-04-16 11:07:04.355] [jointLog] [info] iteration = 1,510 | max rel diff. = 0.00644021
+[2026-04-16 11:07:04.402] [jointLog] [info] Finished optimizer
+[2026-04-16 11:07:04.402] [jointLog] [info] writing output 
+

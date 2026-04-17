@@ -1,0 +1,160 @@
+[0:00:00] Directorio de trabajo actual: /export/space3/users/pablosm/2026-2/Transcriptomica_clase
+[0:00:00] Inicio del script
+[0:00:00] Directorios encontrados en ./results/: 5
+[0:00:00] Alineadores detectados: 4
+[0:00:00] Archivos en ./results/hisat2_pe/BAM: 7
+[0:00:00] Archivos en ./results/hisat2_pe/BAM_FILTERED_SORTED: 7
+[0:00:00] Archivos en ./results/hisat2_se/BAM: 7
+[0:00:00] Archivos en ./results/hisat2_se/BAM_FILTERED_SORTED: 7
+[0:00:00] Archivos en ./results/star_pe/BAM: 7
+[0:00:00] Archivos en ./results/star_pe/BAM_FILTERED_SORTED: 7
+[0:00:00] Archivos en ./results/star_se/BAM: 7
+[0:00:00] Archivos en ./results/star_se/BAM_FILTERED_SORTED: 7
+[0:00:00] Dimensiones matriz: (28, 2) | Bloque: 7
+
+[0:00:00] Procesando alineador 1/4: hisat2_pe
+[0:00:00] Filas asignadas: 0:7
+[0:00:00] Contando reads en 7 archivos...
+[0:00:00]   (1/7) Procesando: SRR9126754_hisat2_pe.bam
+[0:00:19]   → Reads: 28910839
+[0:00:19]   (2/7) Procesando: SRR9126924_hisat2_pe.bam
+[0:00:45]   → Reads: 40048484
+[0:00:45]   (3/7) Procesando: SRR9126950_hisat2_pe.bam
+[0:01:02]   → Reads: 27709403
+[0:01:02]   (4/7) Procesando: SRR9127139_hisat2_pe.bam
+[0:01:20]   → Reads: 27569259
+[0:01:20]   (5/7) Procesando: SRR9127244_hisat2_pe.bam
+[0:01:28]   → Reads: 11236836
+[0:01:28]   (6/7) Procesando: SRR9127382_hisat2_pe.bam
+[0:01:46]   → Reads: 26706999
+[0:01:46]   (7/7) Procesando: SRR9127568_hisat2_pe.bam
+[0:02:00]   → Reads: 23614752
+[0:02:00] Conteo terminado
+[0:02:00] Contando reads en 7 archivos...
+[0:02:00]   (1/7) Procesando: SRR9126754_age18_hisat2_pe_filtered.bam
+[0:02:09]   → Reads: 22629002
+[0:02:09]   (2/7) Procesando: SRR9126924_age18_hisat2_pe_filtered.bam
+[0:02:21]   → Reads: 30110486
+[0:02:21]   (3/7) Procesando: SRR9126950_age3_hisat2_pe_filtered.bam
+[0:02:29]   → Reads: 20493067
+[0:02:29]   (4/7) Procesando: SRR9127139_age3_hisat2_pe_filtered.bam
+[0:02:37]   → Reads: 21701382
+[0:02:37]   (5/7) Procesando: SRR9127244_age3_hisat2_pe_filtered.bam
+[0:02:42]   → Reads: 8873887
+[0:02:42]   (6/7) Procesando: SRR9127382_age18_hisat2_pe_filtered.bam
+[0:02:49]   → Reads: 20973263
+[0:02:49]   (7/7) Procesando: SRR9127568_age18_hisat2_pe_filtered.bam
+[0:02:56]   → Reads: 16894254
+[0:02:56] Conteo terminado
+[0:02:56] Alineador hisat2_pe terminado
+
+[0:02:56] Procesando alineador 2/4: hisat2_se
+[0:02:56] Filas asignadas: 7:14
+[0:02:56] Contando reads en 7 archivos...
+[0:02:56]   (1/7) Procesando: SRR9126754_hisat2_se.bam
+[0:03:05]   → Reads: 31066851
+[0:03:05]   (2/7) Procesando: SRR9126924_hisat2_se.bam
+[0:03:17]   → Reads: 42545035
+[0:03:17]   (3/7) Procesando: SRR9126950_hisat2_se.bam
+[0:03:25]   → Reads: 29564563
+[0:03:25]   (4/7) Procesando: SRR9127139_hisat2_se.bam
+[0:03:34]   → Reads: 29409799
+[0:03:34]   (5/7) Procesando: SRR9127244_hisat2_se.bam
+[0:03:38]   → Reads: 11880053
+[0:03:38]   (6/7) Procesando: SRR9127382_hisat2_se.bam
+[0:03:46]   → Reads: 28674688
+[0:03:46]   (7/7) Procesando: SRR9127568_hisat2_se.bam
+[0:03:53]   → Reads: 25419286
+[0:03:53] Conteo terminado
+[0:03:53] Contando reads en 7 archivos...
+[0:03:53]   (1/7) Procesando: SRR9126754_age18_hisat2_se_filtered.bam
+[0:03:57]   → Reads: 21655386
+[0:03:57]   (2/7) Procesando: SRR9126924_age18_hisat2_se_filtered.bam
+[0:04:02]   → Reads: 28781275
+[0:04:02]   (3/7) Procesando: SRR9126950_age3_hisat2_se_filtered.bam
+[0:04:06]   → Reads: 19546338
+[0:04:06]   (4/7) Procesando: SRR9127139_age3_hisat2_se_filtered.bam
+[0:04:09]   → Reads: 20797661
+[0:04:09]   (5/7) Procesando: SRR9127244_age3_hisat2_se_filtered.bam
+[0:04:11]   → Reads: 8547254
+[0:04:11]   (6/7) Procesando: SRR9127382_age18_hisat2_se_filtered.bam
+[0:04:14]   → Reads: 19985784
+[0:04:14]   (7/7) Procesando: SRR9127568_age18_hisat2_se_filtered.bam
+[0:04:17]   → Reads: 16065006
+[0:04:17] Conteo terminado
+[0:04:17] Alineador hisat2_se terminado
+
+[0:04:17] Procesando alineador 3/4: star_pe
+[0:04:17] Filas asignadas: 14:21
+[0:04:17] Contando reads en 7 archivos...
+[0:04:17]   (1/7) Procesando: SRR9126754_star_pe_Aligned.sortedByCoord.out.bam
+[0:04:28]   → Reads: 26414210
+[0:04:28]   (2/7) Procesando: SRR9126924_star_pe_Aligned.sortedByCoord.out.bam
+[0:04:40]   → Reads: 34145321
+[0:04:40]   (3/7) Procesando: SRR9126950_star_pe_Aligned.sortedByCoord.out.bam
+[0:04:49]   → Reads: 23281255
+[0:04:49]   (4/7) Procesando: SRR9127139_star_pe_Aligned.sortedByCoord.out.bam
+[0:04:59]   → Reads: 25492247
+[0:04:59]   (5/7) Procesando: SRR9127244_star_pe_Aligned.sortedByCoord.out.bam
+[0:05:04]   → Reads: 10318784
+[0:05:04]   (6/7) Procesando: SRR9127382_star_pe_Aligned.sortedByCoord.out.bam
+[0:05:13]   → Reads: 23996151
+[0:05:13]   (7/7) Procesando: SRR9127568_star_pe_Aligned.sortedByCoord.out.bam
+[0:05:21]   → Reads: 19362434
+[0:05:21] Conteo terminado
+[0:05:21] Contando reads en 7 archivos...
+[0:05:21]   (1/7) Procesando: SRR9126754_age18_star_pe_filtered.bam
+[0:05:30]   → Reads: 21960820
+[0:05:30]   (2/7) Procesando: SRR9126924_age18_star_pe_filtered.bam
+[0:05:40]   → Reads: 27449594
+[0:05:40]   (3/7) Procesando: SRR9126950_age3_star_pe_filtered.bam
+[0:05:48]   → Reads: 18633672
+[0:05:48]   (4/7) Procesando: SRR9127139_age3_star_pe_filtered.bam
+[0:05:56]   → Reads: 21184396
+[0:05:56]   (5/7) Procesando: SRR9127244_age3_star_pe_filtered.bam
+[0:06:00]   → Reads: 8595852
+[0:06:00]   (6/7) Procesando: SRR9127382_age18_star_pe_filtered.bam
+[0:06:07]   → Reads: 20272070
+[0:06:07]   (7/7) Procesando: SRR9127568_age18_star_pe_filtered.bam
+[0:06:13]   → Reads: 15083119
+[0:06:13] Conteo terminado
+[0:06:13] Alineador star_pe terminado
+
+[0:06:13] Procesando alineador 4/4: star_se
+[0:06:13] Filas asignadas: 21:28
+[0:06:13] Contando reads en 7 archivos...
+[0:06:13]   (1/7) Procesando: SRR9126754_star_se_Aligned.sortedByCoord.out.bam
+[0:06:19]   → Reads: 32491449
+[0:06:19]   (2/7) Procesando: SRR9126924_star_se_Aligned.sortedByCoord.out.bam
+[0:06:26]   → Reads: 45047517
+[0:06:26]   (3/7) Procesando: SRR9126950_star_se_Aligned.sortedByCoord.out.bam
+[0:06:32]   → Reads: 31991920
+[0:06:32]   (4/7) Procesando: SRR9127139_star_se_Aligned.sortedByCoord.out.bam
+[0:06:37]   → Reads: 31049660
+[0:06:37]   (5/7) Procesando: SRR9127244_star_se_Aligned.sortedByCoord.out.bam
+[0:06:40]   → Reads: 12436971
+[0:06:40]   (6/7) Procesando: SRR9127382_star_se_Aligned.sortedByCoord.out.bam
+[0:06:45]   → Reads: 31267313
+[0:06:45]   (7/7) Procesando: SRR9127568_star_se_Aligned.sortedByCoord.out.bam
+[0:06:49]   → Reads: 27758084
+[0:06:49] Conteo terminado
+[0:06:49] Contando reads en 7 archivos...
+[0:06:49]   (1/7) Procesando: SRR9126754_age18_star_se_filtered.bam
+[0:06:53]   → Reads: 22690388
+[0:06:53]   (2/7) Procesando: SRR9126924_age18_star_se_filtered.bam
+[0:06:59]   → Reads: 30162461
+[0:06:59]   (3/7) Procesando: SRR9126950_age3_star_se_filtered.bam
+[0:07:03]   → Reads: 20800665
+[0:07:03]   (4/7) Procesando: SRR9127139_age3_star_se_filtered.bam
+[0:07:06]   → Reads: 21791961
+[0:07:06]   (5/7) Procesando: SRR9127244_age3_star_se_filtered.bam
+[0:07:08]   → Reads: 8828185
+[0:07:08]   (6/7) Procesando: SRR9127382_age18_star_se_filtered.bam
+[0:07:12]   → Reads: 21447239
+[0:07:12]   (7/7) Procesando: SRR9127568_age18_star_se_filtered.bam
+[0:07:15]   → Reads: 17315877
+[0:07:15] Conteo terminado
+[0:07:15] Alineador star_se terminado
+
+[0:07:15] Guardando resultados en CSV...
+[0:07:15] Proceso finalizado
