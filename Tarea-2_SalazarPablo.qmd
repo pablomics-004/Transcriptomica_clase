@@ -33,7 +33,7 @@ Si bien todos los scripts utilizados se muestran en las secciones subsecuentes, 
 
 ## 1. Filtrado y ordenamiento de los archivos `BAM` mediante `samtools`
 
-[...]
+En esta sección se realiza el procesamiento de los archivos de alineamiento obtenidos previamente, estandarizando su formato y preparándolos para análisis posteriores. Específicamente, se recorre cada conjunto de resultados provenientes de distintos alineadores (HISAT2 y STAR, en configuraciones PE y SE), convirtiendo los archivos SAM a formato BAM cuando es necesario, y posteriormente aplicando un filtrado por calidad y eliminación de lecturas no alineadas. Los archivos resultantes se ordenan, se indexan y se almacenan en directorios organizados, generando así archivos BAM filtrados.
 
 ```{shell Filtrado_ordenamiento de BAM y generación de index}
 #| eval: false
@@ -150,7 +150,7 @@ echo "==========================================================================
 
 ## 2. Pileups
 
-[...]
+Tomando los BAM procesados como entrada es que se generan archivos de cobertura (pileups) para representar la señal de alineamiento a lo largo del genoma. Para ello, se procesan los resultados de distintos alineadores (HISAT2 y STAR, en ambos tipos de lectura PE y SE) utilizando la herramienta `bamCoverage` de `deepTools`, aplicando normalización por BPM, eliminación de duplicados y omisión de regiones problemáticas mediante una blacklist cuando está disponible. Además, se ajusta el tratamiento de las lecturas según su tipo (PE o SE) y se generan archivos en formato `BigWig`, optimizados para visualización y análisis posteriores.
 
 ```{shell Generación de pileups}
 #| eval: false
@@ -242,7 +242,7 @@ echo "==========================================================================
 
 ## 3. Feature counts
 
-[...]
+Se lleva a cabo la primer estrategia de cuantificación de lecturas asignadas a genes mediante `featureCounts`, a partir de los archivos `BAM` previamente filtrados y ordenados. Primero, se descarga y descomprime la anotación genómica de `GENCODE` para ratón en formato `GTF`, necesaria para asociar las lecturas con las características génicas correspondientes. Después, los archivos `BAM` y sus índices se renombran de forma estandarizada incorporando información de la muestra, como el identificador SRR, la edad y el tipo de alineamiento, lo que facilita su organización y trazabilidad. Finalmente, los archivos se ordenan y se procesan con `featureCounts`, ajustando los parámetros según se trate de lecturas PE o SE, para generar tablas de conteo por gen que serán utilizadas en análisis posteriores de expresión.
 
 ```{shell Feature counts}
 #!/usr/bin/env bash
@@ -274,7 +274,7 @@ ANNOTATION="${ANNOTATION_DIR}/gencode.vM38.annotation.gtf"
 
 # Evita volver a descargar si ya estaba
 if [[ ! -f "$ANNOTATION" ]]; then
-    wget -P "$ANNOTATION_DIR" "$URL" && gunzip -f "$ANNOTATION_GZ"
+    wget -P "$ANNOTATION_DIR" "$URL" && gunzip -kf "$ANNOTATION_GZ"
 fi
 
 echo "-------------------------------------------------------------------------------------------------"
@@ -402,7 +402,7 @@ echo "==========================================================================
 
 ## 4. Pseudoalineamientos
 
-[...]
+En contraste con la sección previa, donde la cuantificación se realiza a partir de alineamientos completos mediante `featureCounts`, en esta sección se implementa un enfoque alternativo basado en pseudoalineamientos utilizando `Salmon`. Aquí, las lecturas previamente procesadas (tras control de calidad) se asignan directamente a transcritos de referencia sin necesidad de generar archivos `BAM`, lo que permite una estimación más eficiente de la abundancia transcriptómica. Para ello, se identifican las muestras a partir de los archivos `FASTQ`, se manejan de acuerdo con su tipo de lectura y se cuantifican contra un índice transcriptómico preconstruido. El resultado consiste en estimaciones de abundancia a nivel de transcrito por muestra, que pueden compararse posteriormente con los obtenidos mediante métodos basados en alineamiento.
 
 ```{shell Pseudoalineamientos con Salmon}
 #| eval: false
@@ -501,6 +501,8 @@ echo "==========================================================================
 
 ## 3. `tximport`
 
+Dando continuidad a la cuantificación obtenida mediante pseudoalineamientos con `Salmon`, en esta sección se integran y transforman dichas estimaciones a nivel génico utilizando el puerto en Python de `tximport`. Para ello, primero se construye un mapa de correspondencia entre transcritos y genes a partir de la anotación `GTF` (`tx2gene`), eliminando las versiones de los identificadores para asegurar consistencia. Posteriormente, se filtran y organizan las muestras de interés con base en su `SRR[0-9]+` y edad, generando nombres estandarizados que facilitan su trazabilidad. Finalmente, se importan los archivos `quant.sf` generados por `Salmon` y se agregan a nivel de gen mediante `tximport`, aplicando una corrección basada en la longitud y TPM, lo que produce matrices de conteo listas para análisis downstream de expresión diferencial.
+
 ```{python tximport}
 #| eval: false
 #| echo: true
@@ -527,7 +529,7 @@ def get_dirs_list(dir: str = "results") -> list[str]:
     return dirs
 
 # Mapa transcrito a gen
-tx2gene = create_transcript_gene_map_from_annotation("./data/reference/gencode.vM38.annotation.gtf")
+tx2gene = create_transcript_gene_map_from_annotation("./data/annotation/gencode.vM38.annotation.gtf")
 tx2gene.to_csv("./results/tx2gene.csv", sep=",", index=False)
 
 # Eliminando la versión en los gene y transcript ID
