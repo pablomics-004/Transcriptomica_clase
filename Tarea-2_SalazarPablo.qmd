@@ -21,13 +21,13 @@ format:
         \renewcommand{\figurename}{Figura}
 ---
 
-# Introducción 
+# Planteamiento
 
 El análisis de datos de RNA-seq requiere, como paso fundamental, la cuantificación de la abundancia de los transcritos, ya que a partir de esta medida es posible inferir niveles de expresión génica y realizar comparaciones entre condiciones biológicas. Para ello, existen dos enfoques principales que difieren en su manera de procesar las lecturas de secuenciación: los métodos basados en alineamientos, que buscan ubicar cada lectura en una posición específica del genoma o transcriptoma, y los métodos de pseudoalineamiento, que asignan las lecturas a posibles transcritos de manera más eficiente sin realizar un alineamiento completo.
 
-Este escrito busca mostrar brevemente el procedimiento usual tanto para la cuantificación por alineamientos (con `featureCounts`) como por pseudoalineamientos (`Salmon`), en vísperas de cuantificar la abundancia de los transcritos desde datos de expresión.
+Este escrito busca mostrar brevemente el procedimiento usual tanto para la cuantificación tanto por alineamientos (con `featureCounts`) como por pseudoalineamientos (`Salmon`), en vísperas de cuantificar la abundancia de los transcritos desde datos de expresión.
 
-# Metodología
+# Metodología & justificación
 
 Si bien todos los scripts utilizados se muestran en las secciones subsecuentes, la totalidad del proyecto se ubica en el servidor Chaac dentro del directorio `/export/space3/users/pablosm/2026-2/Transcriptomica_clase` y en el siguiente [repositorio de GitHub](https://github.com/pablomics-004/Transcriptomica_clase).
 
@@ -593,11 +593,58 @@ for salmon_type in (salmon_pe, salmon_pe):
     i += 1
 ```
 
-# Resultados
+# Discusión
 
 [...]
 
-# Discusión
+```{python Figura 1. Relación de retención entre la retención de lecturas y los alineadores}
+#| echo: false
+#| eval: true
+#| message: true
+#| warning: false
+#| fig-cap: Relación de retención entre la retención de lecturas y los alineadores.
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
+
+# Cargando datos
+bam_reads = pd.read_csv("results/bam_reads.csv", sep=",")
+
+# Descomposición de labels
+bam_reads[
+    ["Muestra", "Alineador", "Tipo de lectura"]
+] = bam_reads["aligner"].str.upper().str.split("_", expand=True)
+
+bam_reads["Retención (%)"] = bam_reads["processed"] / bam_reads["raw"]
+
+bam_reads.columns = ['aligner', 'Crudas', 'Procesadas', 'Muestra', 'Alineador', 'Tipo de lectura', 'Retención (%)']
+
+df_long = bam_reads.melt(
+    id_vars=["Muestra", "Alineador", "Tipo de lectura"],
+    value_vars=["Crudas", "Procesadas"],
+    var_name="Estado",
+    value_name="Lecturas"
+)
+
+plt.close("all")
+
+sns.lmplot(
+    data=bam_reads,
+    x="Crudas",
+    y="Procesadas",
+    hue="Tipo de lectura",
+    col="Alineador",
+    palette=sns.color_palette("viridis", 2)
+)
+
+plt.show()
+```
+
+
+
+# Conclusiones
 
 [...]
 

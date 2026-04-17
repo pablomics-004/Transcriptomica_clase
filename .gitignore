@@ -7,7 +7,7 @@ data/sra/
 data/reference/
 data/multiqc/multiqc_data/
 results/*/other_logs/
-results/*/PILEUPS
+# results/*/PILEUPS
 results/SALMON/*/*/aux_info/
 results/SALMON/*/*/libParams/
 
