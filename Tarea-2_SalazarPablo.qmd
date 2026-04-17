@@ -23,7 +23,9 @@ format:
 
 # Introducción 
 
-[...]
+El análisis de datos de RNA-seq requiere, como paso fundamental, la cuantificación de la abundancia de los transcritos, ya que a partir de esta medida es posible inferir niveles de expresión génica y realizar comparaciones entre condiciones biológicas. Para ello, existen dos enfoques principales que difieren en su manera de procesar las lecturas de secuenciación: los métodos basados en alineamientos, que buscan ubicar cada lectura en una posición específica del genoma o transcriptoma, y los métodos de pseudoalineamiento, que asignan las lecturas a posibles transcritos de manera más eficiente sin realizar un alineamiento completo.
+
+Este escrito busca mostrar brevemente el procedimiento usual tanto para la cuantificación por alineamientos (con `featureCounts`) como por pseudoalineamientos (`Salmon`), en vísperas de cuantificar la abundancia de los transcritos desde datos de expresión.
 
 # Metodología
 
@@ -500,10 +502,29 @@ echo "==========================================================================
 ## 3. `tximport`
 
 ```{python tximport}
+#| eval: false
+#| echo: true
+#| message: false
+
 from pytximport.utils import create_transcript_gene_map_from_annotation
+from pytximport import tximport
 import pandas as pd
-import pytximport
 import os
+import re
+
+def get_files_list(dir: str = "results") -> list[str]:
+    if not os.path.isdir(dir):
+        msg = f"[FILES] The given path don't correspond to a directory: {dir}"
+        raise ValueError(msg)
+    files = [file for f in sorted(os.listdir(dir)) if os.path.isfile(file := (os.path.join(dir, f)))]
+    return files
+
+def get_dirs_list(dir: str = "results") -> list[str]:
+    if not os.path.isdir(dir):
+        msg = f"[FILES] The given path don't correspond to a directory: {dir}"
+        raise ValueError(msg)
+    dirs = [path_dir for f in sorted(os.listdir(dir)) if os.path.isdir(path_dir := os.path.join(dir, f))]
+    return dirs
 
 # Mapa transcrito a gen
 tx2gene = create_transcript_gene_map_from_annotation("./data/reference/gencode.vM38.annotation.gtf")
@@ -513,9 +534,69 @@ tx2gene.to_csv("./results/tx2gene.csv", sep=",", index=False)
 tx2gene["transcript_id"] = tx2gene["transcript_id"].str.replace(r"\.[0-9]$", "", regex=True)
 tx2gene["gene_id"] = tx2gene["gene_id"].str.replace(r"\.[0-9]$", "", regex=True)
 
+# Metadata
+metadata = pd.read_csv("data/GSE132040_MACA_Bulk_metadata.csv")
+patt_tissue = re.compile(r"^kidney(.?)+", re.IGNORECASE)
+metadata = metadata[
+    ((metadata["characteristics: age"] == "3") | (metadata["characteristics: age"] == "18")) &
+    ((metadata["characteristics: sex"] == "m") & (metadata["source name"].astype(str).str.match(patt_tissue)))
+]
+SRR_files = list(metadata["raw file"])
+SRR_age = list((metadata["characteristics: age"]))
 
+files_age = {
+    srr : SRR_age[idx]
+    for idx, srr in enumerate(SRR_files)
+}
+
+# Obtención de las asignaciones de pseudo-conteos
+salmon_se, salmon_pe = get_dirs_list("results/SALMON/SE"), get_dirs_list("results/SALMON/PE")
+read_dir_type = "results/SALMON/SE", "results/SALMON/PE"
+read_type = "pe", "se"
+i = 0
+
+for salmon_type in (salmon_pe, salmon_pe):
+
+    files = []
+    new_names = []
+
+    for dir in salmon_type:
+
+        file = f"{dir}/quant.sf"
+        assert os.path.isfile(file), f"No existe el archivo {file}"
+
+        sample = os.path.basename(dir)
+        new_name = f"{sample}_{files_age[sample]}_{read_type[i]}"
+
+        files.append(file)
+        new_names.append(new_name)
+    
+    # Metadata
+    pd.DataFrame({
+        "File" : files,
+        "Sample" : new_names
+    }).to_csv(os.path.join(read_dir_type[i], f"metadata_{read_type[i]}.csv"), index=False, sep=",")
+
+    # pytximport
+    results = tximport(
+        files,
+        data_type="salmon",
+        transcript_gene_map=tx2gene,
+        counts_from_abundance="length_scaled_tpm",
+        output_format="csv",
+        output_path=f"{read_dir_type[i]}/salmon_counts_{read_type[i]}.csv",
+        output_path_overwrite=True
+    )
+
+    i += 1
 ```
 
 # Resultados
 
 [...]
+
+# Discusión
+
+[...]
+
+# Referencias
