@@ -151,7 +151,7 @@ echo "==========================================================================
 
 ## Pileups
 
-Tomando los BAM procesados como entrada es que se generan archivos de cobertura (pileups) para representar la señal de alineamiento a lo largo del genoma. Para ello, se procesan los resultados de distintos alineadores (HISAT2 y STAR, en ambos tipos de lectura PE y SE) utilizando la herramienta `bamCoverage` de `deepTools` (@ramirez-2014), aplicando normalización por BPM, eliminación de duplicados y omisión de regiones problemáticas mediante una blacklist cuando está disponible (aquí se omitió). Además, se ajusta el tratamiento de las lecturas según su tipo (PE o SE) y se generan archivos en formato `BigWig`, optimizados para visualización y análisis posteriores.
+Tomando los BAM procesados como entrada es que se generan archivos de cobertura (pileups) para representar la señal de alineamiento a lo largo del genoma. Para ello, se procesan los resultados de distintos alineadores (HISAT2 y STAR, en ambos tipos de lectura PE y SE) utilizando la herramienta `bamCoverage` de `deepTools` (@ramirez-2014), aplicando normalización por BPM, eliminación de duplicados y omisión de regiones problemáticas mediante una blacklist cuando está disponible (aquí se omitió). Además, se ajusta el tratamiento de las lecturas según su tipo (PE o SE) y se generan archivos en formato `BigWig`, optimizados para visualización (ver **Figura 1**) y análisis posteriores (@robinson-2011).
 
 ```{shell Generación de pileups}
 #| eval: false
@@ -240,6 +240,8 @@ current_date_time="$(date "+%Y-%m-%d %H:%M:%S")"
 echo "Script finalizado con éxito - $current_date_time"
 echo "================================================================================================="
 ```
+
+![Visualización de los archivos `BigWig` en _Integrative Genomics Viewer_ (_IGV_).](docs/images/IGV_visualizacion.png)
 
 ## Feature Counts
 
@@ -599,7 +601,7 @@ for salmon_type in (salmon_pe, salmon_pe):
 
 # Discusión
 
-```{python Figura 1. Relación de retención entre la retención de lecturas y los alineadores}
+```{python Figura 2. Relación de retención entre la retención de lecturas y los alineadores}
 #| echo: false
 #| eval: true
 #| message: true
@@ -646,7 +648,7 @@ sns.lmplot(
 plt.show()
 ```
 
-La **Figura 1** exhibe la relación entre el número de lecturas crudas y las lecturas retenidas tras el procesamiento para los alineadores HISAT2 y STAR, en ambos tipos de lectura (SE y PE). Es posible ver que la retención es independiente del alineador y sigue una tendencia casi lineal en ambos tipos de lectura, lo cual sugiere que el pipeline de procesamiento implementado (filtrado por calidad, eliminación de lecturas no alineadas y ordenamiento) es consistente y no introduce sesgos dependientes del tamaño de la muestra.
+La **Figura 2** exhibe la relación entre el número de lecturas crudas y las lecturas retenidas tras el procesamiento para los alineadores HISAT2 y STAR, en ambos tipos de lectura (SE y PE). Es posible ver que la retención es independiente del alineador y sigue una tendencia casi lineal en ambos tipos de lectura, lo cual sugiere que el pipeline de procesamiento implementado (filtrado por calidad, eliminación de lecturas no alineadas y ordenamiento) es consistente y no introduce sesgos dependientes del tamaño de la muestra.
 
 Aunado a ello, el tipo de lectura muestra que los PE son consistentes en la retención de lecturas tras el filtrado en comparación con las lecturas SE para valores similares de lecturas crudas. Este comportamiento apunta a una mayor robustez de las lecturas PE durante las etapas de alineamiento y filtrado, posiblemente debido a la información adicional que aporta la secuenciación en pares, lo que facilita una asignación más confiable y reduce la probabilidad de descarte durante los filtros de calidad.
 
@@ -795,7 +797,7 @@ display(salmon_pe_stats)
 
 En cuanto a los alineadores, no se aprecian diferencias sustanciales entre HISAT2 y STAR en términos de la proporción de lecturas retenidas. Ambos métodos muestran pendientes similares y patrones consistentes entre tipos de lectura, lo que indica que, bajo las condiciones utilizadas, el desempeño global de los alineadores es comparable en términos de retención de lecturas. Esto es relevante, ya que sugiere que la elección entre estos alineadores podría basarse en otros criterios (como tiempo de ejecución o requerimientos computacionales) más que en diferencias en la eficiencia de retención.
 
-```{python Figura 2. Distribución del tiempo de pseudoalineamiento para ambos tipos de lectura}
+```{python Figura 3. Distribución del tiempo de pseudoalineamiento para ambos tipos de lectura}
 #| echo: false
 #| eval: true
 #| warning: false
@@ -823,11 +825,11 @@ sns.catplot(
 )
 ```
 
-En cuanto a las estrategias de cuantificación, motivo de este trabajo, `Salmon` mostró su ventaja comparativa con respecto a los alineadores HISAT2 y STAR en cuanto a velocidad por muestra, con un promedio de 3.3 mins para PE y 2.26 min para SE (ver **Tabla 1** y **2**). En la **Figura 2** se ilustran las distribuciones de tiempo (en minutos) para ambos tipos de lectura, donde se vuelve claro que, en general, las lecturas PE son más lentas con respecto a las SE, con medianas de 3.4 y 2.3 mins, respectivamente.
+En cuanto a las estrategias de cuantificación, motivo de este trabajo, `Salmon` mostró su ventaja comparativa con respecto a los alineadores HISAT2 y STAR en cuanto a velocidad por muestra, con un promedio de 3.3 mins para PE y 2.26 min para SE (ver **Tabla 1** y **2**). En la **Figura 3** se ilustran las distribuciones de tiempo (en minutos) para ambos tipos de lectura, donde se vuelve claro que, en general, las lecturas PE son más lentas con respecto a las SE, con medianas de 3.4 y 2.3 mins, respectivamente.
 
-Si bien la tasa de mapeo y de alineamiento no son directamente comparables, puesto que uno mapea a coordenadas genómicas explícitas y el otro alinea con transcritos, no se realizarán comparaciones directas entre dichas tasas. Ergo, en la **Figura 3** se muestran las tasas de mapeo para ambos tipos de lectura entre muestras obtenidas por el pseudoalineamiento.
+Si bien la tasa de mapeo y de alineamiento no son directamente comparables, puesto que uno mapea a coordenadas genómicas explícitas y el otro alinea con transcritos, no se realizarán comparaciones directas entre dichas tasas. Ergo, en la **Figura 4** se muestran las tasas de mapeo para ambos tipos de lectura entre muestras obtenidas por el pseudoalineamiento.
 
-```{python Figura 3. Tasas de mapeo obtenidas por el pseudoalineamiento con Salmon}
+```{python Figura 4. Tasas de mapeo obtenidas por el pseudoalineamiento con Salmon}
 #| echo: false
 #| eval: true
 #| warning: false
