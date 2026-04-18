@@ -19,6 +19,7 @@ format:
         \usepackage{fvextra}
         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
         \renewcommand{\figurename}{Figura}
+bibliography: ./docs/Referencias_tarea-2.bib
 ---
 
 # Planteamiento
@@ -595,8 +596,6 @@ for salmon_type in (salmon_pe, salmon_pe):
 
 # Discusión
 
-[...]
-
 ```{python Figura 1. Relación de retención entre la retención de lecturas y los alineadores}
 #| echo: false
 #| eval: true
@@ -608,6 +607,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
+
+plt.close("all")
 
 # Cargando datos
 bam_reads = pd.read_csv("results/bam_reads.csv", sep=",")
@@ -642,7 +643,221 @@ sns.lmplot(
 plt.show()
 ```
 
+La **Figura 1** exhibe la relación entre el número de lecturas crudas y las lecturas retenidas tras el procesamiento para los alineadores HISAT2 y STAR, en ambos tipos de lectura (SE y PE). Es posible ver que la retención es independiente del alineador y sigue una tendencia casi lineal en ambos tipos de lectura, lo cual sugiere que el pipeline de procesamiento implementado (filtrado por calidad, eliminación de lecturas no alineadas y ordenamiento) es consistente y no introduce sesgos dependientes del tamaño de la muestra.
 
+Aunado a ello, el tipo de lectura muestra que los PE son consistentes en la retención de lecturas tras el filtrado en comparación con las lecturas SE para valores similares de lecturas crudas. Este comportamiento apunta a una mayor robustez de las lecturas PE durante las etapas de alineamiento y filtrado, posiblemente debido a la información adicional que aporta la secuenciación en pares, lo que facilita una asignación más confiable y reduce la probabilidad de descarte durante los filtros de calidad.
+
+```{python Tabla 1. Estadísticas de pseudoalineamiento para lecturas SE}
+#| echo: false
+#| eval: true
+#| tbl-cap: Estadísticas de pseudoalineamiento para lecturas SE
+
+from pathlib import Path
+import pandas as pd
+import os
+import re
+
+# Funciones
+def standarize_time(time_str: str) -> float:
+    """
+    Convierte un tiempo en formato "h:m:s" a segundos.
+    """
+    h, m, s = map(float, time_str.strip().split(":"))
+    return h * 3600 + m * 60 + s
+
+def get_dirs_list(dir: str = "results") -> list[str]:
+    """
+    Devuelve la lista de los directorios dentro de otro directorio en particular.
+    """
+    if not os.path.isdir(dir):
+        msg = f"[FILES] The given path don't correspond to a directory: {dir}"
+        raise ValueError(msg)
+    dirs = [path_dir for f in sorted(os.listdir(dir)) if os.path.isdir(path_dir := os.path.join(dir, f))]
+    return dirs
+
+def get_files_list(dir: str = "results") -> list[str]:
+    """
+    Devuelve la lisat de archivos regulares en un directorio dado.
+    """
+    if not os.path.isdir(dir):
+        msg = f"[FILES] The given path don't correspond to a directory: {dir}"
+        raise ValueError(msg)
+    files = [file for f in sorted(os.listdir(dir)) if os.path.isfile(file := (os.path.join(dir, f)))]
+    return files
+
+def parse_salmon_log(log_file: str | Path) -> tuple[float, float]:
+    """
+    Recupera del log de Salmon el tiempo total en segundos (tf - t0) y el mapping rate como float.
+    """
+    time_pattern = re.compile(r"^\[\d{4}-\d{2}-\d{2}\s+(\d{2}:\d{2}:\d{2})\.\d+\]")
+    map_pattern = re.compile(r"Mapping rate\s*=\s*([0-9]+(?:\.[0-9]+)?)%")
+
+    mapping_rate = None
+    t0 = None
+    tf = None
+
+    log_file = Path(log_file)
+
+    with log_file.open("r", encoding="utf-8", errors="ignore") as file:
+        for line in file:
+            line = line.strip()
+
+            time_match = time_pattern.search(line)
+            if time_match is not None:
+                current_time = time_match.group(1)
+
+                if t0 is None:
+                    t0 = current_time
+
+                tf = current_time
+
+            map_match = map_pattern.search(line)
+            if map_match is not None:
+                mapping_rate = float(map_match.group(1))
+
+    if t0 is None or tf is None:
+        raise ValueError(f"No se encontraron timestamps válidos en el archivo: {log_file}")
+
+    if mapping_rate is None:
+        raise ValueError(f"No se encontró el mapping rate en el archivo: {log_file}")
+
+    duration = standarize_time(tf) - standarize_time(t0)
+
+    return duration, mapping_rate
+
+def salmon_logs_to_df(root_dir: str | Path, pattern: str = "*.log") -> pd.DataFrame:
+    """
+    Busca recursivamente logs de Salmon y devuelve un DataFrame con:
+    - sample
+    - log_file
+    - duration_s
+    - duration_min
+    - mapping_rate
+
+    Asume que cada log está dentro del directorio de una muestra, por ejemplo:
+    results/SALMON/PE/SRRXXXXXX/salmon.log
+    """
+    root_dir = Path(root_dir)
+
+    rows = []
+    errors = []
+
+    for log_file in root_dir.rglob(pattern):
+        try:
+            duration_s, mapping_rate = parse_salmon_log(log_file)
+
+            rows.append({
+                "Muestra": log_file.parent.parent.name,
+                "Log": str(log_file),
+                "Duración (seg)": duration_s,
+                "Duración (min)": duration_s / 60,
+                "Tasa de mapeo (%)": mapping_rate
+            })
+
+        except Exception as e:
+            errors.append({
+                "log_file": str(log_file),
+                "error": str(e)
+            })
+
+    df = pd.DataFrame(rows)
+
+    if not df.empty:
+        df = df.sort_values(["Muestra"]).reset_index(drop=True)
+
+    if errors:
+        print("Logs con error:")
+        for err in errors:
+            print(f"- {err['log_file']}: {err['error']}")
+
+    return df
+
+# Obtención de las tablas
+salmon_pe = "results/SALMON/PE"
+salmon_se = "results/SALMON/SE"
+
+salmon_pe_stats = salmon_logs_to_df(salmon_pe)
+salmon_se_stats = salmon_logs_to_df(salmon_se)
+
+display(salmon_se_stats)
+```
+
+```{python Tabla 2. Estadísticas de pseudoalineamiento para lecturas PE}
+#| echo: false
+#| eval: true
+#| tbl-cap: Estadísticas de pseudoalineamiento para lecturas PE
+
+display(salmon_pe_stats)
+```
+
+En cuanto a los alineadores, no se aprecian diferencias sustanciales entre HISAT2 y STAR en términos de la proporción de lecturas retenidas. Ambos métodos muestran pendientes similares y patrones consistentes entre tipos de lectura, lo que indica que, bajo las condiciones utilizadas, el desempeño global de los alineadores es comparable en términos de retención de lecturas. Esto es relevante, ya que sugiere que la elección entre estos alineadores podría basarse en otros criterios (como tiempo de ejecución o requerimientos computacionales) más que en diferencias en la eficiencia de retención.
+
+```{python Figura 2. Distribución del tiempo de pseudoalineamiento para ambos tipos de lectura}
+#| echo: false
+#| eval: true
+#| fig-cap: Distribución del tiempo de pseudoalineamiento para ambos tipos de lectura.
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.close("all")
+
+# Preparación de los datos
+salmon_pe_stats["Tipo de lectura"] = "PE"
+salmon_se_stats["Tipo de lectura"] = "SE"
+
+df = pd.concat([salmon_pe_stats, salmon_se_stats], ignore_index=True)
+long_df = df[["Muestra", "Tipo de lectura", "Duración (min)"]].copy()
+
+sns.catplot(
+    data=long_df,
+    hue="Tipo de lectura",
+    y="Duración (min)",
+    kind="box",
+    palette=sns.color_palette("viridis", 2),
+    legend=True
+)
+```
+
+En cuanto a las estrategias de cuantificación, motivo de este trabajo, `Salmon` mostró su ventaja comparativa con respecto a los alineadores HISAT2 y STAR en cuanto a velocidad por muestra, con un promedio de 3.3 mins para PE y 2.26 min para SE (ver **Tabla 1** y **2**). En la **Figura 2** se ilustran las distribuciones de tiempo (en minutos) para ambos tipos de lectura, donde se vuelve claro que, en general, las lecturas PE son más lentas con respecto a las SE, con medianas de 3.4 y 2.3 mins, respectivamente.
+
+Si bien la tasa de mapeo y de alineamientos no son directamente comparables, puesto que uno mapea a coordenadas genómicas explícitas y el otro alinea con transcritos, no se realizarán comparaciones directas entre dichas tasas. Ergo, en la **Figura 3** se muestran las tasas de mapeo para ambos tipos de lectura entre muestras obtenidas por el pseudoalineamiento.
+
+```{python Figura 3. Tasas de mapeo obtenidas por el pseudoalineamiento con Salmon}
+#| echo: false
+#| eval: true
+#| fig-cap: Tasas de mapeo obtenidas por el pseudoalineamiento con Salmon.
+
+plt.close("all")
+
+long_df = df[["Muestra", "Tipo de lectura", "Tasa de mapeo (%)"]].copy().sort_values(by="Tasa de mapeo (%)", ascending=True)
+
+fig, ax = plt.subplots(1, 1, figsize=(10,10), constrained_layout=True)
+
+sns.lineplot(
+    data=long_df,
+    x="Muestra",
+    y="Tasa de mapeo (%)",
+    style="Tipo de lectura",
+    palette="viridis",
+    hue="Tipo de lectura",
+    ax=ax
+)
+ax.tick_params(axis='x', rotation=45)
+ax.set_ylabel(None)
+ax.set_xlabel("Muestra", fontsize=14)
+
+ax.tick_params(axis='both', labelsize=12)
+ax.legend(title="Tipo de lectura", fontsize=12, title_fontsize=14)
+ax.grid(True, linestyle=":", alpha=0.7)
+
+fig.supylabel(
+    "Tasa de mapeo (%)", fontsize=14, y=0.6
+)
+
+plt.tight_layout()
+plt.show()
+```
 
 # Conclusiones
 
