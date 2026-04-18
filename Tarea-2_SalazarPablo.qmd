@@ -2,7 +2,7 @@
 title: "Tarea 2"
 subtitle: "Pseudoalineamientos"
 author: "Pablo Salazar-Méndez"
-date: "2026-04-15"
+date: "2026-04-17"
 crossref:
   fig-title: "Figura"
   tbl-title: "Tabla"
@@ -10,7 +10,7 @@ format:
   pdf:
     pdf-engine: xelatex
     mainfont: "Arial"
-    fontsize: 12pt
+    fontsize: 11pt
     toc: true
     toc-depth: 3
     number-sections: true
@@ -24,17 +24,17 @@ bibliography: ./docs/Referencias_tarea-2.bib
 
 # Planteamiento
 
-El análisis de datos de RNA-seq requiere, como paso fundamental, la cuantificación de la abundancia de los transcritos, ya que a partir de esta medida es posible inferir niveles de expresión génica y realizar comparaciones entre condiciones biológicas. Para ello, existen dos enfoques principales que difieren en su manera de procesar las lecturas de secuenciación: los métodos basados en alineamientos, que buscan ubicar cada lectura en una posición específica del genoma o transcriptoma, y los métodos de pseudoalineamiento, que asignan las lecturas a posibles transcritos de manera más eficiente sin realizar un alineamiento completo.
+El análisis de datos de RNA-seq requiere, como paso fundamental, la cuantificación de la abundancia de los transcritos, ya que a partir de esta medida es posible inferir niveles de expresión génica y realizar comparaciones entre condiciones biológicas. Para ello, existen dos enfoques principales que difieren en su manera de procesar las lecturas de secuenciación: los métodos basados en alineamientos, que buscan ubicar cada lectura en una posición específica del genoma o transcriptoma, y los métodos de pseudoalineamiento, que asignan las lecturas a posibles transcritos de manera más eficiente sin realizar un alineamiento completo (@valle2026_featurecounts).
 
-Este escrito busca mostrar brevemente el procedimiento usual tanto para la cuantificación tanto por alineamientos (con `featureCounts`) como por pseudoalineamientos (`Salmon`), en vísperas de cuantificar la abundancia de los transcritos desde datos de expresión.
+Este escrito busca mostrar brevemente el procedimiento usual tanto para la cuantificación tanto por alineamientos (@liao-2013) como por pseudoalineamientos (@patro-2017), en vísperas de cuantificar la abundancia de los transcritos desde datos de expresión.
 
 # Metodología & justificación
 
 Si bien todos los scripts utilizados se muestran en las secciones subsecuentes, la totalidad del proyecto se ubica en el servidor Chaac dentro del directorio `/export/space3/users/pablosm/2026-2/Transcriptomica_clase` y en el siguiente [repositorio de GitHub](https://github.com/pablomics-004/Transcriptomica_clase).
 
-## 1. Filtrado y ordenamiento de los archivos `BAM` mediante `samtools`
+## Filtrado y ordenamiento de los archivos `BAM` mediante `samtools`
 
-En esta sección se realiza el procesamiento de los archivos de alineamiento obtenidos previamente, estandarizando su formato y preparándolos para análisis posteriores. Específicamente, se recorre cada conjunto de resultados provenientes de distintos alineadores (HISAT2 y STAR, en configuraciones PE y SE), convirtiendo los archivos SAM a formato BAM cuando es necesario, y posteriormente aplicando un filtrado por calidad y eliminación de lecturas no alineadas. Los archivos resultantes se ordenan, se indexan y se almacenan en directorios organizados, generando así archivos BAM filtrados.
+En esta sección se realiza el procesamiento de los archivos de alineamiento obtenidos previamente, estandarizando su formato y preparándolos para análisis posteriores. Específicamente, se recorre cada conjunto de resultados provenientes de distintos alineadores (HISAT2 y STAR, en configuraciones PE y SE), convirtiendo los archivos `SAM` a formato `BAM` cuando es necesario, y posteriormente aplicando un filtrado por calidad y eliminación de lecturas no alineadas. Los archivos resultantes se ordenan, se indexan y se almacenan en directorios organizados, generando así archivos BAM filtrados (@li-2009).
 
 ```{shell Filtrado_ordenamiento de BAM y generación de index}
 #| eval: false
@@ -149,9 +149,9 @@ echo "Script finalizado con éxito - $current_date_time"
 echo "================================================================================================="
 ```
 
-## 2. Pileups
+## Pileups
 
-Tomando los BAM procesados como entrada es que se generan archivos de cobertura (pileups) para representar la señal de alineamiento a lo largo del genoma. Para ello, se procesan los resultados de distintos alineadores (HISAT2 y STAR, en ambos tipos de lectura PE y SE) utilizando la herramienta `bamCoverage` de `deepTools`, aplicando normalización por BPM, eliminación de duplicados y omisión de regiones problemáticas mediante una blacklist cuando está disponible. Además, se ajusta el tratamiento de las lecturas según su tipo (PE o SE) y se generan archivos en formato `BigWig`, optimizados para visualización y análisis posteriores.
+Tomando los BAM procesados como entrada es que se generan archivos de cobertura (pileups) para representar la señal de alineamiento a lo largo del genoma. Para ello, se procesan los resultados de distintos alineadores (HISAT2 y STAR, en ambos tipos de lectura PE y SE) utilizando la herramienta `bamCoverage` de `deepTools` (@ramirez-2014), aplicando normalización por BPM, eliminación de duplicados y omisión de regiones problemáticas mediante una blacklist cuando está disponible (aquí se omitió). Además, se ajusta el tratamiento de las lecturas según su tipo (PE o SE) y se generan archivos en formato `BigWig`, optimizados para visualización y análisis posteriores.
 
 ```{shell Generación de pileups}
 #| eval: false
@@ -241,9 +241,9 @@ echo "Script finalizado con éxito - $current_date_time"
 echo "================================================================================================="
 ```
 
-## 3. Feature counts
+## Feature Counts
 
-Se lleva a cabo la primer estrategia de cuantificación de lecturas asignadas a genes mediante `featureCounts`, a partir de los archivos `BAM` previamente filtrados y ordenados. Primero, se descarga y descomprime la anotación genómica de `GENCODE` para ratón en formato `GTF`, necesaria para asociar las lecturas con las características génicas correspondientes. Después, los archivos `BAM` y sus índices se renombran de forma estandarizada incorporando información de la muestra, como el identificador SRR, la edad y el tipo de alineamiento, lo que facilita su organización y trazabilidad. Finalmente, los archivos se ordenan y se procesan con `featureCounts`, ajustando los parámetros según se trate de lecturas PE o SE, para generar tablas de conteo por gen que serán utilizadas en análisis posteriores de expresión.
+Se lleva a cabo la primer estrategia de cuantificación de lecturas asignadas a genes mediante `featureCounts`, a partir de los archivos `BAM` previamente filtrados y ordenados. Primero, se descarga y descomprime la anotación genómica de `GENCODE` para ratón en formato `GTF` (@mudge-2024), necesaria para asociar las lecturas con las características génicas correspondientes. Después, los archivos `BAM` y sus índices se renombran de forma estandarizada incorporando información de la muestra, como el identificador `SRR`, la edad y el tipo de alineamiento, lo que facilita su organización y trazabilidad. Finalmente, los archivos se ordenan y se procesan con `featureCounts` (@liao-2013), ajustando los parámetros según se trate de lecturas PE o SE, para generar tablas de conteo por gen que serán utilizadas en análisis posteriores de expresión.
 
 ```{shell Feature counts}
 #!/usr/bin/env bash
@@ -401,9 +401,9 @@ echo "Script finalizado - $current_date_time"
 echo "================================================================================================="
 ```
 
-## 4. Pseudoalineamientos
+## Pseudoalineamientos
 
-En contraste con la sección previa, donde la cuantificación se realiza a partir de alineamientos completos mediante `featureCounts`, en esta sección se implementa un enfoque alternativo basado en pseudoalineamientos utilizando `Salmon`. Aquí, las lecturas previamente procesadas (tras control de calidad) se asignan directamente a transcritos de referencia sin necesidad de generar archivos `BAM`, lo que permite una estimación más eficiente de la abundancia transcriptómica. Para ello, se identifican las muestras a partir de los archivos `FASTQ`, se manejan de acuerdo con su tipo de lectura y se cuantifican contra un índice transcriptómico preconstruido. El resultado consiste en estimaciones de abundancia a nivel de transcrito por muestra, que pueden compararse posteriormente con los obtenidos mediante métodos basados en alineamiento.
+En contraste con la sección previa, donde la cuantificación se realiza a partir de alineamientos completos mediante `featureCounts`, en esta sección se implementa un enfoque alternativo basado en pseudoalineamientos utilizando `Salmon`. Aquí, las lecturas previamente procesadas (tras control de calidad) se asignan directamente a transcritos de referencia sin necesidad de generar archivos `BAM`, lo que permite una estimación más eficiente de la abundancia transcriptómica. Para ello, se identifican las muestras a partir de los archivos `FASTQ`, se manejan de acuerdo con su tipo de lectura y se cuantifican contra un índice transcriptómico preconstruido (@patro-2017). El resultado consiste en estimaciones de abundancia a nivel de transcrito por muestra, que pueden compararse posteriormente con los obtenidos mediante métodos basados en alineamiento.
 
 ```{shell Pseudoalineamientos con Salmon}
 #| eval: false
@@ -454,6 +454,7 @@ for sample in "${nombres[@]}"; do
 
     OUT="${SALMON_DIR}/$sample"
 
+    # Ejecución dependiente del tipo de lectura
     if [[ "$READ_TYPE" == "paired" ]]; then
 
         R1="${FASTQ_CLEANED}/${sample}_clean_1.fastq"
@@ -500,9 +501,9 @@ echo "Script finalizado con éxito - $current_date_time"
 echo "================================================================================================="
 ```
 
-## 3. `tximport`
+## `tximport`
 
-Dando continuidad a la cuantificación obtenida mediante pseudoalineamientos con `Salmon`, en esta sección se integran y transforman dichas estimaciones a nivel génico utilizando el puerto en Python de `tximport`. Para ello, primero se construye un mapa de correspondencia entre transcritos y genes a partir de la anotación `GTF` (`tx2gene`), eliminando las versiones de los identificadores para asegurar consistencia. Posteriormente, se filtran y organizan las muestras de interés con base en su `SRR[0-9]+` y edad, generando nombres estandarizados que facilitan su trazabilidad. Finalmente, se importan los archivos `quant.sf` generados por `Salmon` y se agregan a nivel de gen mediante `tximport`, aplicando una corrección basada en la longitud y TPM, lo que produce matrices de conteo listas para análisis downstream de expresión diferencial.
+Dando continuidad a la cuantificación obtenida mediante pseudoalineamientos con `Salmon`, en esta sección se integran y transforman dichas estimaciones a nivel génico utilizando el puerto en Python de `tximport` (@kuehl-2024). Para ello, primero se construye un mapa de correspondencia entre transcritos y genes a partir de la anotación `GTF` (`tx2gene`), eliminando las versiones de los identificadores para asegurar consistencia. Posteriormente, se filtran y organizan las muestras de interés con base en su `SRR[0-9]+` y edad, generando nombres estandarizados que facilitan su trazabilidad. Finalmente, se importan los archivos `quant.sf` generados por `Salmon` y se agregan a nivel de gen mediante `pytximport`, aplicando una corrección basada en la longitud y TPM, lo que produce matrices de conteo listas para análisis downstream de expresión diferencial (@valle2026_featurecounts).
 
 ```{python tximport}
 #| eval: false
@@ -530,7 +531,8 @@ def get_dirs_list(dir: str = "results") -> list[str]:
     return dirs
 
 # Mapa transcrito a gen
-tx2gene = create_transcript_gene_map_from_annotation("./data/annotation/gencode.vM38.annotation.gtf")
+annotation = "./data/annotation/gencode.vM38.annotation.gtf"
+tx2gene = create_transcript_gene_map_from_annotation(annotation)
 tx2gene.to_csv("./results/tx2gene.csv", sep=",", index=False)
 
 # Eliminando la versión en los gene y transcript ID
@@ -547,6 +549,7 @@ metadata = metadata[
 SRR_files = list(metadata["raw file"])
 SRR_age = list((metadata["characteristics: age"]))
 
+# Asociando SRR con la edad del ratón
 files_age = {
     srr : SRR_age[idx]
     for idx, srr in enumerate(SRR_files)
@@ -748,7 +751,7 @@ def salmon_logs_to_df(root_dir: str | Path, pattern: str = "*.log") -> pd.DataFr
 
             rows.append({
                 "Muestra": log_file.parent.parent.name,
-                "Log": str(log_file),
+                # "Log": str(log_file),
                 "Duración (seg)": duration_s,
                 "Duración (min)": duration_s / 60,
                 "Tasa de mapeo (%)": mapping_rate
@@ -795,6 +798,7 @@ En cuanto a los alineadores, no se aprecian diferencias sustanciales entre HISAT
 ```{python Figura 2. Distribución del tiempo de pseudoalineamiento para ambos tipos de lectura}
 #| echo: false
 #| eval: true
+#| warning: false
 #| fig-cap: Distribución del tiempo de pseudoalineamiento para ambos tipos de lectura.
 
 import matplotlib.pyplot as plt
@@ -821,11 +825,12 @@ sns.catplot(
 
 En cuanto a las estrategias de cuantificación, motivo de este trabajo, `Salmon` mostró su ventaja comparativa con respecto a los alineadores HISAT2 y STAR en cuanto a velocidad por muestra, con un promedio de 3.3 mins para PE y 2.26 min para SE (ver **Tabla 1** y **2**). En la **Figura 2** se ilustran las distribuciones de tiempo (en minutos) para ambos tipos de lectura, donde se vuelve claro que, en general, las lecturas PE son más lentas con respecto a las SE, con medianas de 3.4 y 2.3 mins, respectivamente.
 
-Si bien la tasa de mapeo y de alineamientos no son directamente comparables, puesto que uno mapea a coordenadas genómicas explícitas y el otro alinea con transcritos, no se realizarán comparaciones directas entre dichas tasas. Ergo, en la **Figura 3** se muestran las tasas de mapeo para ambos tipos de lectura entre muestras obtenidas por el pseudoalineamiento.
+Si bien la tasa de mapeo y de alineamiento no son directamente comparables, puesto que uno mapea a coordenadas genómicas explícitas y el otro alinea con transcritos, no se realizarán comparaciones directas entre dichas tasas. Ergo, en la **Figura 3** se muestran las tasas de mapeo para ambos tipos de lectura entre muestras obtenidas por el pseudoalineamiento.
 
 ```{python Figura 3. Tasas de mapeo obtenidas por el pseudoalineamiento con Salmon}
 #| echo: false
 #| eval: true
+#| warning: false
 #| fig-cap: Tasas de mapeo obtenidas por el pseudoalineamiento con Salmon.
 
 plt.close("all")
@@ -861,6 +866,10 @@ plt.show()
 
 # Conclusiones
 
-[...]
+La estrategia para cuantificar la abundancia de transcritos depende de criterios como la disponibilidad del poder de cómputo, la velocidad a la que se requieren los datos procesados y el tipo de dato de origen. En este trabajo se encontró que el tipo de lectura incide más en la retención de datos tras su filtrado y ordenamiento que el alineador de procedencia, así como una tendencia aproximadamente lineal con respecto a las lecturas crudas de procedencia.
+
+A partir de estos resultados, se observa que las lecturas PE presentan consistentemente mayores tasas de mapeo en comparación con las SE, lo cual es congruente con lo observado en las etapas previas del pipeline y refuerza la idea de que la información adicional de las lecturas pareadas contribuye a una asignación más precisa. Asimismo, la variabilidad entre muestras es relativamente baja, lo que sugiere estabilidad en el desempeño del método de pseudoalineamiento.
+
+En conjunto, los resultados indican que `Salmon` constituye una alternativa eficiente y robusta para la cuantificación de abundancia transcriptómica, especialmente en contextos donde el tiempo de cómputo es un factor crítico. Sin embargo, la elección final del método debe considerar el objetivo del análisis, ya que los enfoques basados en alineamiento tradicional siguen siendo relevantes cuando se requiere información a nivel genómico más detallada, como la detección de variantes o el análisis estructural de los transcritos.
 
 # Referencias
