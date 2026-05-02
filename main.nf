@@ -23,7 +23,6 @@ process FASTQC_RAW {
 
   script:
   """
-  ln -s ${read} ${sample}${name_suffix}${ext}
   fastqc ${sample}${name_suffix}${ext}
   """
 }
@@ -40,7 +39,6 @@ process FASTQC_CLEAN {
 
   script:
   """
-  ln -s ${read} ${sample}${name_suffix}${ext}
   fastqc ${sample}${name_suffix}${ext}
   """
 }
