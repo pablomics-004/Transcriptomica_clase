@@ -189,4 +189,5 @@ workflow {
   // Visualización global 
   multiqc_input = FASTQC_RAW.out.mix(FASTQC_CLEAN.out).collect()
   MULTIQC(multiqc_input)
+  }
 }
