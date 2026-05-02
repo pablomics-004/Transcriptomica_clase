@@ -86,7 +86,8 @@ process FASTP_SE {
     -o ${sample}_clean.fastq \
     -w ${task.cpus} \
     --trim_poly_g \
-    --trim_front1 ${params.trim_front}
+    --trim_front1 ${params.trim_front} \
+    --detect_adapter_for_se
   """
 }
 
@@ -124,12 +125,14 @@ workflow {
   // ----------------- PE -----------------
   if (is_pe) {
 
+    // Captura de archivos con respecto al patrón
     reads = Channel.fromFilePairs(
       "${params.fastq_dir}/*_{1,2}.fastq*",
       checkIfExists: true
     )
 
     // Visualización inicial de la calidad
+    // Entrada para el FASTQC_RAW
     reads_for_fastqc = reads.flatMap { sample, pair ->
       [
         tuple(pair[0], "fastqc_1${tag}"),
@@ -151,7 +154,8 @@ workflow {
 
   // ----------------- SE -----------------
   } else {
-
+    
+    // Captura de archivos y retiro de terminación para renombrado
     reads = Channel.fromPath(
       "${params.fastq_dir}/*.fastq*",
       checkIfExists: true
