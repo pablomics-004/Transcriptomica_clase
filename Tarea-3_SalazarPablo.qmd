@@ -1,0 +1,282 @@
+---
+title: "Tarea 3"
+subtitle: "Pipelines con Nextflow"
+author: "Pablo Salazar-Méndez"
+date: "2026-04-30"
+crossref:
+  fig-title: "Figura"
+  tbl-title: "Tabla"
+format:
+  pdf:
+    pdf-engine: xelatex
+    mainfont: "Verdana"
+    fontsize: 11pt
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \renewcommand{\figurename}{Figura}
+bibliography: ./docs/Referencias_tarea-3.bib
+---
+
+# Planteamiento
+
+El análisis bioinformático suele requerir la integración de múltiples herramientas para la limpieza, procesamiento y análisis de datos. Si bien estos procesos se han visto facilitados por el desarrollo de software especializado, frecuentemente carecen de reproducibilidad, ya que el comportamiento de los programas y de los flujos de trabajo puede variar en función de configuraciones específicas del entorno computacional, como el hardware y las dependencias instaladas.
+
+En este contexto, `Nextflow` surge como una solución robusta. Se trata de un *Domain Specific Language* (DSL) diseñado para la construcción de pipelines reproducibles y escalables, que simplifica la orquestación de procesos y la gestión de entornos de ejecución, incluyendo aquellos basados en `Conda`. Además, permite un control estructurado sobre las entradas y salidas de cada herramienta, favoreciendo la trazabilidad y consistencia de los análisis @ewels-2020.
+
+# Metodología y justificación
+
+Con el objetivo de mejorar la reproducibilidad del pipeline trabajado, el siguiente código de `Nextflow`...
+
+```{groovy}
+#| label: modulo_limpieza
+#| echo: true
+#| eval: false
+
+#!/usr/bin/env nextflow
+nextflow.enable.dsl=2
+
+// Parámetros
+params.fastq_dir = "./data/fastq"
+params.output_dir = "./data/"
+params.fastqc_tag = ""
+params.trim_front = 15
+params.is_pe = null
+
+// ================= PROCESOS =================
+
+// FASTQC
+process FASTQC_RAW {
+
+  publishDir { "${params.output_dir}/${subdir}" }, mode: "copy"
+
+  input:
+  tuple val(sample), path(read), val(subdir), val(name_suffix), val(ext)
+
+  output:
+  path "${sample}${name_suffix}_fastqc.{html,zip}"
+
+  script:
+  """
+  ln -s ${read} ${sample}${name_suffix}${ext}
+  fastqc ${sample}${name_suffix}${ext}
+  """
+}
+
+process FASTQC_CLEAN {
+
+  publishDir { "${params.output_dir}/${subdir}" }, mode: "copy"
+
+  input:
+  tuple val(sample), path(read), val(subdir), val(name_suffix), val(ext)
+
+  output:
+  path "${sample}${name_suffix}_fastqc.{html,zip}"
+
+  script:
+  """
+  ln -s ${read} ${sample}${name_suffix}${ext}
+  fastqc ${sample}${name_suffix}${ext}
+  """
+}
+
+// FASTP
+process FASTP_PE {
+
+  publishDir "${params.output_dir}/fastp", mode: "copy"
+
+  input:
+    tuple val(sample), path(reads)
+
+    output:
+    tuple val(sample), path("${sample}_clean_1.fastq"), path("${sample}_clean_2.fastq")
+
+    script:
+    """
+    fastp \
+      -i ${reads[0]} \
+      -I ${reads[1]} \
+      -o ${sample}_clean_1.fastq \
+      -O ${sample}_clean_2.fastq \
+      -w ${task.cpus} \
+      --trim_poly_g \
+      --trim_front1 ${params.trim_front} \
+      --trim_front2 ${params.trim_front} \
+      --detect_adapter_for_pe
+    """
+}
+
+process FASTP_SE {
+
+    publishDir "${params.output_dir}/fastp", mode: "copy"
+
+    input:
+    tuple val(sample), path(read)
+
+    output:
+    tuple val(sample), path("${sample}_clean.fastq")
+
+    script:
+    """
+    fastp \
+      -i ${read} \
+      -o ${sample}_clean.fastq \
+      -w ${task.cpus} \
+      --trim_poly_g \
+      --trim_front1 ${params.trim_front}
+    """
+}
+
+// MULTIQC
+process MULTIQC {
+
+    publishDir "${params.output_dir}/multiqc", mode: "copy"
+
+    input:
+    path qc_files
+
+    output:
+    path "multiqc_report.html"
+    path "multiqc_data"
+
+    script:
+    """
+    multiqc . -o .
+    """
+}
+
+// Funciones
+def get_ext(read) {
+    read.name.endsWith(".fastq.gz") ? ".fastq.gz" : ".fastq"
+}
+
+workflow {
+  // Validando parámetros
+  if (params.is_pe == null) {
+    error "Debe indicarse si se trata de lecturas PE o SE con el parámetro --is_pe (true|false)"
+  }
+  if (!file(params.fastq_dir).exists()) {
+    error "El directorio no existe: ${params.fastq_dir}"
+  }
+
+  is_pe = params.is_pe.toString().toBoolean()
+  tag = params.fastqc_tag ?: ""
+
+  if (is_pe) {
+
+    Channel.fromFilePairs(
+      "${params.fastq_dir}/*_{1,2}.fastq*",
+      checkIfExists: true
+    ).into { reads_fastqc; reads_fastp }
+
+    // Verificación de calidad inicial
+    reads_for_fastqc = reads_fastqc.flatMap { sample, pair ->
+      [
+        tuple(sample, pair[0], "fastqc_1${tag}", "${tag}_1", get_ext(pair[0])),
+        tuple(sample, pair[1], "fastqc_2${tag}", "${tag}_2", get_ext(pair[1]))
+      ]
+    }
+
+    FASTQC_RAW(reads_for_fastqc)
+
+    // Limpieza de los archivos
+    clean = FASTP_PE(reads_fastp)
+
+    clean_for_fastqc = clean.out.flatMap { sample, r1, r2 ->
+      [
+        tuple(sample, r1, "fastqc_1_clean", "_clean_1", get_ext(r1)),
+        tuple(sample, r2, "fastqc_2_clean", "_clean_2", get_ext(r2))
+      ]
+    }
+
+  } else {
+
+    Channel.fromPath(
+      "${params.fastq_dir}/*.fastq*",
+      checkIfExists: true
+    ).map { read ->
+      def sample = read.name.replaceAll(/\.fastq(\.gz)?$/, "")
+      tuple(sample, read)
+    }.into { reads_fastqc; reads_fastp }
+
+    // Verificación de calidad inicial
+    reads_for_fastqc = reads_fastqc.map { sample, read ->
+      tuple(sample, read, "fastqc${tag}", tag, get_ext(read))
+    }
+
+    FASTQC_RAW(reads_for_fastqc)
+
+    // Limpieza de los archivos
+    clean = FASTP_SE(reads_fastp)
+
+    clean_for_fastqc = clean.out.map { sample, read ->
+      tuple(sample, read, "fastqc_clean", "_clean", get_ext(read))
+    }
+  }
+  
+  // Visualización final
+  FASTQC_CLEAN(clean_for_fastqc)
+
+  // Visualización global 
+  multiqc_input = FASTQC_RAW.out.mix(FASTQC_CLEAN.out).collect()
+  MULTIQC(multiqc_input)
+}
+```
+
+[...]
+
+```{groovy}
+#| label: configuracion
+#| echo: true
+#| eval: false
+
+conda.enabled = true
+
+// Configuraciones para cada proceso en el main.nf
+process {
+
+    withName: FASTQC_RAW {
+        conda = "bioconda::fastqc=0.12.1"
+        cpus = 2
+        maxForks = 2
+    }
+
+    withName: FASTQC_CLEAN {
+        conda = "bioconda::fastqc=0.12.1"
+        cpus = 2
+        maxForks = 2
+    }
+
+    withName: FASTP_PE {
+        conda = "bioconda::fastp=0.24.1"
+        cpus = 2
+        maxForks = 2
+    }
+
+    withName: FASTP_SE {
+        conda = "bioconda::fastp=0.24.1"
+        cpus = 2
+        maxForks = 2
+    }
+
+    withName: MULTIQC {
+        conda = "bioconda::multiqc=1.33"
+        cpus = 1
+        maxForks = 1
+    }
+}
+```
+
+# Discusión
+
+[...]
+
+# Conclusiones
+
+[...]
+
+# Referencias
