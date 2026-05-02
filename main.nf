@@ -130,14 +130,14 @@ workflow {
 
   // ----------------- PE -----------------
   if (is_pe) {
-
-    Channel.fromFilePairs(
+    
+    // Visualización inicial de la calidad
+    reads = Channel.fromFilePairs(
       "${params.fastq_dir}/*_{1,2}.fastq*",
       checkIfExists: true
-    ).into { reads_fastqc; reads_fastp }
+    )
 
-    // Verificación de calidad inicial
-    reads_for_fastqc = reads_fastqc.flatMap { sample, pair ->
+    reads_for_fastqc = reads.flatMap { sample, pair ->
       [
         tuple(sample, pair[0], "fastqc_1${tag}", "${tag}_1", get_ext(pair[0])),
         tuple(sample, pair[1], "fastqc_2${tag}", "${tag}_2", get_ext(pair[1]))
@@ -147,7 +147,7 @@ workflow {
     FASTQC_RAW(reads_for_fastqc)
 
     // Limpieza de los archivos
-    clean = FASTP_PE(reads_fastp)
+    clean = FASTP_PE(reads)
 
     clean_for_fastqc = clean.out.flatMap { sample, r1, r2 ->
       [
@@ -158,24 +158,24 @@ workflow {
   
   // ----------------- SE -----------------
   } else {
-
-    Channel.fromPath(
+    
+    // Visualización inicial de la calidad
+    reads = Channel.fromPath(
       "${params.fastq_dir}/*.fastq*",
       checkIfExists: true
     ).map { read ->
       def sample = read.name.replaceAll(/\.fastq(\.gz)?$/, "")
-      tuple(sample, read)
-    }.into { reads_fastqc; reads_fastp }
+      tuple(sample, read) 
+    }
 
-    // Verificación de calidad inicial
-    reads_for_fastqc = reads_fastqc.map { sample, read ->
+    reads_for_fastqc = reads.map { sample, read ->
       tuple(sample, read, "fastqc${tag}", tag, get_ext(read))
     }
 
     FASTQC_RAW(reads_for_fastqc)
 
     // Limpieza de los archivos
-    clean = FASTP_SE(reads_fastp)
+    clean = FASTP_SE(reads)
 
     clean_for_fastqc = clean.out.map { sample, read ->
       tuple(sample, read, "fastqc_clean", "_clean", get_ext(read))
