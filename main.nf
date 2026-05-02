@@ -149,7 +149,7 @@ workflow {
     // Limpieza de los archivos
     clean = FASTP_PE(reads)
 
-    clean_for_fastqc = clean.out.flatMap { sample, r1, r2 ->
+    clean_for_fastqc = clean.flatMap { sample, r1, r2 ->
       [
         tuple(sample, r1, "fastqc_1_clean", "_clean_1", get_ext(r1)),
         tuple(sample, r2, "fastqc_2_clean", "_clean_2", get_ext(r2))
@@ -177,10 +177,9 @@ workflow {
     // Limpieza de los archivos
     clean = FASTP_SE(reads)
 
-    clean_for_fastqc = clean.out.map { sample, read ->
+    clean_for_fastqc = clean.map { sample, read ->
       tuple(sample, read, "fastqc_clean", "_clean", get_ext(read))
     }
-  }
 
   // ----------------- PARA AMBOS -----------------
   
