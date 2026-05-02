@@ -178,6 +178,7 @@ workflow {
     clean_for_fastqc = clean.map { sample, read ->
       tuple(sample, read, "fastqc_clean", "_clean", get_ext(read))
     }
+  }
 
   // ----------------- PARA AMBOS -----------------
   
@@ -187,5 +188,4 @@ workflow {
   // Visualización global 
   multiqc_input = FASTQC_RAW.out.mix(FASTQC_CLEAN.out).collect()
   MULTIQC(multiqc_input)
-  }
 }
