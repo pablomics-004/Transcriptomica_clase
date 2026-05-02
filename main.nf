@@ -16,14 +16,14 @@ process FASTQC_RAW {
   publishDir { "${params.output_dir}/${subdir}" }, mode: "copy"
 
   input:
-  tuple val(sample), path(read), val(subdir), val(name_suffix), val(ext)
+  tuple path(read), val(subdir)
 
   output:
-  path "${sample}${name_suffix}_fastqc.{html,zip}"
+  path "*_fastqc.{html,zip}"
 
   script:
   """
-  fastqc ${sample}${name_suffix}${ext}
+  fastqc ${read}
   """
 }
 
@@ -32,14 +32,14 @@ process FASTQC_CLEAN {
   publishDir { "${params.output_dir}/${subdir}" }, mode: "copy"
 
   input:
-  tuple val(sample), path(read), val(subdir), val(name_suffix), val(ext)
+  tuple path(read), val(subdir)
 
   output:
-  path "${sample}${name_suffix}_fastqc.{html,zip}"
+  path "*_fastqc.{html,zip}"
 
   script:
   """
-  fastqc ${sample}${name_suffix}${ext}
+  fastqc ${read}
   """
 }
 
@@ -49,68 +49,63 @@ process FASTP_PE {
   publishDir "${params.output_dir}/fastp", mode: "copy"
 
   input:
-    tuple val(sample), path(reads)
+  tuple val(sample), path(reads)
 
-    output:
-    tuple val(sample), path("${sample}_clean_1.fastq"), path("${sample}_clean_2.fastq")
+  output:
+  tuple val(sample), path("${sample}_clean_1.fastq"), path("${sample}_clean_2.fastq")
 
-    script:
-    """
-    fastp \
-      -i ${reads[0]} \
-      -I ${reads[1]} \
-      -o ${sample}_clean_1.fastq \
-      -O ${sample}_clean_2.fastq \
-      -w ${task.cpus} \
-      --trim_poly_g \
-      --trim_front1 ${params.trim_front} \
-      --trim_front2 ${params.trim_front} \
-      --detect_adapter_for_pe
-    """
+  script:
+  """
+  fastp \
+    -i ${reads[0]} \
+    -I ${reads[1]} \
+    -o ${sample}_clean_1.fastq \
+    -O ${sample}_clean_2.fastq \
+    -w ${task.cpus} \
+    --trim_poly_g \
+    --trim_front1 ${params.trim_front} \
+    --trim_front2 ${params.trim_front} \
+    --detect_adapter_for_pe
+  """
 }
 
 process FASTP_SE {
 
-    publishDir "${params.output_dir}/fastp", mode: "copy"
+  publishDir "${params.output_dir}/fastp", mode: "copy"
 
-    input:
-    tuple val(sample), path(read)
+  input:
+  tuple val(sample), path(read)
 
-    output:
-    tuple val(sample), path("${sample}_clean.fastq")
+  output:
+  tuple val(sample), path("${sample}_clean.fastq")
 
-    script:
-    """
-    fastp \
-      -i ${read} \
-      -o ${sample}_clean.fastq \
-      -w ${task.cpus} \
-      --trim_poly_g \
-      --trim_front1 ${params.trim_front}
-    """
+  script:
+  """
+  fastp \
+    -i ${read} \
+    -o ${sample}_clean.fastq \
+    -w ${task.cpus} \
+    --trim_poly_g \
+    --trim_front1 ${params.trim_front}
+  """
 }
 
 // ----------------- MULTIQC -----------------
 process MULTIQC {
 
-    publishDir "${params.output_dir}/multiqc", mode: "copy"
+  publishDir "${params.output_dir}/multiqc", mode: "copy"
 
-    input:
-    path qc_files
+  input:
+  path qc_files
 
-    output:
-    path "multiqc_report.html"
-    path "multiqc_data"
+  output:
+  path "multiqc_report.html"
+  path "multiqc_data"
 
-    script:
-    """
-    multiqc . -o .
-    """
-}
-
-// ================= FUNCIONES =================
-def get_ext(read) {
-    read.name.endsWith(".fastq.gz") ? ".fastq.gz" : ".fastq"
+  script:
+  """
+  multiqc . -o .
+  """
 }
 
 // ================= MAIN =================
@@ -128,17 +123,17 @@ workflow {
 
   // ----------------- PE -----------------
   if (is_pe) {
-    
-    // Visualización inicial de la calidad
+
     reads = Channel.fromFilePairs(
       "${params.fastq_dir}/*_{1,2}.fastq*",
       checkIfExists: true
     )
 
+    // Visualización inicial de la calidad
     reads_for_fastqc = reads.flatMap { sample, pair ->
       [
-        tuple(sample, pair[0], "fastqc_1${tag}", "${tag}_1", get_ext(pair[0])),
-        tuple(sample, pair[1], "fastqc_2${tag}", "${tag}_2", get_ext(pair[1]))
+        tuple(pair[0], "fastqc_1${tag}"),
+        tuple(pair[1], "fastqc_2${tag}")
       ]
     }
 
@@ -149,25 +144,25 @@ workflow {
 
     clean_for_fastqc = clean.flatMap { sample, r1, r2 ->
       [
-        tuple(sample, r1, "fastqc_1_clean", "_clean_1", get_ext(r1)),
-        tuple(sample, r2, "fastqc_2_clean", "_clean_2", get_ext(r2))
+        tuple(r1, "fastqc_1_clean"),
+        tuple(r2, "fastqc_2_clean")
       ]
     }
-  
+
   // ----------------- SE -----------------
   } else {
-    
-    // Visualización inicial de la calidad
+
     reads = Channel.fromPath(
       "${params.fastq_dir}/*.fastq*",
       checkIfExists: true
     ).map { read ->
       def sample = read.name.replaceAll(/\.fastq(\.gz)?$/, "")
-      tuple(sample, read) 
+      tuple(sample, read)
     }
 
+    // Visualización inicial de la calidad
     reads_for_fastqc = reads.map { sample, read ->
-      tuple(sample, read, "fastqc${tag}", tag, get_ext(read))
+      tuple(read, "fastqc${tag}")
     }
 
     FASTQC_RAW(reads_for_fastqc)
@@ -176,16 +171,16 @@ workflow {
     clean = FASTP_SE(reads)
 
     clean_for_fastqc = clean.map { sample, read ->
-      tuple(sample, read, "fastqc_clean", "_clean", get_ext(read))
+      tuple(read, "fastqc_clean")
     }
   }
 
   // ----------------- PARA AMBOS -----------------
-  
+
   // Visualización final
   FASTQC_CLEAN(clean_for_fastqc)
 
-  // Visualización global 
+  // Visualización global
   multiqc_input = FASTQC_RAW.out.mix(FASTQC_CLEAN.out).collect()
   MULTIQC(multiqc_input)
 }
