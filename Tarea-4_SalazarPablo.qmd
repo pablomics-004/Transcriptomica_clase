@@ -1,0 +1,41 @@
+---
+title: "Tarea 4"
+subtitle: "Análisis de Expresión Diferencial"
+author: "Pablo Salazar-Méndez"
+date: "[...]"
+crossref:
+  fig-title: "Figura"
+  tbl-title: "Tabla"
+format:
+  pdf:
+    pdf-engine: xelatex
+    mainfont: "Arial"
+    fontsize: 11pt
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \renewcommand{\figurename}{Figura}
+# bibliography:
+jupyter: mi_entorno
+---
+
+```{python}
+from pathlib import Path
+import shutil
+import re
+
+origen = Path(".")
+destino = Path("./docs/entregas")
+
+destino.mkdir(exist_ok=True)
+
+patron = re.compile(r"Tarea-[1-3]_SalazarPablo\.(qmd|pdf)$")
+
+for archivo in origen.iterdir():
+    if archivo.is_file() and patron.match(archivo.name):
+        shutil.move(str(archivo), str(destino / archivo.name))
+```
