@@ -574,27 +574,61 @@ for salmon_type in (salmon_pe, salmon_pe):
         assert os.path.isfile(file), f"No existe el archivo {file}"
 
         sample = os.path.basename(dir)
-        new_name = f"{sample}_{files_age[sample]}_{read_type[i]}"
+        new_name = f"age{files_age[sample]}_{sample}"
 
         files.append(file)
         new_names.append(new_name)
     
     # Metadata
-    pd.DataFrame({
+    metadata = pd.DataFrame({
         "File" : files,
         "Sample" : new_names
-    }).to_csv(os.path.join(read_dir_type[i], f"metadata_{read_type[i]}.csv"), index=False, sep=",")
+    })
+    metadata.to_csv(os.path.join(read_dir_type[i], f"metadata_{read_type[i]}.csv"), index=False, sep=",")
+
+    # Mapeo
+    mapping = dict(zip(metadata["File"], metadata["Sample"]))
 
     # pytximport
+    out = f"{read_dir_type[i]}/salmon_counts_{read_type[i]}.csv"
     results = tximport(
         files,
         data_type="salmon",
         transcript_gene_map=tx2gene,
         counts_from_abundance="length_scaled_tpm",
         output_format="csv",
-        output_path=f"{read_dir_type[i]}/salmon_counts_{read_type[i]}.csv",
+        output_path=out,
         output_path_overwrite=True
     )
+
+    gen_col = "Geneid"
+    table_counts = pd.read_csv(out, sep=",")
+    table_counts = table_counts.rename(columns={"Unnamed: 0" : gen_col})
+
+    # Modificación de las columnas
+    table_counts = table_counts.rename(columns=mapping)
+
+    # Obtención de las columnas
+    sample_cols = [
+        col for col in table_counts.columns
+        if col != gen_col
+    ]
+
+    # Ordenando las columnas
+    sorted_sample_cols = sorted(
+        sample_cols,
+        key=lambda col: int(re.search(r"age(\d+)", col).group(1))
+    )
+
+    table_counts = table_counts[gene_col + sorted_sample_cols]
+
+    # Retirando las versiones de los genes
+    table_counts[gen_col] = table_counts[gen_col].str.replace(
+        r"\.\d+$", "", regex=True
+    )
+
+    # Guardado de la tabla de conteos ordenada por columna
+    table_counts.to_csv(out, sep=",", index=False)
 
     i += 1
 ```
