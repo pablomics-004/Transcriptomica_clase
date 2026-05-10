@@ -560,7 +560,7 @@ files_age = {
 # Obtención de las asignaciones de pseudo-conteos
 salmon_se, salmon_pe = get_dirs_list("results/SALMON/SE"), get_dirs_list("results/SALMON/PE")
 read_dir_type = "results/SALMON/SE", "results/SALMON/PE"
-read_type = "pe", "se"
+read_type = "se", "pe"
 i = 0
 
 for salmon_type in (salmon_pe, salmon_pe):
