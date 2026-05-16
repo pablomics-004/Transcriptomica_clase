@@ -422,6 +422,22 @@ geneid_names = read.table(
     "results/support_files/M38_gene_id-name.csv",
     sep=",", row.names = 1, header=TRUE
 )
+
+## Anotaciones geneid-length
+geneid_length = list(
+  hisat2 = read.table(
+    "results/support_files/geneid-length_aligners.csv",
+    sep=",", header=TRUE
+  ), 
+  star = read.table(
+    "results/support_files/geneid-length_aligners.csv",
+    sep=",", header=TRUE
+  ), 
+  salmon = read.table(
+    "results/support_files/geneid-length_salmon.csv",
+    sep=",", header=TRUE
+  )
+)
 ```
 
 ### Python
@@ -978,70 +994,73 @@ for read_type in ["PE", "SE"]:
 #| eval: true
 #| message: false
 
-# ================== CARGADO DE LOS OBJETOS ==================
+# ================== CARGADO DE LOS OBJETOS edgeR ==================
 
-## PAIRED-END
 pe_dge = list()
 pe_logcpm = list()
 
-## SINGLE-END
 se_dge = list()
 se_logcpm = list()
 
-## Matriz de diseño para todas las tablas
-design = model.matrix(~ 0 + age, data = metadata)
-
-# Modelo para todas las tablas
 for (i in 1:2) {
-    if (i == 1) {
-        dge = pe_dge
-        counts = pe_counts
-        logcpm = pe_logcpm
-    } else {
-        dge = se_dge
-        counts = se_counts
-        logcpm = se_logcpm
-    }
-
-    for (tool in count_tools) {
-
-        # Inicialización del objeto edgeR
-        tmp_dge = DGEList(
-            counts = round(counts[[tool]]),
-            samples = metadata
-        )
-
-        # Filtrado de genes con baja expresión
-        keep = filterByExpr(tmp_dge, design)
-        tmp_dge = tmp_dge[keep, , keep.lib.sizes = FALSE]
-        rm(keep)
-
-        # Normalización TMM
-        tmp_dge = calcNormFactors(tmp_dge)
-
-        # Matriz logCPM para PCA
-        logcpm[[tool]] = cpm(
-            tmp_dge,
-            log = TRUE,
-            prior.count = 1
-        )
-
-        # Guardar objeto DGEList
-        dge[[tool]] = tmp_dge
-    }
-
-    # Guardado final
-    if (i == 1) {
-        pe_dge = dge
-        pe_logcpm = logcpm
-    } else {
-        se_dge = dge
-        se_logcpm = logcpm
-    }
+  
+  if (i == 1) {
+    dge = pe_dge
+    counts = pe_counts
+    logcpm = pe_logcpm
+  } else {
+    dge = se_dge
+    counts = se_counts
+    logcpm = se_logcpm
+  }
+  
+  for (tool in count_tools) {
+    
+    # Reordenar metadata según las columnas de la matriz de conteos
+    metadata_tool = metadata[colnames(counts[[tool]]), , drop = FALSE]
+    
+    stopifnot(all(colnames(counts[[tool]]) == rownames(metadata_tool)))
+    
+    # Asegurar que age sea factor
+    metadata_tool$age = factor(metadata_tool$age)
+    
+    # Diseño específico para esa matriz
+    design_tool = model.matrix(~ 0 + age, data = metadata_tool)
+    
+    # Inicialización del objeto edgeR
+    tmp_dge = DGEList(
+      counts = round(counts[[tool]]),
+      samples = metadata_tool,
+      group = metadata_tool$age
+    )
+    
+    # Filtrado de baja expresión
+    keep = filterByExpr(tmp_dge, design = design_tool)
+    tmp_dge = tmp_dge[keep, , keep.lib.sizes = FALSE]
+    
+    # Normalización TMM
+    tmp_dge = calcNormFactors(tmp_dge)
+    
+    # Matriz logCPM para PCA
+    logcpm[[tool]] = cpm(tmp_dge, log = TRUE)
+    
+    # Guardar también el diseño, porque corresponde a ese objeto
+    dge[[tool]] = list(
+      dge = tmp_dge,
+      design = design_tool
+    )
+  }
+  
+  if (i == 1) {
+    pe_dge = dge
+    pe_logcpm = logcpm
+  } else {
+    se_dge = dge
+    se_logcpm = logcpm
+  }
 }
 
-# Limpieza de variables
-rm(dge, logcpm, tmp_dge, i, tool, counts)
+rm(dge, logcpm, tmp_dge, counts, keep, metadata_tool, design_tool, i, tool)
 invisible(gc())
 ```
 
@@ -1144,47 +1163,47 @@ invisible((gc()))
 `EdgeR` es una herramienta que separa en dos funciones lo que el algoritmo `DESeq2` tiene en una sola: 1) la estimación de la dispersión poblacional a partir de las réplicas y 2) el ajuste del modelo GLM. Por ello es que se codificó de tal manera que ambos procesos quedaran incluidos en el pipeline.
 
 ```{r}
-#| label: ajuste_modelo_edgeR_R
+#| label: ajuste_modelo_edgeR
 #| echo: true
 #| eval: true
 #| message: false
 
-design = model.matrix(~ 0 + age, data = metadata)
-
 for (i in 1:2) {
-    if (i == 1) {
-        dge_objs = pe_dge
-    } else {
-        dge_objs = se_dge
-    }
-
-    for (tool in count_tools) {
-        tmp_dge = dge_objs[[tool]]
-
-        # Estimación de dispersión
-        tmp_dge = estimateDisp(tmp_dge, design)
-
-        # Ajuste del modelo GLM con quasi-likelihood
-        fit = glmQLFit(tmp_dge, design)
-
-        # Guardar objeto DGEList ajustado y fit
-        dge_objs[[tool]] = list(
-            dge = tmp_dge,
-            fit = fit
-        )
-    }
-
-    # Guardado final
-    if (i == 1) {
-        pe_edger_fit = dge_objs
-    } else {
-        se_edger_fit = dge_objs
-    }
-
-    rm(tmp_dge, fit, dge_objs, tool)
+  
+  if (i == 1) {
+    dge_objs <- pe_dge
+  } else {
+    dge_objs <- se_dge
+  }
+  
+  for (tool in count_tools) {
+    
+    tmp_dge <- dge_objs[[tool]]$dge
+    design_tool <- dge_objs[[tool]]$design
+    
+    tmp_dge <- estimateDisp(tmp_dge, design_tool)
+    
+    fit <- glmQLFit(
+      tmp_dge,
+      design_tool,
+      robust = TRUE
+    )
+    
+    dge_objs[[tool]] <- list(
+      dge = tmp_dge,
+      design = design_tool,
+      fit = fit
+    )
+  }
+  
+  if (i == 1) {
+    pe_edger_fit <- dge_objs
+  } else {
+    se_edger_fit <- dge_objs
+  }
 }
 
-rm(i, design)
+rm(tmp_dge, fit, dge_objs, design_tool, tool, i)
 invisible(gc())
 ```
 
@@ -1395,14 +1414,15 @@ plot_se = deseq2_num_genes_long %>%
 plot_pe + plot_se +
   plot_layout(guides = "collect") + 
   plot_annotation(
-    title = "Barrido de FDR en DESeq2"
+    title = "Barrido de FDR en DESeq2", 
   ) &
   theme(
-    legend.position = "right"
-)
+    legend.position = "right",
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
 ```
 
-[...]
+En la **Figura 4** se observó que tanto `HISAT2` como `STAR` son consistentes en el número de genes diferencialmente expresados en el barrido de valores de `FDR`, en contraste con `Salmon` que de forma general se mantuvo con números bajos de estos genes. Con estos resultados se optó por un `FDR` conservador de $1e-06$, es decir, se aceptó un falso positivo por cada millón de genes.
 
 ```{r}
 #| label: tablas_DESeq2
@@ -1487,15 +1507,11 @@ rm(
     deseq2_num_genes_long,
     deseq2_num_genes_pe,
     deseq2_num_genes_se,
-    pe_contrasts,
-    se_contrasts,
     plot_pe,
     plot_se
 )
 invisible(gc())
 ```
-
-En la **Figura 4** se observó que tanto `HISAT2` como `STAR` son consistentes en el número de genes diferencialmente expresados en el barrido de valores de `FDR`, en contraste con `Salmon` que de forma general se mantuvo con números bajos de estos genes. Con estos resultados se optó por un `FDR` conservador de $1e-06$, es decir, se aceptó un falso positivo por cada millón de genes.
 
 #### Python
 
@@ -1710,7 +1726,7 @@ plt.tight_layout(rect=[0, 0, 0.88, 1])
 plt.show()
 ```
 
-[...]
+La **Figura 5** mostró una tendencia similar a la vista en la implementación en R de este algoritmo, por lo que se utilizó el mismo $FDR < 10^{-6}$.
 
 ```{python}
 #| label: tablas_Inmoose
@@ -1780,6 +1796,17 @@ for read_type in ["PE", "SE"]:
         )
 ```
 
+```{python}
+#| label: limpieza_var_Py_1
+#| echo: false
+#| eval: true
+
+del up, down, metadata_tmp, axes, age, dds_objs, fdr, fig, handles
+del legend_handles, n, pe_counts, se_counts, pe_vsd, se_vsd, read_type
+del palette, res, res_objs, results_dir, results_dir_pe, results_dir_se
+del pe_dds, se_dds, tool
+```
+
 ### EdgeR
 
 En el caso de `EdgeR` los contrastes se establecieron a la par que se aplicó la prueba estadística, manteniendo la dirección de la misma para mantener consistencia en los resultados.
@@ -1830,11 +1857,6 @@ edger_num_genes_se = data.frame(
 # Contraste edgeR
 design = model.matrix(~ 0 + age, data = metadata)
 
-edger_contrast = makeContrasts(
-  a18_vs_a3 = agea18 - agea3,
-  levels = design
-)
-
 contrast_var = "a18_vs_a3"
 
 for (i in 1:2) {
@@ -1850,6 +1872,13 @@ for (i in 1:2) {
   }
   
   for (tool in count_tools) {
+
+    design_tool <- fit_objs[[tool]]$design
+
+    edger_contrast = makeContrasts(
+      a18_vs_a3 = agea18 - agea3,
+      levels = design
+    )
     
     # Prueba del contraste con quasi-likelihood
     qlf = glmQLFTest(
@@ -1982,7 +2011,7 @@ plot_se = edger_num_genes_long %>%
   )
 ```
 
-[...]
+La **Figura 6** exhibió un comportamiento donde la caída en el número de genes fue mucho más pronunciado en valores relativamente altos de FDR. Lo anterior se contrapone a los resultados de ambas implementaciones de `DESeq2`, las cuales fueron más robustaz ante un FDR más estricto.
 
 ```{r}
 #| label: tablas_edgeR
@@ -2064,9 +2093,634 @@ invisible(gc())
 
 ## Volcano plot
 
+```{r}
+#| label: limpieza_var_5
+#| echo: false
+#| eval: true
+
+rm(
+    pe_counts,
+    pe_dds,
+    se_dds,
+    se_counts,
+    n,
+    FDR_values,
+    sample_color,
+    results_dir_pe,
+    results_dir_se,
+    generate_pca,
+    row_label,
+    fdr,
+    design,
+    deseq2_contrasts,
+    metadata,
+    age, contrast_var
+)
+invisible(gc())
+```
+
+En este segmento se generaron _volcano plots_, gráficos útiles para relacionar la significancia estadística (mediante el p-value ajustado) y el LFC. Estos siguieron los umbrales aplicados en la sección pasada:
+
+- $FDR < 10^{-6}$ para `DESeq2` y $FDR < 0.05$ para `EdgeR`.
+- $LFC > 0.5$ y $LFC < -0.5$ para todos los casos.
+
+
+La función para obtener los volcano plots se construyó buscando generalizar el proceso:
+
+```{r}
+#| label: volcano_plot_func
+#| echo: true
+#| eval: true
+
+# ========================== FUNCIONES ==========================
+
+make_volcano_plot = function(
+  res,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = 0.5,
+  FDR_cutoff = 0.05,
+  title = "Volcano plot",
+  volcano_LFC_limit = 12,
+  volcano_FDR_limit = 10
+) {
+  
+  res_plot <- res %>%
+    as.data.frame() %>%
+    mutate(
+      lfc_value = as.numeric(.data[[lfc_col]]),
+      fdr_value = as.numeric(.data[[fdr_col]]),
+      fdr_plot = ifelse(fdr_value == 0, .Machine$double.xmin, fdr_value),
+      neg_log10_FDR = -log10(fdr_plot),
+      DE = case_when(
+        lfc_value > LFC_cutoff & fdr_value < FDR_cutoff ~ "UP",
+        lfc_value < -LFC_cutoff & fdr_value < FDR_cutoff ~ "DOWN",
+        TRUE ~ "NO"
+      )
+    )
+    
+  ggplot(res_plot, aes(x = lfc_value, y = neg_log10_FDR)) +
+    geom_point(
+      data = res_plot %>% filter(DE == "NO"),
+      color = "gray80",
+      size = 0.8,
+      alpha = 0.25
+    ) +
+    geom_point(
+      data = res_plot %>% filter(DE == "DOWN"),
+      color = "blue",
+      size = 1.8,
+      alpha = 0.9
+    ) +
+    geom_point(
+      data = res_plot %>% filter(DE == "UP"),
+      color = "red",
+      size = 1.8,
+      alpha = 0.9
+    ) +
+    geom_vline(
+      xintercept = c(-LFC_cutoff, LFC_cutoff),
+      color = "black",
+      linetype = "longdash"
+    ) +
+    geom_hline(
+      yintercept = -log10(FDR_cutoff),
+      color = "black",
+      linetype = "longdash"
+    ) +
+    coord_cartesian(
+      xlim = c(-volcano_LFC_limit, volcano_LFC_limit),
+      ylim = c(0, volcano_FDR_limit)
+    ) +
+    labs(
+      title = title,
+      x = "log2 Fold Change",
+      y = "-log10(FDR)"
+    ) +
+    theme_classic(base_size = 13, base_line_size = 1) +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold")
+    )
+}
+
+# Función para crear etiquetas laterales PE / SE
+row_label = function(label) {
+  ggplot() +
+    annotate(
+      "text",
+      x = 0.5,
+      y = 0.5,
+      label = label,
+      angle = 90,
+      fontface = "bold",
+      size = 6
+    ) +
+    theme_void()
+}
+```
+
+### DESeq2
+
+Aunado a ello, se guardaron todas las tablas resultantes de la implementación de `inmoose` para ser cargados como objetos de R.
+
+```{python}
+#| label: convert_py2r_objs_1
+#| echo: false
+#| eval: true
+
+# GeneID de índice a columna
+for read_res in (pe_res, se_res):
+    for tool in ("hisat2", "star", "salmon"):
+        read_res[tool] = read_res[tool].reset_index(names="Geneid")
+
+# ================ TABLAS ================
+
+results_dir_pe = {
+    "hisat2": Path("results/hisat2_pe/diffexp_Inmoose"),
+    "star": Path("results/star_pe/diffexp_Inmoose"),
+    "salmon": Path("results/SALMON/PE/diffexp_Inmoose")
+}
+results_dir_se = {
+    "hisat2": Path("results/hisat2_se/diffexp_Inmoose"),
+    "star": Path("results/star_se/diffexp_Inmoose"),
+    "salmon": Path("results/SALMON/SE/diffexp_Inmoose")
+}
+
+for tool in ("hisat2", "star", "salmon"):
+
+    # ================ DIRECTORIOS ================
+    outdir_pe = results_dir_pe[tool]
+    outdir_pe.mkdir(parents=True, exist_ok=True)
+
+    outdir_se = results_dir_se[tool]
+    outdir_se.mkdir(parents=True, exist_ok=True)
+
+    # ================ GUARDADO ================
+    pe_res[tool].sort_values(
+        by="adj_pvalue",
+        ascending=True
+    ).to_csv(
+        outdir_pe / f"inmoose-DEG-RAW_{tool}.csv",
+        index = False
+    )
+    se_res[tool].sort_values(
+        by="adj_pvalue",
+        ascending=True
+    ).to_csv(
+        outdir_se / f"inmoose-DEG-RAW_{tool}.csv",
+        index = False
+    )
+
+del results_dir_pe, results_dir_se
+del tool, outdir_pe, outdir_se
+```
+
+```{r}
+#| label: converting_py2r_objs_2
+#| echo: false
+#| eval: true
+
+# ==================== CONVERSIÓN FINAL ====================
+
+res_inmoose_dir_pe = list(
+    hisat2 = "results/hisat2_pe/diffexp_Inmoose/inmoose-DEG-RAW_hisat2.csv",
+    star = "results/star_pe/diffexp_Inmoose/inmoose-DEG-RAW_star.csv",
+    salmon = "results/star_pe/diffexp_Inmoose/inmoose-DEG-RAW_star.csv"
+)
+res_inmoose_dir_se = list(
+    hisat2 = "results/hisat2_se/diffexp_Inmoose/inmoose-DEG-RAW_hisat2.csv",
+    star = "results/star_se/diffexp_Inmoose/inmoose-DEG-RAW_star.csv",
+    salmon = "results/SALMON/SE/diffexp_Inmoose/inmoose-DEG-RAW_salmon.csv"
+)
+
+results_pe_inmoose = list()
+results_se_inmoose = list()
+
+for (tool in c("hisat2", "star", "salmon")) {
+  results_pe_inmoose[[tool]] = read.table(
+    res_inmoose_dir_pe[[tool]],
+    header = TRUE,
+    sep = ",",
+    row.names = 1
+  )
+  
+  results_se_inmoose[[tool]] = read.table(
+    res_inmoose_dir_se[[tool]],
+    header = TRUE,
+    sep = ",",
+    row.names = 1
+  )
+}
+
+rm(res_inmoose_dir_pe, res_inmoose_dir_se, tool)
+invisible(gc())
+```
+
+#### R
+
+```{r}
+#| fig-cap: "Volcano plots para `DESeq2` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 10^{-6}$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
+#| echo: false
+#| eval: true
+
+# ================== GRAFICANDO ==================
+
+# Parámetros
+LFC_unique = 0.5
+FDR_unique = 1e-06
+FDR_limit = 50
+LFC_limit = 15
+
+p_hisat2_pe = make_volcano_plot(
+  results_pe$hisat2,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = "HISAT2"
+)
+
+p_star_pe = make_volcano_plot(
+  results_pe$star,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = "STAR"
+)
+
+p_salmon_pe = make_volcano_plot(
+  results_pe$salmon,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = "SALMON"
+)
+
+p_hisat2_se = make_volcano_plot(
+  results_se$hisat2,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = ""
+)
+
+p_star_se = make_volcano_plot(
+  results_se$star,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = ""
+)
+
+p_salmon_se = make_volcano_plot(
+  results_se$salmon,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = ""
+)
+
+# ================== GRID CON LABEL LATERAL PE / SE ==================
+
+### PE
+pe_row_volcano = wrap_plots(
+  c(
+    list(row_label("PE")),
+    list(p_hisat2_pe, p_star_pe, p_salmon_pe)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+### SE
+se_row_volcano = wrap_plots(
+  c(
+    list(row_label("SE")),
+    list(p_hisat2_se, p_star_se, p_salmon_se)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+### Figura final
+volcano_grid = pe_row_volcano / se_row_volcano +
+  plot_annotation(
+    title = "Volcano plots de expresión diferencial (DESeq2)"
+  ) &
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+volcano_grid
+```
+
+[...]
+
+```{r}
+#| label: limpieza_var_idk1
+#| echo: false
+#| eval: true 
+
+rm(
+  p_hisat2_pe,
+  p_hisat2_se,
+  p_star_se,
+  p_star_pe,
+  p_salmon_pe,
+  p_salmon_se,
+  volcano_grid
+)
+invisible(gc())
+```
+
+#### Python
+
+```{r}
+#| fig-cap: "Volcano plots para `DESeq2` de la suite `inmoose` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 10^{-6}$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
+#| echo: false
+#| eval: true
+
+# ================== GRAFICANDO ==================
+
+# Parámetros
+LFC_unique = 0.5
+FDR_unique = 1e-06
+FDR_limit = 30
+LFC_limit = 15
+
+p_hisat2_pe = make_volcano_plot(
+  results_pe_inmoose$hisat2,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = "HISAT2"
+)
+
+p_star_pe = make_volcano_plot(
+  results_pe_inmoose$star,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = "STAR"
+)
+
+p_salmon_pe = make_volcano_plot(
+  results_pe_inmoose$salmon,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = "SALMON"
+)
+
+p_hisat2_se = make_volcano_plot(
+  results_se_inmoose$hisat2,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = ""
+)
+
+p_star_se = make_volcano_plot(
+  results_se_inmoose$star,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = ""
+)
+
+p_salmon_se = make_volcano_plot(
+  results_se_inmoose$salmon,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  volcano_FDR_limit = FDR_limit,
+  volcano_LFC_limit = LFC_limit,
+  title = ""
+)
+
+# ================== GRID CON LABEL LATERAL PE / SE ==================
+
+### PE
+pe_row_volcano = wrap_plots(
+  c(
+    list(row_label("PE")),
+    list(p_hisat2_pe, p_star_pe, p_salmon_pe)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+### SE
+se_row_volcano = wrap_plots(
+  c(
+    list(row_label("SE")),
+    list(p_hisat2_se, p_star_se, p_salmon_se)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+### Figura final
+volcano_grid = pe_row_volcano / se_row_volcano +
+  plot_annotation(
+    title = "Volcano plots de expresión diferencial (inmoose)"
+  ) &
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+volcano_grid
+```
+
+[...]
+
+```{r}
+#| label: limpieza_var_idk2
+#| echo: false
+#| eval: true 
+
+rm(
+  p_hisat2_pe,
+  p_hisat2_se,
+  p_star_se,
+  p_star_pe,
+  p_salmon_pe,
+  p_salmon_se,
+  volcano_grid
+)
+invisible(gc())
+```
+
+### EdgeR
+
+```{r}
+#| fig-cap: "Volcano plots para `EdgeR` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 0.05$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
+#| echo: false
+#| eval: true
+
+# ================== GRAFICANDO ==================
+
+# Parámetros
+FDR_unique = 0.05
+LFC_unique = 0.5
+
+p_hisat2_pe = make_volcano_plot(
+  edger_results_pe$hisat2,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  title = "HISAT2",
+  volcano_FDR_limit = 10
+)
+
+p_star_pe = make_volcano_plot(
+  edger_results_pe$star,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  title = "STAR",
+  volcano_FDR_limit = 10
+)
+
+p_salmon_pe = make_volcano_plot(
+  edger_results_pe$salmon,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  title = "SALMON",
+  volcano_FDR_limit = 10
+)
+
+p_hisat2_se = make_volcano_plot(
+  edger_results_se$hisat2,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  title = "",
+  volcano_FDR_limit = 10
+)
+
+p_star_se = make_volcano_plot(
+  edger_results_se$star,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  title = "",
+  volcano_FDR_limit = 10
+)
+
+p_salmon_se = make_volcano_plot(
+  edger_results_se$salmon,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  title = "",
+  volcano_FDR_limit = 10
+)
+
+# ================== GRID CON LABEL LATERAL PE / SE ==================
+
+### PE
+pe_row_volcano = wrap_plots(
+  c(
+    list(row_label("PE")),
+    list(p_hisat2_pe, p_star_pe, p_salmon_pe)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+### SE
+se_row_volcano = wrap_plots(
+  c(
+    list(row_label("SE")),
+    list(p_hisat2_se, p_star_se, p_salmon_se)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+### Figura final
+volcano_grid = pe_row_volcano / se_row_volcano +
+  plot_annotation(
+    title = "Volcano plots de expresión diferencial (EdgeR)"
+  ) &
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+volcano_grid
+```
+
 [...]
 
 ## Heatmap
+
+Para la construcción de estas representaciones no se trabajó con TPMs, puesto que en pasos previos se generaron matrices transformadas de los conteos que facilitan la comparación entre muestras. Tal fue el caso de los `logcpm` de `EdgeR` y `vst` de `DESeq2`.
+
+```{r}
+#| label: heatmaps_function
+#| echo: true
+#| eval: true
+#| message: false
+
+
+```
+
+### DESeq2
+
+#### R
+
+[...]
+
+#### Python
+
+[...]
+
+### EdgeR
+
+[...]
+
+## Intersección de genes entre algoritmos y datasets
 
 [...]
 
