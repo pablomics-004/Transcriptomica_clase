@@ -6,7 +6,7 @@ format:
   pdf:
     pdf-engine: xelatex
     mainfont: "Arial"
-    fontsize: 11pt
+    fontsize: 10pt
     toc: true
     toc-depth: 3
     number-sections: true
@@ -15,28 +15,21 @@ format:
         \usepackage{fvextra}
         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
         \renewcommand{\figurename}{Figura}
-    includes:
-        before_body: ./docs/entregas/cover.tex
+    include-before-body: ./docs/entregas/cover.tex
 bibliography: ./docs/referencias/Referencias_tarea-4.bib
 csl: ./docs/nlm-citation-sequence-brackets.csl
-
-jupyter: mi_entorno
 ---
 
 # Planteamiento
 
-[...]
+Este trabajo compara la detección de genes diferencialmente expresados en datos de RNA-seq procesados con distintos enfoques de cuantificación: alineamiento con **HISAT2** y **STAR**, y pseudoalineamiento con **Salmon**. Para ello, evalúa tanto lecturas **paired-end (PE)** como **single-end (SE)** y aplica tres estrategias de análisis diferencial: **DESeq2 en R**, su implementación en Python mediante **inmoose**, y **edgeR**. A partir de umbrales definidos de ($FDR < 0.05$) y ($|LFC| > 0.5$), analiza la concordancia entre métodos mediante barridos de FDR, volcano plots, heatmaps y diagramas de Venn para genes sobreexpresados y subexpresados.
 
 # Metodología & Justificación
 
-## Obtención de anotaciones y tablas de conteo
-
-En esta sección se extrajeron las anotaciones correspondientes a los identificadores de los genes, sus longitudes y sus nombres asociados mediante el siguiente código:
-
 ```{python}
 #| label: anotaciones
-#| echo: true
-#| eval: true
+#| echo: false
+#| eval: false
 #| message: false
 
 from pathlib import Path # Manejo de archivos
@@ -140,12 +133,10 @@ gene_id_name.to_csv(
 del gencode_M38_annot, outdir, parse_gtf_gene_names
 ```
 
-Asimismo, se organizaron las tablas de conteos para cada alineador (`HISAT2` y `STAR`) y tipo de lectura (PE y SE), junto con sus respectivas anotaciones, debido a que esta información se encuentra integrada en la salida de `FeatureCounts`.
-
 ```{python}
 #| label: anotaciones_tabla_alineadores
-#| echo: true
-#| eval: true
+#| echo: false
+#| eval: false
 #| message: false
 
 # =================== FUNCIONES ===================
@@ -270,9 +261,9 @@ del parse_feature_counts, pattern, support_files
 
 ## Análisis de Expresión Diferencial
 
-En este apartado se compararon los resultados del análisis de expresión diferencial obtenidos con las herramientas `edgeR` (@chen-2025) y `DESeq2` (@anders-2010), disponibles en R mediante `Bioconductor` (@unknown-author-no-date). Adicionalmente, se contrastó la salida de `DESeq2` con la de su implementación en Python, accesible mediante la suite `inmoose` (@colange-2025).
+En este apartado se compararon los resultados del análisis de expresión diferencial obtenidos con las herramientas `edgeR` [@chen-2025] y `DESeq2` [@anders-2010], disponibles en R mediante `Bioconductor`. Adicionalmente, se contrastó la salida de `DESeq2` con la de su implementación en Python, accesible mediante la suite `inmoose` [@colange-2025].
 
-Es relevante destacar que se siguió el flujo de trabajo descrito en \citet{@valle-garcia-2026} para llevar a cabo este análisis.
+Es relevante destacar que se siguió el flujo de trabajo descrito en [@valle-garcia-2026] para llevar a cabo este análisis.
 
 ## Cargado de paqueterías
 
@@ -280,14 +271,15 @@ Se verificó que los paquetes necesarios estuvieran instalados para su uso; en c
 
 ```{r}
 #| label: paquetes_R
-#| eval: true
+#| eval: false
 #| echo: true
 #| message: false
 
 bioc_packages = c("DESeq2", "edgeR", "ComplexHeatmap")
 cran_packages = c(
     "ggplot2", "dplyr", "tibble",
-    "patchwork", "VennDiagram", "tidyr"
+    "patchwork", "VennDiagram", "tidyr",
+    "ggVennDiagram"
 )
 
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -335,7 +327,8 @@ conda install bioconda::inmoose=0.9.1 \
               pandas=2.2.3 \
               scikit-learn=1.7.1 \
               matplotlib=3.10.0 \
-              seaborn=0.13.2
+              seaborn=0.13.2 \
+              scipy=1.15.2
 ```
 
 Una vez hecho eso, se cargó la suite `inmoose` en el entorno adecuado:
@@ -343,11 +336,13 @@ Una vez hecho eso, se cargó la suite `inmoose` en el entorno adecuado:
 ```{python}
 #| label: cargando_librerias
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 import matplotlib.pyplot as plt # Graficar datos
+from pathlib import Path # Manejo de archivos
 from inmoose.deseq2 import * # Expresión diferencial
+from scipy import sparse # Manejo de objetos sparse
 import seaborn as sns # Graficar datos
 import pandas as pd # Manejo de tablas
 import numpy as np # Operaciones vectorizadas
@@ -356,19 +351,15 @@ import gc # Recolector de basura
 
 ## Matriz de diseño
 
-La matriz de diseño, también conocida como matriz modelo, establece el modelo estadístico con el que se describe la relación entre las relaciones en la expresión de los genes, _variable de respuesta_, y aquellas variables que influencian dicha expresión, _variables predictoras_ (\citep{@law-2020}). En este caso se planteó a la **edad** como ***variable predictora***, con la intención de encontrar su influencia en los niveles de expresión sin contemplar otros factores como el sexo ya que todas las muetsras provienen de machos (\citep{@valle-garcia-2026}).
+La matriz de diseño, también conocida como matriz modelo, establece el modelo estadístico con el que se describe la relación entre las relaciones en la expresión de los genes, _variable de respuesta_, y aquellas variables que influencian dicha expresión, _variables predictoras_ (@law-2020). En este caso se planteó a la **edad** como ***variable predictora***, con la intención de encontrar su influencia en los niveles de expresión sin contemplar otros factores como el sexo ya que todas las muetsras provienen de machos (@valle-garcia-2026).
 
 El modelo utilizado se muestra a continuación:
 
 $$
-\begin{aligned}
-Y \thicksim \beta_1 + \beta_2 \\
-\beta_1 := 0 \\
-\beta_2 := \text{edad}
-\end{aligned}
+Y \thicksim \beta_1 + \beta_2
 $$
 
-La ausencia de un intercepto, $\beta_1$, indica que los contrastes se construyeron manualmente, ya que se buscó tener mayor control sobre las variables predictoras utilizadas para evaluar la respuesta (\citep{@valle-garcia-2026}).
+La ausencia de un intercepto, $\beta_1 = 0$, indica que los contrastes se construyeron manualmente, ya que se buscó tener mayor control sobre las variables predictoras, $\beta_2 := \text{edad}$ utilizadas para evaluar la respuesta [@valle-garcia-2026].
 
 ## Cargado de los datos
 
@@ -377,7 +368,7 @@ Los datos fueron cargados en objetos únicos dentro de cada lenguaje:
 ### R
 ```{r}
 #| label: cargado_R
-#| eval: true
+#| eval: false
 #| echo: true
 #| message: false
 
@@ -447,7 +438,7 @@ Se replicó el procedimiento con adaptaciones al lenguaje (como el uso de diccio
 ```{python}
 #| label: cargado_Py
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # ================ CARGANDO DATOS ================
@@ -503,12 +494,12 @@ del key, value
 
 ## Tablas de metadatos
 
-Se contruyeron las tablas de metadatos para cada tabla de conteos, en las que se contienen valores utilizados más tarde para la visualización de los datos (\citep{@valle-garcia-2026}).
+Se contruyeron las tablas de metadatos para cada tabla de conteos, en las que se contienen valores utilizados más tarde para la visualización de los datos @valle-garcia-2026.
 
 ```{r}
 #| label: metadata_R
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # Cada tipo de alineador
@@ -533,7 +524,7 @@ Para python se siguió un proceso similar.
 ```{python}
 #| label: metadata_Py
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: true
 
 from inmoose.utils import Factor
@@ -563,7 +554,7 @@ for counts_set in (pe_counts, se_counts):
 
 ## Generación del modelo y visualización inicial
 
-Cada implementación se ejecutó siguiendo el mismo procedimiento y con sus respectivas adaptaciones, que se desglozaron en dos secciones (con la de `DESeq2` teniendo una subsección por lenguaje).
+Cada implementación se ejecutó siguiendo el mismo procedimiento y con sus respectivas adaptaciones, que se desglozaron en dos secciones con una dedicada a las implementaciones de `DESeq2`.
 
 ### DESeq2
 
@@ -572,8 +563,21 @@ Cada implementación se ejecutó siguiendo el mismo procedimiento y con sus resp
 ```{r}
 #| label: dds_R
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
+
+# ================== DIRECTORIOS ==================
+
+results_dir_pe = list(
+    hisat2 = "results/hisat2_pe/diffexp_DESeq2", 
+    star = "results/star_pe/diffexp_DESeq2", 
+    salmon = "results/SALMON/PE/diffexp_DESeq2" 
+) 
+results_dir_se = list(
+    hisat2 = "results/hisat2_se/diffexp_DESeq2", 
+    star = "results/star_se/diffexp_DESeq2", 
+    salmon = "results/SALMON/SE/diffexp_DESeq2"
+)
 
 # ================== CARGADO DE LOS OBJETOS ==================
 
@@ -594,11 +598,14 @@ for (i in 1:2) {
         dds = pe_dds
         counts = pe_counts
         vsd = pe_vsd
+        results_dir = results_dir_pe
     } else {
         dds = se_dds
         counts = se_counts
         vsd = se_vsd
+        results_dir = results_dir_se
     }
+
     for (tool in count_tools) {
         # Inicilización del objeto
         tmp_dds = DESeqDataSetFromMatrix(
@@ -615,6 +622,22 @@ for (i in 1:2) {
         # Transformación estabilizadora de la varianza
         vsd[[tool]] = vst(tmp_dds)
         dds[[tool]] = tmp_dds
+
+        # Guardado de la matriz VSD
+        if (!dir.exists(results_dir[[tool]])) {
+            dir.create(results_dir[[tool]], recursive = TRUE)
+        }
+
+        write.table(
+            assay(vsd[[tool]]),
+            file = file.path(
+                results_dir[[tool]],
+                "deseq2-vsd-matrix.csv"
+            ),
+            sep = ",",
+            quote = FALSE,
+            row.names = TRUE
+        )
     }
 
     # Guardado final
@@ -628,14 +651,14 @@ for (i in 1:2) {
 }
 
 # Limpieza de variables
-rm(dds, vsd, tmp_dds, i, tool, counts)
+rm(dds, vsd, tmp_dds, i, tool, counts, results_dir)
 invisible(gc())
 ```
 
 ```{r}
-#| fig-cap: "PCA para cada tipo de lectura (PE/SE) y los tres tipos de alineador (HISAT2, STAR y SALMON) tras su procesamiento en `DESeq2`."
+#| label: "PCA para cada tipo de lectura (PE/SE) y los tres tipos de alineador (HISAT2, STAR y SALMON) tras su procesamiento en `DESeq2`."
 #| echo: false
-#| eval: true
+#| eval: false
 
 # ================== FUNCIONES ==================
 
@@ -710,10 +733,11 @@ pca_grid = pe_row / se_row +
 pca_grid
 ```
 
+![PCA para cada tipo de lectura (PE/SE) y los tres tipos de alineador (HISAT2, STAR y SALMON) tras su procesamiento en `DESeq2`.](docs/images/pca_deseq2.png)
 ```{r}
 #| label: limpieza_var_1
 #| echo: false
-#| eval: true
+#| eval: false
 #| message: false
 
 rm(pca_grid, pe_pca_plots, pe_row, pe_vsd)
@@ -728,7 +752,7 @@ Dicho eso se procedió a ajustar el modelo, encontrar los factores de normalizac
 ```{r}
 #| label: ajuste_modelo_DESeq2_R
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 for (i in 1:2) {
@@ -761,8 +785,21 @@ for (i in 1:2) {
 ```{python}
 #| label: dds_Py
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
+
+# ================== DIRECTORIOS ==================
+
+results_dir_pe = {
+    "hisat2": Path("results/hisat2_pe/diffexp_Inmoose"),
+    "star": Path("results/star_pe/diffexp_Inmoose"),
+    "salmon": Path("results/SALMON/PE/diffexp_Inmoose")
+}
+results_dir_se = {
+    "hisat2": Path("results/hisat2_se/diffexp_Inmoose"),
+    "star": Path("results/star_se/diffexp_Inmoose"),
+    "salmon": Path("results/SALMON/SE/diffexp_Inmoose")
+}
 
 # ================== CARGADO DE LOS OBJETOS ==================
 
@@ -780,10 +817,12 @@ for read_type in ("PE", "SE"):
         dds_objs = pe_dds
         counts_set = pe_counts
         vsd_objs = pe_vsd
+        results_dir = results_dir_pe
     else:
         dds_objs = se_dds
         counts_set = se_counts
         vsd_objs = se_vsd
+        results_dir = results_dir_se
 
     for tool in count_tools:
         # Matriz de conteos
@@ -811,6 +850,29 @@ for read_type in ("PE", "SE"):
         # Guardado de resultados
         vsd_objs[tool] = tmp_vsd
         dds_objs[tool] = tmp_dds
+
+        # Guardado de la matriz VSD
+        results_dir[tool].mkdir(parents=True, exist_ok=True)
+
+        # Extraer matriz VSD
+        vsd_values = tmp_vsd.X
+
+        # Por si fuera matriz sparse
+        if sparse.issparse(vsd_values):
+            vsd_values = vsd_values.toarray()
+
+        # Construir DataFrame: muestras x genes
+        vsd_df = pd.DataFrame(
+            vsd_values,
+            index=tmp_vsd.obs_names,
+            columns=tmp_vsd.var_names
+        )
+
+        # Guardar como genes x muestras, equivalente a assay(vsd) en R
+        vsd_df.T.to_csv(
+            results_dir[tool] / "inmoose-vsd-matrix.csv",
+            index_label="Geneid"
+        )
     
     # Guardado final
     if read_type == "PE":
@@ -820,18 +882,18 @@ for read_type in ("PE", "SE"):
         se_dds = dds_objs
         se_vsd = vsd_objs
     
-    del tmp_vsd, tmp_dds, tool, counts_set
+    del tmp_vsd, tmp_dds, tool, counts_set, results_dir
 
 del read_type, dds_objs, vsd_objs
 gc.collect()
 ```
 
 ```{python}
-#| fig-cap: "PCA para cada tipo de lectura (PE/SE) y los tres tipos de alineador (HISAT2, STAR y SALMON) tras su procesamiento en `DESeq2` en Python."
+#| label: "PCA para cada tipo de lectura (PE/SE) y los tres tipos de alineador (HISAT2, STAR y SALMON) tras su procesamiento en `DESeq2` en Python."
 #| fig-width: 12
 #| fig-height: 6
 #| echo: false
-#| eval: true
+#| eval: false
 
 from sklearn.decomposition import PCA
 
@@ -955,14 +1017,16 @@ plt.tight_layout(rect=[0.04, 0.08, 1, 1])
 plt.show()
 ```
 
-Se observó que, en cuanto a las varianzas, las distribuciones entre ambas implementaciones son muy similares (ver **Figuras 1** y **2**). Aunque el acomodo espacial pueda lucir desconcertante, de usar procrustes ortogonales para rotar las proyecciones obtenidas por el PCA se podría visualizar un empalme en la mayoría de los alineadores con excepción de `SALMON` (\citep{@perla-2024-orthogonal}). 
+![PCA para cada tipo de lectura (PE/SE) y los tres tipos de alineador (HISAT2, STAR y SALMON) tras su procesamiento en `DESeq2` en Python.](docs/images/pca_inmoose.png)
+
+Se observó que, en cuanto a las varianzas, las distribuciones entre ambas implementaciones son muy similares (ver **Figuras 1** y **2**). Aunque el acomodo espacial pueda lucir desconcertante, de usar procrustes ortogonales para rotar las proyecciones obtenidas por el PCA se podría visualizar un empalme en la mayoría de los alineadores con excepción de `SALMON` [@perla-2024-orthogonal]. 
 
 Sin embargo, la mayor diferencia entre ambos se ve en el porcentaje de varianza que los primeros dos componentes capturan en `inmooose` con respecto a `DESeq2`.
 
 ```{python}
 #| label: ajuste_Py
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # ================== AJUSTE DEL MODELO ==================
@@ -991,8 +1055,21 @@ for read_type in ["PE", "SE"]:
 ```{r}
 #| label: dds_edgeR
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
+
+# ================== DIRECTORIOS ==================
+
+results_dir_pe = list(
+    hisat2 = "results/hisat2_pe/diffexp_DESeq2", 
+    star = "results/star_pe/diffexp_DESeq2", 
+    salmon = "results/SALMON/PE/diffexp_DESeq2" 
+) 
+results_dir_se = list(
+    hisat2 = "results/hisat2_se/diffexp_DESeq2", 
+    star = "results/star_se/diffexp_DESeq2", 
+    salmon = "results/SALMON/SE/diffexp_DESeq2"
+)
 
 # ================== CARGADO DE LOS OBJETOS edgeR ==================
 
@@ -1008,10 +1085,12 @@ for (i in 1:2) {
     dge = pe_dge
     counts = pe_counts
     logcpm = pe_logcpm
+    results_dir = results_dir_pe
   } else {
     dge = se_dge
     counts = se_counts
     logcpm = se_logcpm
+    results_dir = results_dir_se
   }
   
   for (tool in count_tools) {
@@ -1041,8 +1120,24 @@ for (i in 1:2) {
     # Normalización TMM
     tmp_dge = calcNormFactors(tmp_dge)
     
-    # Matriz logCPM para PCA
+    # Matriz logCPM para PCA / heatmaps
     logcpm[[tool]] = cpm(tmp_dge, log = TRUE)
+    
+    # Guardado de la matriz logCPM
+    if (!dir.exists(results_dir[[tool]])) {
+      dir.create(results_dir[[tool]], recursive = TRUE)
+    }
+    
+    write.table(
+      logcpm[[tool]],
+      file = file.path(
+        results_dir[[tool]],
+        "edgeR-logCPM-matrix.csv"
+      ),
+      sep = ",",
+      quote = FALSE,
+      row.names = TRUE
+    )
     
     # Guardar también el diseño, porque corresponde a ese objeto
     dge[[tool]] = list(
@@ -1060,14 +1155,24 @@ for (i in 1:2) {
   }
 }
 
-rm(dge, logcpm, tmp_dge, counts, keep, metadata_tool, design_tool, i, tool)
+rm(
+  dge, 
+  logcpm, 
+  tmp_dge, 
+  counts, 
+  keep, 
+  metadata_tool, 
+  design_tool, 
+  i, tool, 
+  results_dir
+)
 invisible(gc())
 ```
 
 ```{r}
-#| fig-cap: "PCA para cada tipo de lectura (PE/SE) y cada tipo de alineador (HISAT2, STAR y SALMON) a partir de su procesamiento por `EdgeR`."
+#| label: "PCA para cada tipo de lectura (PE/SE) y cada tipo de alineador (HISAT2, STAR y SALMON) a partir de su procesamiento por `EdgeR`."
 #| echo: false
-#| eval: true
+#| eval: false
 
 # ================== FUNCIONES ==================
 
@@ -1150,46 +1255,53 @@ pca_grid = pe_row / se_row +
 pca_grid
 ```
 
+![PCA para cada tipo de lectura (PE/SE) y cada tipo de alineador (HISAT2, STAR y SALMON) a partir de su procesamiento por `EdgeR`.](docs/images/pca_edgeR.png)
+
 ```{r}
 #| label: limpieza_var_2
 #| echo: false
-#| eval: true
+#| eval: false
 
-rm(pca_grid, pe_pca_plots, pe_logcpm)
-rm(se_pca_plots, se_row, se_logcpm)
-invisible((gc()))
+rm(
+  pca_grid, 
+  pe_pca_plots, 
+  pe_logcpm, 
+  se_pca_plots, 
+  se_row, 
+  se_logcpm
+)
+invisible(gc())
 ```
 
 `EdgeR` es una herramienta que separa en dos funciones lo que el algoritmo `DESeq2` tiene en una sola: 1) la estimación de la dispersión poblacional a partir de las réplicas y 2) el ajuste del modelo GLM. Por ello es que se codificó de tal manera que ambos procesos quedaran incluidos en el pipeline.
-
 ```{r}
 #| label: ajuste_modelo_edgeR
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 for (i in 1:2) {
   
   if (i == 1) {
-    dge_objs <- pe_dge
+    dge_objs = pe_dge
   } else {
-    dge_objs <- se_dge
+    dge_objs = se_dge
   }
   
   for (tool in count_tools) {
     
-    tmp_dge <- dge_objs[[tool]]$dge
-    design_tool <- dge_objs[[tool]]$design
+    tmp_dge = dge_objs[[tool]]$dge
+    design_tool = dge_objs[[tool]]$design
     
-    tmp_dge <- estimateDisp(tmp_dge, design_tool)
+    tmp_dge = estimateDisp(tmp_dge, design_tool)
     
-    fit <- glmQLFit(
+    fit = glmQLFit(
       tmp_dge,
       design_tool,
       robust = TRUE
     )
     
-    dge_objs[[tool]] <- list(
+    dge_objs[[tool]] = list(
       dge = tmp_dge,
       design = design_tool,
       fit = fit
@@ -1197,9 +1309,9 @@ for (i in 1:2) {
   }
   
   if (i == 1) {
-    pe_edger_fit <- dge_objs
+    pe_edger_fit = dge_objs
   } else {
-    se_edger_fit <- dge_objs
+    se_edger_fit = dge_objs
   }
 }
 
@@ -1218,7 +1330,7 @@ Los contrastes se realizaron entre las edades de 18 y 3 meses aprovechando que n
 ```{r}
 #| label: contrastes_R
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # ================== CONTRASTES ==================
@@ -1238,7 +1350,7 @@ Se contrastó con el mismo diseño para todos los datasets, por lo que las prueb
 ```{r}
 #| label: expresion_diff_R
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # ==================== PRUEBA ESTADÍSTICA ====================
@@ -1329,15 +1441,20 @@ for (i in 1:2) {
 }
 
 # Limpieza de variables
-rm(dds, res, deseq2_num_genes)
-rm(tool, i, j)
+rm(
+  dds, 
+  res, 
+  deseq2_num_genes, 
+  tool, 
+  i, j
+)
 invisible(gc())
 ```
 
 ```{r}
-#| fig-cap: "Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el método `DESeq2`."
+#| label: "Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el método `DESeq2`."
 #| echo: false
-#| eval: true
+#| eval: false
 
 # =============== PREPARACIÓN DE LOS DATOS ===============
 
@@ -1422,12 +1539,14 @@ plot_pe + plot_se +
   )
 ```
 
-En la **Figura 4** se observó que tanto `HISAT2` como `STAR` son consistentes en el número de genes diferencialmente expresados en el barrido de valores de `FDR`, en contraste con `Salmon` que de forma general se mantuvo con números bajos de estos genes. Con estos resultados se optó por un `FDR` conservador de $1e-06$, es decir, se aceptó un falso positivo por cada millón de genes.
+![Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el método `DESeq2`.](docs/images/fdr_deseq2.png)
+
+En la **Figura 4** se observó que tanto `HISAT2` como `STAR` son consistentes en el número de genes diferencialmente expresados en el barrido de valores de `FDR`, en contraste con `Salmon` que de forma general se mantuvo con números bajos de estos genes. Con estos resultados se optó por un `FDR` laxo de $0.05$, es decir, se aceptaron cinco  falsos positivos por cada cien genes.
 
 ```{r}
 #| label: tablas_DESeq2
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # ==================== TABLAS ====================
@@ -1445,7 +1564,7 @@ results_dir_se = list(
 )
 
 # Parámetros
-FDR_unique = 1e-6
+FDR_unique = 0.05
 
 for (i in 1:2) {
     if (i == 1) {
@@ -1500,7 +1619,7 @@ invisible(gc())
 ```{r}
 #| label: limpieza_var_3
 #| echo: false
-#| eval: true
+#| eval: false
 
 rm(
     deseq2_num_genes, 
@@ -1518,7 +1637,7 @@ invisible(gc())
 ```{python}
 #| label: contrastes_Py
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # ================= CONSTRASTES =================
@@ -1558,7 +1677,7 @@ Los contrastes siguieron la misma interpretación biológica que en R y misma di
 ```{python}
 #| label: diffexp_Py
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # Parámetros
@@ -1642,9 +1761,9 @@ del res_objs, num_genes_df, tool
 ```
 
 ```{python}
-#| fig-cap: "Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el método `DESeq2` implementado en `inmoose`."
+#| label: "Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el método `DESeq2` implementado en `inmoose`."
 #| echo: false
-#| eval: true
+#| eval: false
 
 # ================ CONVIRTIENDO DATOS ================
 
@@ -1726,15 +1845,15 @@ plt.tight_layout(rect=[0, 0, 0.88, 1])
 plt.show()
 ```
 
-La **Figura 5** mostró una tendencia similar a la vista en la implementación en R de este algoritmo, por lo que se utilizó el mismo $FDR < 10^{-6}$.
+![Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el método `DESeq2` implementado en `inmoose`.](docs/images/fdr_inmoose.png)
+
+La **Figura 5** mostró una tendencia similar a la vista en la implementación en R de este algoritmo, por lo que se utilizó el mismo $FDR < 0.05$.
 
 ```{python}
 #| label: tablas_Inmoose
-#| echo: true
-#| eval: true
+#| echo: false
+#| eval: false
 #| message: false
-
-from pathlib import Path # Librería nativa de Python
 
 # ============== DIRECTORIOS DE SALIDA ==============
 
@@ -1750,7 +1869,7 @@ results_dir_se = {
 }
 
 # Parámetros
-FDR_unique = 1e-6
+FDR_unique = 0.05
 
 for read_type in ["PE", "SE"]:
 
@@ -1799,7 +1918,7 @@ for read_type in ["PE", "SE"]:
 ```{python}
 #| label: limpieza_var_Py_1
 #| echo: false
-#| eval: true
+#| eval: false
 
 del up, down, metadata_tmp, axes, age, dds_objs, fdr, fig, handles
 del legend_handles, n, pe_counts, se_counts, pe_vsd, se_vsd, read_type
@@ -1814,7 +1933,7 @@ En el caso de `EdgeR` los contrastes se establecieron a la par que se aplicó la
 ```{r}
 #| label: contrastes_edgeR
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # ================== CONTRASTE ==================
@@ -1873,7 +1992,7 @@ for (i in 1:2) {
   
   for (tool in count_tools) {
 
-    design_tool <- fit_objs[[tool]]$design
+    design_tool = fit_objs[[tool]]$design
 
     edger_contrast = makeContrasts(
       a18_vs_a3 = agea18 - agea3,
@@ -1945,9 +2064,9 @@ invisible(gc())
 ```
 
 ```{r}
-#| fig-cap: "Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el algoritmo `EdgeR`."
+#| label: "Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el algoritmo `EdgeR`."
 #| echo: false
-#| eval: true
+#| eval: false
 
 edger_num_genes = rbind(
   edger_num_genes_pe,
@@ -2011,12 +2130,14 @@ plot_se = edger_num_genes_long %>%
   )
 ```
 
+![Barrido de valores de FDR y su efecto en el número de genes diferencialmente expresados para el algoritmo `EdgeR`.](docs/images/fdr_edgeR.png)
+
 La **Figura 6** exhibió un comportamiento donde la caída en el número de genes fue mucho más pronunciado en valores relativamente altos de FDR. Lo anterior se contrapone a los resultados de ambas implementaciones de `DESeq2`, las cuales fueron más robustaz ante un FDR más estricto.
 
 ```{r}
 #| label: tablas_edgeR
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 
 # ================= TABLAS =================
@@ -2096,7 +2217,7 @@ invisible(gc())
 ```{r}
 #| label: limpieza_var_5
 #| echo: false
-#| eval: true
+#| eval: false
 
 rm(
     pe_counts,
@@ -2111,26 +2232,32 @@ rm(
     generate_pca,
     row_label,
     fdr,
-    design,
     deseq2_contrasts,
     metadata,
-    age, contrast_var
+    age, contrast_var,
+    pe_edger_fit,
+    se_edger_fit,
+    design_tool,
+    edger_num_genes_pe,
+    edger_num_genes_se,
+    edger_num_genes_long,
+    generate_pca_edger,
+    edger_contrast,
+    edger_num_genes,
+    down, up
 )
 invisible(gc())
 ```
 
 En este segmento se generaron _volcano plots_, gráficos útiles para relacionar la significancia estadística (mediante el p-value ajustado) y el LFC. Estos siguieron los umbrales aplicados en la sección pasada:
 
-- $FDR < 10^{-6}$ para `DESeq2` y $FDR < 0.05$ para `EdgeR`.
-- $LFC > 0.5$ y $LFC < -0.5$ para todos los casos.
-
-
-La función para obtener los volcano plots se construyó buscando generalizar el proceso:
+- $FDR < 0.05$.
+- $|LFC| > 0.5$.
 
 ```{r}
 #| label: volcano_plot_func
-#| echo: true
-#| eval: true
+#| echo: false
+#| eval: false
 
 # ========================== FUNCIONES ==========================
 
@@ -2145,7 +2272,7 @@ make_volcano_plot = function(
   volcano_FDR_limit = 10
 ) {
   
-  res_plot <- res %>%
+  res_plot = res %>%
     as.data.frame() %>%
     mutate(
       lfc_value = as.numeric(.data[[lfc_col]]),
@@ -2226,7 +2353,7 @@ Aunado a ello, se guardaron todas las tablas resultantes de la implementación d
 ```{python}
 #| label: convert_py2r_objs_1
 #| echo: false
-#| eval: true
+#| eval: false
 
 # GeneID de índice a columna
 for read_res in (pe_res, se_res):
@@ -2278,7 +2405,7 @@ del tool, outdir_pe, outdir_se
 ```{r}
 #| label: converting_py2r_objs_2
 #| echo: false
-#| eval: true
+#| eval: false
 
 # ==================== CONVERSIÓN FINAL ====================
 
@@ -2319,15 +2446,15 @@ invisible(gc())
 #### R
 
 ```{r}
-#| fig-cap: "Volcano plots para `DESeq2` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 10^{-6}$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
+#| label: "Volcano plots para `DESeq2` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 0.05$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
 #| echo: false
-#| eval: true
+#| eval: false
 
 # ================== GRAFICANDO ==================
 
 # Parámetros
 LFC_unique = 0.5
-FDR_unique = 1e-06
+FDR_unique = 0.05
 FDR_limit = 50
 LFC_limit = 15
 
@@ -2431,12 +2558,12 @@ volcano_grid = pe_row_volcano / se_row_volcano +
 volcano_grid
 ```
 
-[...]
+![Volcano plots para `DESeq2` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 0.05$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down.](docs/images/volcanos_deseq2.png)
 
 ```{r}
 #| label: limpieza_var_idk1
 #| echo: false
-#| eval: true 
+#| eval: false 
 
 rm(
   p_hisat2_pe,
@@ -2450,18 +2577,20 @@ rm(
 invisible(gc())
 ```
 
+Como se evidenció anteriormente, bajo el mismo umbral hay una proporción importante de genes diferencialmente expresados tanto **UP** como **DOWN** ante un FDR laxo.
+
 #### Python
 
 ```{r}
-#| fig-cap: "Volcano plots para `DESeq2` de la suite `inmoose` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 10^{-6}$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
+#| label: "Volcano plots para `DESeq2` de la suite `inmoose` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 0.05$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
 #| echo: false
-#| eval: true
+#| eval: false
 
 # ================== GRAFICANDO ==================
 
 # Parámetros
 LFC_unique = 0.5
-FDR_unique = 1e-06
+FDR_unique = 0.05
 FDR_limit = 30
 LFC_limit = 15
 
@@ -2565,12 +2694,12 @@ volcano_grid = pe_row_volcano / se_row_volcano +
 volcano_grid
 ```
 
-[...]
+![Volcano plots para `DESeq2` de la suite `inmoose` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 0.05$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down.](docs/images/volcanos_inmoose.png)
 
 ```{r}
 #| label: limpieza_var_idk2
 #| echo: false
-#| eval: true 
+#| eval: false 
 
 rm(
   p_hisat2_pe,
@@ -2584,12 +2713,14 @@ rm(
 invisible(gc())
 ```
 
+Se mantuvo un patrón similar a su contraparte en R, con los alineadores siguiendo tendencias similares en los gráficos con mayores diferencias en contraste con `SALMON`.
+
 ### EdgeR
 
 ```{r}
-#| fig-cap: "Volcano plots para `EdgeR` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 0.05$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
+#| label: "Volcano plots para `EdgeR` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 0.05$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down."
 #| echo: false
-#| eval: true
+#| eval: false
 
 # ================== GRAFICANDO ==================
 
@@ -2691,7 +2822,18 @@ volcano_grid = pe_row_volcano / se_row_volcano +
 volcano_grid
 ```
 
-[...]
+![Volcano plots para `EdgeR` de todos los datasets (tres alineadores y dos tipos de lectura). Se usó un $FDR < 0.05$, un $LFC > 0.5$ para los up y $LFC < -0.5$ para los down.](docs/images/volcanos_edgeR.png)
+
+```{r}
+#| label: limpieza_var_idk_3
+#| echo: false
+#| eval: false
+
+rm(FDR_limit, FDR_unique, LFC_limit, LFC_unique, i)
+invisible(gc())
+```
+
+De nueva cuenta, `EdgeR` mostró un comportamiento más conservador en todos los datasets con relación a `DESeq2`.
 
 ## Heatmap
 
@@ -2699,37 +2841,929 @@ Para la construcción de estas representaciones no se trabajó con TPMs, puesto 
 
 ```{r}
 #| label: heatmaps_function
-#| echo: true
-#| eval: true
+#| echo: false
+#| eval: false
 #| message: false
 
+make_deg_heatmap = function(
+  res,
+  expr_mat,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = 0.5,
+  FDR_cutoff = 0.05,
+  top_n = 2000,
+  cluster_rows = TRUE,
+  cluster_columns = FALSE,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  km = 2,
+  heatmap_title = "Heatmap",
+  heatmap_name = "Z score"
+) {
+  
+  # Convertir resultados a dataframe
+  res_df = as.data.frame(res)
+  
+  # Clasificación UP / DOWN
+  up = (res_df[[lfc_col]] > LFC_cutoff) &
+    (res_df[[fdr_col]] < FDR_cutoff)
+  up[is.na(up)] = FALSE
+  
+  down = (res_df[[lfc_col]] < -LFC_cutoff) &
+    (res_df[[fdr_col]] < FDR_cutoff)
+  down[is.na(down)] = FALSE
+  
+  # Genes significativos
+  significant = res_df[up | down, , drop = FALSE]
+  
+  if (nrow(significant) == 0) {
+    stop("No hay genes significativos con los cortes indicados.")
+  }
+  
+  # Ordenar por FDR
+  significant_order = significant[
+    order(significant[[fdr_col]]),
+    ,
+    drop = FALSE
+  ]
+  
+  # Tomar top genes
+  significant_genes = head(
+    rownames(significant_order),
+    n = min(top_n, nrow(significant_order))
+  )
+  
+  # Asegurar que los genes existan en la matriz de expresión
+  significant_genes = significant_genes[
+    significant_genes %in% rownames(expr_mat)
+  ]
+  
+  if (length(significant_genes) == 0) {
+    stop("Los genes significativos no están presentes en expr_mat.")
+  }
+  
+  # Subset de matriz de expresión
+  expr_sig = expr_mat[significant_genes, , drop = FALSE]
+  
+  # Z-score por gen
+  zscore_significant = t(scale(t(expr_sig)))
+  
+  # Eliminar genes con NA producidos por varianza cero
+  zscore_significant = zscore_significant[
+    complete.cases(zscore_significant),
+    ,
+    drop = FALSE
+  ]
+  
+  # Heatmap
+  p = Heatmap(
+    zscore_significant,
+    cluster_rows = cluster_rows,
+    cluster_columns = cluster_columns,
+    show_row_names = show_row_names,
+    show_column_names = show_column_names,
+    name = heatmap_name,
+    km = km,
+    column_title = heatmap_title
+  )
+  
+  return(p)
+}
 
+# Convertir Heatmap de ComplexHeatmap a objeto compatible con patchwork
+heatmap_to_patchwork = function(ht) {
+  wrap_elements(
+    full = grid.grabExpr(
+      draw(ht, heatmap_legend_side = "right")
+    )
+  )
+}
 ```
 
 ### DESeq2
 
 #### R
 
-[...]
+```{r}
+#| label: "Top 25 genes diferencialmente expresados para cada dataset procesado con el algoritmo `DESeq2`."
+#| echo: false
+#| eval: false
+#| fig-width: 12
+#| fig-height: 10
+
+# ======================= TABLAS =======================
+deseq2_mat_pe = list(
+  hisat2 = read.table(
+    "results/hisat2_pe/diffexp_DESeq2/deseq2-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1
+  ),
+  star = read.table(
+    "results/star_pe/diffexp_DESeq2/deseq2-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1
+  ),
+  salmon = read.table(
+    "results/SALMON/PE/diffexp_DESeq2/deseq2-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1
+  )
+)
+deseq2_mat_se = list(
+  hisat2 = read.table(
+    "results/hisat2_se/diffexp_DESeq2/deseq2-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1
+  ),
+  star = read.table(
+    "results/star_se/diffexp_DESeq2/deseq2-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1
+  ),
+  salmon = read.table(
+    "results/SALMON/SE/diffexp_DESeq2/deseq2-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1
+  )
+)
+
+# ================== PARÁMETROS ==================
+
+FDR_unique = 0.05
+LFC_unique = 0.5
+top_n_heatmap = 25
+
+# ================== HEATMAPS PE ==================
+
+hm_hisat2_pe = make_deg_heatmap(
+  res = results_pe$hisat2,
+  expr_mat = deseq2_mat_pe$hisat2,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "HISAT2"
+)
+
+hm_star_pe = make_deg_heatmap(
+  res = results_pe$star,
+  expr_mat = deseq2_mat_pe$star,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "STAR"
+)
+
+hm_salmon_pe = make_deg_heatmap(
+  res = results_pe$salmon,
+  expr_mat = deseq2_mat_pe$salmon,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "SALMON"
+)
+
+# ================== HEATMAPS SE ==================
+
+hm_hisat2_se = make_deg_heatmap(
+  res = results_se$hisat2,
+  expr_mat = deseq2_mat_se$hisat2,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  heatmap_title = ""
+)
+
+hm_star_se = make_deg_heatmap(
+  res = results_se$star,
+  expr_mat = deseq2_mat_se$star,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  heatmap_title = ""
+)
+
+hm_salmon_se = make_deg_heatmap(
+  res = results_se$salmon,
+  expr_mat = deseq2_mat_se$salmon,
+  lfc_col = "log2FoldChange",
+  fdr_col = "padj",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  heatmap_title = ""
+)
+
+# ================== CONVERSIÓN A PATCHWORK ==================
+
+p_hisat2_pe = heatmap_to_patchwork(hm_hisat2_pe)
+p_star_pe = heatmap_to_patchwork(hm_star_pe)
+p_salmon_pe = heatmap_to_patchwork(hm_salmon_pe)
+
+p_hisat2_se = heatmap_to_patchwork(hm_hisat2_se)
+p_star_se = heatmap_to_patchwork(hm_star_se)
+p_salmon_se = heatmap_to_patchwork(hm_salmon_se)
+
+# ================== GRID CON LABEL LATERAL PE / SE ==================
+
+pe_row_heatmap = wrap_plots(
+  c(
+    list(row_label("PE")),
+    list(p_hisat2_pe, p_star_pe, p_salmon_pe)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+se_row_heatmap = wrap_plots(
+  c(
+    list(row_label("SE")),
+    list(p_hisat2_se, p_star_se, p_salmon_se)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+heatmap_grid = pe_row_heatmap / se_row_heatmap +
+  plot_annotation(
+    title = "Heatmaps de genes diferencialmente expresados (DESeq2)"
+  ) &
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+heatmap_grid
+
+rm(
+  deseq2_mat_pe,
+  deseq2_mat_se
+)
+invisible(gc())
+```
+
+![Top 25 genes diferencialmente expresados para cada dataset procesado con el algoritmo `DESeq2`.](docs/images/heatmaps_deseq2.png)
 
 #### Python
 
-[...]
+```{r}
+#| label: "Top 25 genes diferencialmente expresados para cada dataset procesado con el algoritmo `DESeq2` en la suite `inmoose`."
+#| echo: false
+#| eval: false
+#| fig-width: 12
+#| fig-height: 10
+
+# ======================= TABLAS =======================
+
+inmoose_mat_pe = list(
+  hisat2 = read.table(
+    "results/hisat2_pe/diffexp_Inmoose/inmoose-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  ),
+  star = read.table(
+    "results/star_pe/diffexp_Inmoose/inmoose-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  ),
+  salmon = read.table(
+    "results/SALMON/PE/diffexp_Inmoose/inmoose-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  )
+)
+
+inmoose_mat_se = list(
+  hisat2 = read.table(
+    "results/hisat2_se/diffexp_Inmoose/inmoose-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  ),
+  star = read.table(
+    "results/star_se/diffexp_Inmoose/inmoose-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  ),
+  salmon = read.table(
+    "results/SALMON/SE/diffexp_Inmoose/inmoose-vsd-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  )
+)
+
+# ================== PARÁMETROS ==================
+
+FDR_unique = 0.05
+LFC_unique = 0.5
+top_n_heatmap = 25
+
+# ================== HEATMAPS PE ==================
+
+hm_hisat2_pe = make_deg_heatmap(
+  res = results_pe_inmoose$hisat2,
+  expr_mat = inmoose_mat_pe$hisat2,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "HISAT2"
+)
+
+hm_star_pe = make_deg_heatmap(
+  res = results_pe_inmoose$star,
+  expr_mat = inmoose_mat_pe$star,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "STAR"
+)
+
+hm_salmon_pe = make_deg_heatmap(
+  res = results_pe_inmoose$salmon,
+  expr_mat = inmoose_mat_pe$salmon,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "SALMON"
+)
+
+# ================== HEATMAPS SE ==================
+
+hm_hisat2_se = make_deg_heatmap(
+  res = results_se_inmoose$hisat2,
+  expr_mat = inmoose_mat_se$hisat2,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  heatmap_title = ""
+)
+
+hm_star_se = make_deg_heatmap(
+  res = results_se_inmoose$star,
+  expr_mat = inmoose_mat_se$star,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  heatmap_title = ""
+)
+
+hm_salmon_se = make_deg_heatmap(
+  res = results_se_inmoose$salmon,
+  expr_mat = inmoose_mat_se$salmon,
+  lfc_col = "log2FoldChange",
+  fdr_col = "adj_pvalue",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  heatmap_title = ""
+)
+
+# ================== CONVERSIÓN A PATCHWORK ==================
+
+p_hisat2_pe = heatmap_to_patchwork(hm_hisat2_pe)
+p_star_pe = heatmap_to_patchwork(hm_star_pe)
+p_salmon_pe = heatmap_to_patchwork(hm_salmon_pe)
+
+p_hisat2_se = heatmap_to_patchwork(hm_hisat2_se)
+p_star_se = heatmap_to_patchwork(hm_star_se)
+p_salmon_se = heatmap_to_patchwork(hm_salmon_se)
+
+# ================== GRID CON LABEL LATERAL PE / SE ==================
+
+pe_row_heatmap = wrap_plots(
+  c(
+    list(row_label("PE")),
+    list(p_hisat2_pe, p_star_pe, p_salmon_pe)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+se_row_heatmap = wrap_plots(
+  c(
+    list(row_label("SE")),
+    list(p_hisat2_se, p_star_se, p_salmon_se)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+heatmap_grid = pe_row_heatmap / se_row_heatmap +
+  plot_annotation(
+    title = "Heatmaps de genes diferencialmente expresados (inmoose)"
+  ) &
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+heatmap_grid
+
+rm(
+  inmoose_mat_pe,
+  inmoose_mat_se
+)
+
+invisible(gc())
+```
+
+![Top 25 genes diferencialmente expresados para cada dataset procesado con el algoritmo `DESeq2` en la suite `inmoose`.](docs/images/heatmaps_inmoose.png)
 
 ### EdgeR
 
-[...]
+```{r}
+#| label: "Top 25 genes diferencialmente expresados para cada dataset procesado con el algoritmo `EdgeR`."
+#| echo: false
+#| eval: false
+#| fig-width: 12
+#| fig-height: 10
+
+# ======================= TABLAS =======================
+
+edgeR_mat_pe = list(
+  hisat2 = read.table(
+    "results/hisat2_pe/diffexp_edgeR/edgeR-logCPM-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  ),
+  star = read.table(
+    "results/star_pe/diffexp_edgeR/edgeR-logCPM-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  ),
+  salmon = read.table(
+    "results/SALMON/PE/diffexp_edgeR/edgeR-logCPM-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  )
+)
+
+edgeR_mat_se = list(
+  hisat2 = read.table(
+    "results/hisat2_se/diffexp_edgeR/edgeR-logCPM-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  ),
+  star = read.table(
+    "results/star_se/diffexp_edgeR/edgeR-logCPM-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  ),
+  salmon = read.table(
+    "results/SALMON/SE/diffexp_edgeR/edgeR-logCPM-matrix.csv",
+    sep = ",", header = TRUE, row.names = 1, check.names = FALSE
+  )
+)
+
+# ================== PARÁMETROS ==================
+
+FDR_unique = 0.05
+LFC_unique = 0.5
+top_n_heatmap = 25
+
+# ================== HEATMAPS PE ==================
+
+hm_hisat2_pe = make_deg_heatmap(
+  res = edger_results_pe$hisat2,
+  expr_mat = edgeR_mat_pe$hisat2,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "HISAT2"
+)
+
+hm_star_pe = make_deg_heatmap(
+  res = edger_results_pe$star,
+  expr_mat = edgeR_mat_pe$star,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "STAR"
+)
+
+hm_salmon_pe = make_deg_heatmap(
+  res = edger_results_pe$salmon,
+  expr_mat = edgeR_mat_pe$salmon,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  heatmap_title = "SALMON"
+)
+
+# ================== HEATMAPS SE ==================
+
+hm_hisat2_se = make_deg_heatmap(
+  res = edger_results_se$hisat2,
+  expr_mat = edgeR_mat_se$hisat2,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  heatmap_title = ""
+)
+
+hm_star_se = make_deg_heatmap(
+  res = edger_results_se$star,
+  expr_mat = edgeR_mat_se$star,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  heatmap_title = ""
+)
+
+hm_salmon_se = make_deg_heatmap(
+  res = edger_results_se$salmon,
+  expr_mat = edgeR_mat_se$salmon,
+  lfc_col = "logFC",
+  fdr_col = "FDR",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  top_n = top_n_heatmap,
+  show_row_names = FALSE,
+  show_column_names = TRUE,
+  heatmap_title = ""
+)
+
+# ================== CONVERSIÓN A PATCHWORK ==================
+
+p_hisat2_pe = heatmap_to_patchwork(hm_hisat2_pe)
+p_star_pe = heatmap_to_patchwork(hm_star_pe)
+p_salmon_pe = heatmap_to_patchwork(hm_salmon_pe)
+
+p_hisat2_se = heatmap_to_patchwork(hm_hisat2_se)
+p_star_se = heatmap_to_patchwork(hm_star_se)
+p_salmon_se = heatmap_to_patchwork(hm_salmon_se)
+
+# ================== GRID CON LABEL LATERAL PE / SE ==================
+
+pe_row_heatmap = wrap_plots(
+  c(
+    list(row_label("PE")),
+    list(p_hisat2_pe, p_star_pe, p_salmon_pe)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+se_row_heatmap = wrap_plots(
+  c(
+    list(row_label("SE")),
+    list(p_hisat2_se, p_star_se, p_salmon_se)
+  ),
+  nrow = 1,
+  widths = c(0.08, 1, 1, 1)
+)
+
+heatmap_grid = pe_row_heatmap / se_row_heatmap +
+  plot_annotation(
+    title = "Heatmaps de genes diferencialmente expresados (edgeR)"
+  ) &
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+
+heatmap_grid
+
+rm(
+  edgeR_mat_pe,
+  edgeR_mat_se
+)
+
+invisible(gc())
+```
+
+![Top 25 genes diferencialmente expresados para cada dataset procesado con el algoritmo `EdgeR`.](docs/images/heatmaps_edgeR.png)
 
 ## Intersección de genes entre algoritmos y datasets
 
-[...]
+En este apartado se buscó la intersección de los genes obtenidos por la clasificación de cada algoritmo (up- o down-regulated) entre datasets (tipo de lectura y alineador/pseudoalineador).
+
+```{r}
+#| label: extraccion_dge
+#| echo: false
+#| eval: false
+
+get_deg_genes = function(
+  res,
+  lfc_col,
+  fdr_col,
+  LFC_cutoff = 0.5,
+  FDR_cutoff = 0.05,
+  direction = "up"
+) {
+  
+  res_df = as.data.frame(res)
+  
+  # Genes: usa rownames como identificadores
+  gene_ids = rownames(res_df)
+  
+  if (direction == "up") {
+    keep = (res_df[[lfc_col]] > LFC_cutoff) &
+      (res_df[[fdr_col]] < FDR_cutoff)
+  } else if (direction == "down") {
+    keep = (res_df[[lfc_col]] < -LFC_cutoff) &
+      (res_df[[fdr_col]] < FDR_cutoff)
+  } else {
+    stop("direction debe ser 'up' o 'down'.")
+  }
+  
+  keep[is.na(keep)] = FALSE
+  
+  gene_ids[keep]
+}
+
+make_venn_plot = function(
+  tool,
+  read_type = "PE",
+  direction = "up",
+  LFC_cutoff = 0.5,
+  FDR_cutoff = 0.05,
+  title = NULL
+) {
+  
+  if (read_type == "PE") {
+    deseq2_res = results_pe[[tool]]
+    inmoose_res = results_pe_inmoose[[tool]]
+    edger_res = edger_results_pe[[tool]]
+  } else if (read_type == "SE") {
+    deseq2_res = results_se[[tool]]
+    inmoose_res = results_se_inmoose[[tool]]
+    edger_res = edger_results_se[[tool]]
+  } else {
+    stop("read_type debe ser 'PE' o 'SE'.")
+  }
+  
+  gene_sets = list(
+    DESeq2 = get_deg_genes(
+      res = deseq2_res,
+      lfc_col = "log2FoldChange",
+      fdr_col = "padj",
+      LFC_cutoff = LFC_cutoff,
+      FDR_cutoff = FDR_cutoff,
+      direction = direction
+    ),
+    inmoose = get_deg_genes(
+      res = inmoose_res,
+      lfc_col = "log2FoldChange",
+      fdr_col = "adj_pvalue",
+      LFC_cutoff = LFC_cutoff,
+      FDR_cutoff = FDR_cutoff,
+      direction = direction
+    ),
+    edgeR = get_deg_genes(
+      res = edger_res,
+      lfc_col = "logFC",
+      fdr_col = "FDR",
+      LFC_cutoff = LFC_cutoff,
+      FDR_cutoff = FDR_cutoff,
+      direction = direction
+    )
+  )
+  
+  if (is.null(title)) {
+    title = toupper(tool)
+  }
+  
+  ggVennDiagram(
+    gene_sets,
+    label_alpha = 0,
+    edge_size = 0.8
+  ) +
+    scale_fill_gradient(low = "white", high = "steelblue") +
+    labs(title = title) +
+    theme_void(base_size = 12) +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      legend.position = "none"
+    )
+}
+
+make_venn_grid = function(
+  direction = "up",
+  LFC_cutoff = 0.5,
+  FDR_cutoff = 0.05,
+  main_title = NULL
+) {
+  
+  if (is.null(main_title)) {
+    main_title = paste0(
+      "Diagramas de Venn - genes ",
+      toupper(direction),
+      " diferencialmente expresados"
+    )
+  }
+  
+  # ================== PE ==================
+  
+  p_hisat2_pe = make_venn_plot(
+    tool = "hisat2",
+    read_type = "PE",
+    direction = direction,
+    LFC_cutoff = LFC_cutoff,
+    FDR_cutoff = FDR_cutoff,
+    title = "HISAT2"
+  )
+  
+  p_star_pe = make_venn_plot(
+    tool = "star",
+    read_type = "PE",
+    direction = direction,
+    LFC_cutoff = LFC_cutoff,
+    FDR_cutoff = FDR_cutoff,
+    title = "STAR"
+  )
+  
+  p_salmon_pe = make_venn_plot(
+    tool = "salmon",
+    read_type = "PE",
+    direction = direction,
+    LFC_cutoff = LFC_cutoff,
+    FDR_cutoff = FDR_cutoff,
+    title = "SALMON"
+  )
+  
+  # ================== SE ==================
+  
+  p_hisat2_se = make_venn_plot(
+    tool = "hisat2",
+    read_type = "SE",
+    direction = direction,
+    LFC_cutoff = LFC_cutoff,
+    FDR_cutoff = FDR_cutoff,
+    title = ""
+  )
+  
+  p_star_se = make_venn_plot(
+    tool = "star",
+    read_type = "SE",
+    direction = direction,
+    LFC_cutoff = LFC_cutoff,
+    FDR_cutoff = FDR_cutoff,
+    title = ""
+  )
+  
+  p_salmon_se = make_venn_plot(
+    tool = "salmon",
+    read_type = "SE",
+    direction = direction,
+    LFC_cutoff = LFC_cutoff,
+    FDR_cutoff = FDR_cutoff,
+    title = ""
+  )
+  
+  # ================== GRID ==================
+  
+  pe_row_venn = wrap_plots(
+    c(
+      list(row_label("PE")),
+      list(p_hisat2_pe, p_star_pe, p_salmon_pe)
+    ),
+    nrow = 1,
+    widths = c(0.08, 1, 1, 1)
+  )
+  
+  se_row_venn = wrap_plots(
+    c(
+      list(row_label("SE")),
+      list(p_hisat2_se, p_star_se, p_salmon_se)
+    ),
+    nrow = 1,
+    widths = c(0.08, 1, 1, 1)
+  )
+  
+  venn_grid = pe_row_venn / se_row_venn +
+    plot_annotation(
+      title = main_title,
+      caption = paste0(
+        "Cutoffs: FDR < ", FDR_cutoff,
+        "; |LFC| > ", LFC_cutoff
+      )
+    ) &
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.caption = element_text(hjust = 0.5)
+    )
+  
+  return(venn_grid)
+}
+```
+
+### Genes sobre-regulados
+
+```{r}
+#| label: "Diagramas de Venn para genes diferencialmente sobreexpresados comparando DESeq2, inmoose y edgeR por alineador y tipo de lectura."
+#| echo: false
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+
+FDR_unique = 0.05
+LFC_unique = 0.5
+
+venn_up_grid = make_venn_grid(
+  direction = "up",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  main_title = "Genes UP diferencialmente expresados"
+)
+
+venn_up_grid
+```
+
+![Diagramas de Venn para genes diferencialmente sobreexpresados comparando DESeq2, inmoose y edgeR por alineador y tipo de lectura.](docs/images/venn_up.png)
+
+La figura muestra que los genes **up diferencialmente expresados** presentan una alta concordancia entre **`DESeq2`** e **inmoose**, especialmente en `HISAT2` y `STAR`, tanto para PE como para SE. En cambio, **`edgeR`** no comparte genes UP exclusivos ni intersecciones relevantes con los otros métodos, lo que sugiere que bajo este umbral es más conservador o detecta un conjunto muy reducido de genes.
+
+También se observa que **Salmon** tiene un comportamiento distinto: en PE, inmoose detecta una mayor proporción de genes exclusivos, mientras que en SE la intersección entre `DESeq2` e inmoose sigue siendo la región dominante. En general, la figura indica que la mayor consistencia ocurre entre las implementaciones tipo `DESeq2`, mientras que `edgeR` contribuye poco a la intersección de genes UP con los criterios de ($FDR < 0.05$) y ($$|LFC| > 0.5$$).
+
+### Genes sub-regulados
+
+```{r}
+#| label: "Diagramas de Venn para genes diferencialmente subexpresados comparando DESeq2, inmoose y edgeR por alineador y tipo de lectura."
+#| echo: false
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+
+FDR_unique = 0.05
+LFC_unique = 0.5
+
+venn_down_grid = make_venn_grid(
+  direction = "down",
+  LFC_cutoff = LFC_unique,
+  FDR_cutoff = FDR_unique,
+  main_title = "Genes DOWN diferencialmente expresados"
+)
+
+venn_down_grid
+```
+
+![Diagramas de Venn para genes diferencialmente subexpresados comparando DESeq2, inmoose y edgeR por alineador y tipo de lectura.](docs/images/venn_down.png)
+
+La figura muestra que los genes **DOWN diferencialmente expresados** mantienen una concordancia alta entre **DESeq2** e **inmoose**, especialmente en `HISAT2` y `STAR`, donde la intersección entre ambos métodos concentra la mayor parte de los genes detectados. En contraste, **`edgeR`** no aporta genes exclusivos ni intersecciones relevantes, lo que indica que bajo este criterio es el método más restrictivo para genes subexpresados.
+
+También se observa que **Salmon** presenta un patrón más variable: en PE, inmoose detecta más genes exclusivos, mientras que en SE la mayor proporción corresponde a genes compartidos entre `DESeq2` e inmoose. En conjunto, la figura sugiere que la señal de genes DOWN es consistente principalmente entre `DESeq2` e `inmoose`, mientras que `edgeR` contribuye poco a la detección compartida con ($FDR < 0.05$) y ($|LFC| > 0.5$).
 
 # Discusión
 
-[...]
+El análisis muestra que la detección de genes diferencialmente expresados depende de manera importante tanto del método estadístico utilizado como del umbral de significancia seleccionado. En particular, se observa que **edgeR presenta un comportamiento más conservador** en comparación con DESeq2 y su implementación en Python mediante inmoose. Esto se refleja en un menor número de genes diferencialmente expresados al aplicar el ajuste por múltiples pruebas mediante FDR, especialmente cuando se utilizan criterios combinados de ($FDR < 0.05$) y ($|LFC| > 0.5$).
+
+Este comportamiento puede explicarse por la forma en que edgeR modela la dispersión y evalúa la significancia estadística. Al utilizar el enfoque de quasi-likelihood con `glmQLFit()` y `glmQLFTest()`, edgeR incorpora una estimación más cuidadosa de la incertidumbre asociada a la dispersión biológica [@chen-2025]. En consecuencia, tiende a ser más estricto al declarar genes como significativos, lo que reduce la probabilidad de cometer errores de tipo I, es decir, falsos positivos. Bajo esta lógica, edgeR sacrifica sensibilidad para ganar mayor control sobre la detección espuria de genes diferencialmente expresados.
+
+En contraste, `DESeq2` en R e `inmoose` en Python muestran una alta convergencia entre sí. Esto se observa tanto en los diagramas de Venn como en los volcano plots y heatmaps, donde ambos métodos tienden a recuperar conjuntos de genes muy similares, especialmente para los resultados provenientes de `HISAT2` y `STAR`. Esta concordancia sugiere que la implementación de inmoose reproduce de forma consistente la lógica estadística central de `DESeq2`, al menos bajo las condiciones evaluadas en este trabajo. Por ello, una hipótesis razonable es que las diferencias menores entre ambas implementaciones pueden deberse más a detalles computacionales, redondeo, filtrado previo, manejo de valores faltantes o diferencias en las transformaciones internas que a discrepancias metodológicas profundas.
+
+También se observa que el impacto del FDR seleccionado es determinante para la cantidad de genes recuperados. El barrido de FDR permite ver que pequeños cambios en el umbral pueden modificar de forma considerable el número de genes diferencialmente expresados. Esto ocurre porque el FDR controla la proporción esperada de falsos descubrimientos entre los genes declarados significativos; por lo tanto, un umbral más estricto, como ($1 \times 0.05$), selecciona únicamente genes con evidencia estadística muy fuerte, mientras que un umbral más flexible, como ($0.05$), permite recuperar un conjunto más amplio de genes candidatos.
+
+Esta diferencia es relevante porque el FDR no solo afecta la cantidad de genes obtenidos, sino también la interpretación biológica posterior. Un umbral muy estricto puede reducir falsos positivos, pero también puede excluir genes biológicamente relevantes con efectos moderados. Por otro lado, un umbral más permisivo aumenta la sensibilidad, pero también puede introducir genes menos confiables. Por ello, el análisis no debe depender únicamente de un punto de corte arbitrario, sino que debe considerar cómo cambia la señal diferencial a lo largo del barrido de FDR.
+
+En conjunto, los resultados sugieren que **`DESeq2` e inmoose ofrecen una detección más concordante y posiblemente más sensible bajo estos datos**, mientras que `edgeR` actúa como un método más conservador frente al ajuste por múltiples comparaciones. Una hipótesis general es que la estructura del experimento, el tamaño muestral, la dispersión biológica y las diferencias entre conteos derivados de alineamiento o pseudoalineamiento influyen directamente en el comportamiento de cada método. Por ello, comparar varios enfoques permite distinguir genes robustos, detectados de manera consistente entre herramientas, de genes cuya significancia depende más fuertemente del modelo estadístico o del umbral de FDR utilizado.
 
 # Conclusiones
 
-[...]
+Con base en la comparación realizada, se selecciona el dataset **paired-end procesado con `STAR`** y el análisis diferencial con **`DESeq2` en culaquier implementación** como estrategia principal. Esta elección se justifica porque `STAR`-PE mostró una señal diferencial clara, consistente y comparable con `HISAT2`, pero con una buena recuperación de genes tanto en los volcano plots como en los barridos de FDR. Además, los resultados de `DESeq2` en R convergieron ampliamente con los obtenidos mediante **`inmoose`**, lo que refuerza la reproducibilidad del análisis entre implementaciones.
+
+Aunque **edgeR** mostró un comportamiento más conservador frente al ajuste por FDR, su baja recuperación de genes sugiere que podría utilizarse mejor como análisis de contraste o validación estricta, más que como herramienta principal en este caso. Por otro lado, `Salmon` presentó patrones más variables, especialmente en las intersecciones de genes UP y DOWN, por lo que se considera menos estable para tomarlo como dataset principal.
+
+En conclusión, **`STAR` paired-end + `DESeq2`** representa el balance más adecuado entre sensibilidad, consistencia metodológica y claridad interpretativa para este análisis de expresión diferencial.
 
 # Referencias
